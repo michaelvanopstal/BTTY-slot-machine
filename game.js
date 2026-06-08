@@ -9,6 +9,7 @@ const symbols = [
 
 let credits = 5000;
 let bet = 100;
+let score = 0;
 let lastWin = 0;
 
 const reel1 = document.getElementById("reel1");
