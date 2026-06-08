@@ -89,14 +89,13 @@ button:disabled {
 }
 
 .symbol.winning {
-    box-shadow: 0 0 25px #ffd700,
-                0 0 45px #ffeb3b;
-    border-color: #ffeb3b;
-    transform: scale(1.08);
-    z-index: 10;
+    box-shadow: 0 0 20px #ffd700, 0 0 40px #ffeb3b;
+    border-color: #ffff00;
+    transform: scale(1.1);
+    transition: all 0.4s;
 }
 
 @keyframes spin {
-    0% { transform: rotateX(0deg); }
-    100% { transform: rotateX(360deg); }
+    from { transform: rotateX(0deg); }
+    to { transform: rotateX(360deg); }
 }
