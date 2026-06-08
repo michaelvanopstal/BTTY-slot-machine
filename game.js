@@ -1,5 +1,5 @@
 // game.js
-const symbols = ["btty1.png", "btty2.png", "btty3.png", "btty4.png"];
+const symbolNames = ["btty1.png", "btty2.png", "btty3.png", "btty4.png"];
 
 const payouts = {
     "btty1.png": { 3: 500, 4: 2500 },
@@ -20,10 +20,10 @@ const spinBtn = document.getElementById("spinBtn");
 const reelsContainer = document.getElementById("reels");
 
 const paylines = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11],     // horizontale
-    [0,5,10,11], [8,5,2,3],                 // diagonalen
-    [0,1,6,11], [8,9,6,3],                  // V vormen
-    [4,1,2,7], [4,9,10,7]                   // zigzag
+    [0,1,2,3], [4,5,6,7], [8,9,10,11],
+    [0,5,10,11], [8,5,2,3],
+    [0,1,6,11], [8,9,6,3],
+    [4,1,2,7], [4,9,10,7]
 ];
 
 function createReels() {
@@ -31,11 +31,13 @@ function createReels() {
     for (let i = 0; i < 12; i++) {
         const div = document.createElement("div");
         div.classList.add("symbol");
+        
         const img = document.createElement("img");
-        img.src = symbols[Math.floor(Math.random() * symbols.length)];
+        img.src = symbolNames[Math.floor(Math.random() * symbolNames.length)];
         img.style.width = "100%";
         img.style.height = "100%";
         img.style.objectFit = "contain";
+        
         div.appendChild(img);
         reelsContainer.appendChild(div);
     }
@@ -43,6 +45,10 @@ function createReels() {
 
 function clearHighlights() {
     document.querySelectorAll(".symbol").forEach(s => s.classList.remove("winning"));
+}
+
+function getFileName(src) {
+    return src.split('/').pop();   // haalt alleen "btty1.png" eruit
 }
 
 async function spin() {
@@ -59,7 +65,6 @@ async function spin() {
 
     const allImgs = document.querySelectorAll(".symbol img");
 
-    // Snelle spin
     allImgs.forEach(img => img.style.animation = "spin 0.08s linear infinite");
 
     const delays = [600, 1000, 1450];
@@ -69,15 +74,14 @@ async function spin() {
         const start = r * 4;
         for (let i = 0; i < 4; i++) {
             allImgs[start + i].style.animation = "none";
-            allImgs[start + i].src = symbols[Math.floor(Math.random() * symbols.length)];
+            allImgs[start + i].src = symbolNames[Math.floor(Math.random() * symbolNames.length)];
         }
     }
 
-    // Win check
     const wins = checkAllPaylines();
 
     if (wins.length > 0) {
-        wins.sort((a, b) => a.amount - b.amount);   // laag naar hoog
+        wins.sort((a, b) => a.amount - b.amount);
 
         let totalWin = 0;
 
@@ -85,7 +89,7 @@ async function spin() {
             highlightPayline(win.line);
             messageEl.innerHTML = `Payline ${win.lineIndex + 1} → <strong>${win.amount} credits</strong>`;
             totalWin += win.amount;
-            await new Promise(res => setTimeout(res, 1100)); // pauze zodat je het ziet
+            await new Promise(res => setTimeout(res, 1200));
         }
 
         credits += totalWin;
@@ -93,7 +97,7 @@ async function spin() {
         messageEl.innerHTML = `🎉 <strong>BIG WIN ${totalWin}!</strong>`;
     } else {
         lastWin = 0;
-        messageEl.textContent = "Geen winst...";
+        messageEl.textContent = "Geen winst... Probeer opnieuw!";
     }
 
     updateUI();
@@ -102,21 +106,21 @@ async function spin() {
 
 function checkAllPaylines() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
-    const current = imgs.map(img => img.src);
+    const current = imgs.map(img => getFileName(img.src));
     const wins = [];
 
     paylines.forEach((line, index) => {
         const lineSymbols = line.map(pos => current[pos]);
-        const firstSymbol = lineSymbols[0];
+        const first = lineSymbols[0];
         let count = 1;
 
         for (let i = 1; i < lineSymbols.length; i++) {
-            if (lineSymbols[i] === firstSymbol) count++;
+            if (lineSymbols[i] === first) count++;
             else break;
         }
 
         if (count >= 3) {
-            const amount = payouts[firstSymbol]?.[count] || 0;
+            const amount = payouts[first]?.[count] || 0;
             if (amount > 0) {
                 wins.push({
                     lineIndex: index,
