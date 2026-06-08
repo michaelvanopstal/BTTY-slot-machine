@@ -21,21 +21,21 @@ const creditsEl = document.getElementById("credits");
 const betEl = document.getElementById("bet");
 const winEl = document.getElementById("win");
 const messageEl = document.getElementById("message");
+const scoreEl = document.getElementById("score");
 
 document
-.getElementById("spinBtn")
-.addEventListener("click", spin);
+    .getElementById("spinBtn")
+    .addEventListener("click", spin);
 
-function randomSymbol(){
-
+function randomSymbol() {
     return symbols[
         Math.floor(Math.random() * symbols.length)
     ];
 }
 
-function spin(){
+function spin() {
 
-    if(credits < bet){
+    if (credits < bet) {
 
         alert("Not enough credits");
         return;
@@ -48,19 +48,14 @@ function spin(){
     const r3 = randomSymbol();
     const r4 = randomSymbol();
 
-    reel1.textContent = r1.name;
-    reel2.textContent = r2.name;
-    reel3.textContent = r3.name;
-    reel4.textContent = r4.name;
+    reel1.textContent = r1;
+    reel2.textContent = r2;
+    reel3.textContent = r3;
+    reel4.textContent = r4;
 
     lastWin = 0;
 
-    const results = [
-        r1.name,
-        r2.name,
-        r3.name,
-        r4.name
-    ];
+    const results = [r1, r2, r3, r4];
 
     const counts = {};
 
@@ -71,16 +66,16 @@ function spin(){
     let winningSymbol = null;
     let matchCount = 0;
 
-    for(const symbol in counts){
+    for (const symbol in counts) {
 
-        if(counts[symbol] > matchCount){
+        if (counts[symbol] > matchCount) {
 
             matchCount = counts[symbol];
             winningSymbol = symbol;
         }
     }
 
-    if(matchCount >= 2){
+    if (matchCount >= 2) {
 
         lastWin = calculateWin(
             winningSymbol,
@@ -93,7 +88,7 @@ function spin(){
         messageEl.textContent =
             `🎉 ${matchCount}x ${winningSymbol} = ${lastWin} points`;
 
-    }else{
+    } else {
 
         messageEl.textContent =
             "No Win";
@@ -102,7 +97,7 @@ function spin(){
     updateUI();
 }
 
-function calculateWin(symbol, count){
+function calculateWin(symbol, count) {
 
     const payouts = {
 
@@ -143,14 +138,18 @@ function calculateWin(symbol, count){
         }
     };
 
-    return payouts[symbol][count] || 0;
+    return payouts[symbol]?.[count] || 0;
 }
 
-function updateUI(){
+function updateUI() {
 
     creditsEl.textContent = credits;
     betEl.textContent = bet;
     winEl.textContent = lastWin;
+
+    if (scoreEl) {
+        scoreEl.textContent = score;
+    }
 }
 
 updateUI();
