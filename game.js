@@ -20,26 +20,24 @@ const spinBtn = document.getElementById("spinBtn");
 const reelsContainer = document.getElementById("reels");
 
 // Veel betere paylines (18 lijnen) voor 3x4 grid
+// game.js - Vervang het paylines array met dit:
 const paylines = [
-    // Horizontale
     [0,1,2,3], [4,5,6,7], [8,9,10,11],
-    // Diagonalen
     [0,5,10,11], [8,5,2,3],
-    // V-vormen
     [0,1,6,11], [8,9,6,3],
-    // Zigzag
     [4,1,2,7], [4,9,10,7],
-    // Extra veelgebruikte lijnen
-    [0,5,6,11], [8,5,6,3],
+    [0,5,2,7], [8,5,6,3],
+    [0,5,6,3], [8,5,2,7],
+    [4,1,6,11], [4,9,2,3],
     [0,1,2,7], [8,9,10,3],
-    [4,5,2,3], [4,9,6,7],
-    // Nieuwe lijnen voor jouw screenshots
-    [0,5,2,7],   // gele lijn links
-    [4,1,6,11],  // gele lijn midden
-    [8,5,2,3],   // extra diagonaal
-    [0,5,10,3]   // extra zigzag
+    [0,5,10,3], [8,5,6,11],
+    // Nieuwe lijnen speciaal voor jouw laatste screenshots
+    [4,5,10,11],   // jouw huidige gele lijn
+    [4,5,6,11],    // variant
+    [0,5,9,10],    // extra
+    [4,1,10,11],
+    [8,5,2,7]
 ];
-
 function createReels() {
     reelsContainer.innerHTML = "";
     for (let i = 0; i < 12; i++) {
