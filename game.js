@@ -22,21 +22,20 @@ const reelsContainer = document.getElementById("reels");
 // Veel betere paylines (18 lijnen) voor 3x4 grid
 // game.js - Vervang het paylines array met dit:
 const paylines = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11],
-    [0,5,10,11], [8,5,2,3],
-    [0,1,6,11], [8,9,6,3],
-    [4,1,2,7], [4,9,10,7],
+    [0,1,2,3], [4,5,6,7], [8,9,10,11],           // horizontaal
+    [0,5,10,11], [8,5,2,3],                       // diagonalen
+    [0,1,6,11], [8,9,6,3],                        // V-vorm
+    [4,1,2,7], [4,9,10,7],                        // zigzag
     [0,5,2,7], [8,5,6,3],
     [0,5,6,3], [8,5,2,7],
     [4,1,6,11], [4,9,2,3],
     [0,1,2,7], [8,9,10,3],
     [0,5,10,3], [8,5,6,11],
-    // Nieuwe lijnen speciaal voor jouw laatste screenshots
-    [4,5,10,11],   // jouw huidige gele lijn
-    [4,5,6,11],    // variant
-    [0,5,9,10],    // extra
-    [4,1,10,11],
-    [8,5,2,7]
+    [4,5,2,11], [0,5,2,11],
+    // NIEUWE lijnen speciaal voor jouw laatste combinatie
+    [1,0,4,8],     // jouw huidige 4 klimmers lijn
+    [1,4,8,9],     // variant
+    [1,5,9,10]     // extra dekking
 ];
 function createReels() {
     reelsContainer.innerHTML = "";
