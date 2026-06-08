@@ -1,11 +1,11 @@
-// game.js
+// game.js - VERSIMPELD EN GECORRIGEERD
 const symbolNames = ["btty1.png", "btty2.png", "btty3.png", "btty4.png"];
 
 const payouts = {
-    "btty1.png": { 3: 500, 4: 2500 },
-    "btty2.png": { 3: 300, 4: 1500 },
-    "btty3.png": { 3: 200, 4: 1000 },
-    "btty4.png": { 3: 100, 4: 500 }
+    "btty1.png": { 3: 600, 4: 3000 },
+    "btty2.png": { 3: 350, 4: 1800 },
+    "btty3.png": { 3: 250, 4: 1200 },
+    "btty4.png": { 3: 120, 4: 600 }
 };
 
 let credits = 5000;
@@ -19,19 +19,13 @@ const messageEl = document.getElementById("message");
 const spinBtn = document.getElementById("spinBtn");
 const reelsContainer = document.getElementById("reels");
 
-// Veel betere paylines (18 lijnen) voor 3x4 grid
-// game.js - Vervang het paylines array met dit:
 const paylines = [
-    [0,1,2,3],     // top rij
-    [4,5,6,7],     // midden rij
-    [8,9,10,11],   // bottom rij
-    [0,5,10,11],   // diagonaal linksboven naar rechtsonder
-    [8,5,2,3],     // diagonaal linksonder naar rechtsboven
-    [0,1,6,11],    // V-vorm
-    [8,9,6,3],     // omgekeerde V
-    [4,1,2,7],     // zigzag boven
-    [4,9,10,7]     // zigzag onder
+    [0,1,2,3], [4,5,6,7], [8,9,10,11],
+    [0,5,10,11], [8,5,2,3],
+    [0,1,6,11], [8,9,6,3],
+    [4,1,2,7], [4,9,10,7]
 ];
+
 function createReels() {
     reelsContainer.innerHTML = "";
     for (let i = 0; i < 12; i++) {
@@ -58,10 +52,9 @@ function clearHighlights() {
 async function highlightPayline(line, count) {
     clearHighlights();
     for (let i = 0; i < count; i++) {
-        const symbolDiv = reelsContainer.children[line[i]];
-        if (symbolDiv) symbolDiv.classList.add("winning");
+        reelsContainer.children[line[i]].classList.add("winning");
     }
-    await new Promise(res => setTimeout(res, 1800));
+    await new Promise(r => setTimeout(r, 1600));
 }
 
 async function spin() {
@@ -76,11 +69,11 @@ async function spin() {
     spinBtn.disabled = true;
     clearHighlights();
 
+    // Spin animatie
     const allImgs = document.querySelectorAll(".symbol img");
     allImgs.forEach(img => img.style.animation = "spin 0.08s linear infinite");
 
     const delays = [600, 1000, 1450];
-
     for (let r = 0; r < 3; r++) {
         await new Promise(res => setTimeout(res, delays[r]));
         const start = r * 4;
@@ -93,11 +86,12 @@ async function spin() {
     const wins = checkAllPaylines();
 
     if (wins.length > 0) {
-        wins.sort((a, b) => a.amount - b.amount);
+        wins.sort((a, b) => b.count - a.count || b.amount - a.amount); // langste eerst
+
         let totalWin = 0;
 
         for (let win of wins) {
-            messageEl.innerHTML = `Payline ${win.lineIndex + 1} → <strong>${win.amount} credits</strong>`;
+            messageEl.innerHTML = `Payline ${win.lineIndex + 1} (${win.count}x) → <strong>${win.amount}</strong>`;
             await highlightPayline(win.line, win.count);
             totalWin += win.amount;
         }
@@ -119,6 +113,7 @@ function checkAllPaylines() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
     const wins = [];
+    const usedPositions = new Set();   // voorkomt dubbele telling
 
     paylines.forEach((line, index) => {
         const lineSymbols = line.map(pos => current[pos]);
@@ -131,14 +126,22 @@ function checkAllPaylines() {
         }
 
         if (count >= 3) {
-            const amount = payouts[first]?.[count] || 0;
-            if (amount > 0) {
-                wins.push({
-                    lineIndex: index,
-                    line: line,
-                    count: count,
-                    amount: amount
-                });
+            // Check of deze posities al gebruikt zijn
+            const linePositions = line.slice(0, count);
+            const alreadyUsed = linePositions.some(pos => usedPositions.has(pos));
+
+            if (!alreadyUsed) {
+                const amount = payouts[first]?.[count] || 0;
+                if (amount > 0) {
+                    wins.push({
+                        lineIndex: index,
+                        line: line,
+                        count: count,
+                        amount: amount
+                    });
+                    // Markeer posities als gebruikt
+                    linePositions.forEach(pos => usedPositions.add(pos));
+                }
             }
         }
     });
