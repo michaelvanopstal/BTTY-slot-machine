@@ -24,8 +24,8 @@ const paylines = [
     [0,1,2,3],   // top rij
     [4,5,6,7],   // midden rij
     [8,9,10,11], // bottom rij
-    [0,5,10,11], // diagonaal linksboven → rechtsonder
-    [8,5,2,3]    // diagonaal linksonder → rechtsboven
+    [0,5,10], // diagonaal linksboven → rechtsonder
+    [8,5,2]    // diagonaal linksonder → rechtsboven
 ];
 
 function createReels() {
