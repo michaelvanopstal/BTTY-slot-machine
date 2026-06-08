@@ -20,9 +20,9 @@ const spinBtn = document.getElementById("spinBtn");
 const reelsContainer = document.getElementById("reels");
 
 const paylines = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11],
-    [0,5,10,11], [8,5,2,3],
-    [0,1,6,11], [8,9,6,3],
+    [0,1,2,3], [4,5,6,7], [8,9,10,11],     // 1,2,3 horizontaal
+    [0,5,10,11], [8,5,2,3],                 // diagonalen
+    [0,1,6,11], [8,9,6,3], 
     [4,1,2,7], [4,9,10,7]
 ];
 
@@ -31,24 +31,22 @@ function createReels() {
     for (let i = 0; i < 12; i++) {
         const div = document.createElement("div");
         div.classList.add("symbol");
-        
         const img = document.createElement("img");
         img.src = symbolNames[Math.floor(Math.random() * symbolNames.length)];
         img.style.width = "100%";
         img.style.height = "100%";
         img.style.objectFit = "contain";
-        
         div.appendChild(img);
         reelsContainer.appendChild(div);
     }
 }
 
-function clearHighlights() {
-    document.querySelectorAll(".symbol").forEach(s => s.classList.remove("winning"));
+function getFileName(src) {
+    return src.split('/').pop().split('?')[0]; // veiliger
 }
 
-function getFileName(src) {
-    return src.split('/').pop();   // haalt alleen "btty1.png" eruit
+function clearHighlights() {
+    document.querySelectorAll(".symbol").forEach(s => s.classList.remove("winning"));
 }
 
 async function spin() {
@@ -89,7 +87,7 @@ async function spin() {
             highlightPayline(win.line);
             messageEl.innerHTML = `Payline ${win.lineIndex + 1} → <strong>${win.amount} credits</strong>`;
             totalWin += win.amount;
-            await new Promise(res => setTimeout(res, 1200));
+            await new Promise(res => setTimeout(res, 1300));
         }
 
         credits += totalWin;
@@ -97,7 +95,7 @@ async function spin() {
         messageEl.innerHTML = `🎉 <strong>BIG WIN ${totalWin}!</strong>`;
     } else {
         lastWin = 0;
-        messageEl.textContent = "Geen winst... Probeer opnieuw!";
+        messageEl.textContent = "Geen winst...";
     }
 
     updateUI();
@@ -114,9 +112,13 @@ function checkAllPaylines() {
         const first = lineSymbols[0];
         let count = 1;
 
+        // STRIKTE check: alleen opeenvolgend vanaf links
         for (let i = 1; i < lineSymbols.length; i++) {
-            if (lineSymbols[i] === first) count++;
-            else break;
+            if (lineSymbols[i] === first) {
+                count++;
+            } else {
+                break;   // stop meteen bij eerste verschil
+            }
         }
 
         if (count >= 3) {
