@@ -20,9 +20,9 @@ const spinBtn = document.getElementById("spinBtn");
 const reelsContainer = document.getElementById("reels");
 
 const paylines = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11],     // 1,2,3 horizontaal
-    [0,5,10,11], [8,5,2,3],                 // diagonalen
-    [0,1,6,11], [8,9,6,3], 
+    [0,1,2,3], [4,5,6,7], [8,9,10,11],
+    [0,5,10,11], [8,5,2,3],
+    [0,1,6,11], [8,9,6,3],
     [4,1,2,7], [4,9,10,7]
 ];
 
@@ -42,11 +42,25 @@ function createReels() {
 }
 
 function getFileName(src) {
-    return src.split('/').pop().split('?')[0]; // veiliger
+    return src.split('/').pop().split('?')[0];
 }
 
 function clearHighlights() {
     document.querySelectorAll(".symbol").forEach(s => s.classList.remove("winning"));
+}
+
+async function highlightPayline(line, count) {
+    // Eerst alles uit
+    clearHighlights();
+    
+    // Highlight de juiste aantal vakjes
+    for (let i = 0; i < count; i++) {
+        const symbolDiv = reelsContainer.children[line[i]];
+        if (symbolDiv) symbolDiv.classList.add("winning");
+    }
+
+    // Wacht 1.8 seconde zodat je het goed ziet
+    await new Promise(res => setTimeout(res, 1800));
 }
 
 async function spin() {
@@ -62,7 +76,6 @@ async function spin() {
     clearHighlights();
 
     const allImgs = document.querySelectorAll(".symbol img");
-
     allImgs.forEach(img => img.style.animation = "spin 0.08s linear infinite");
 
     const delays = [600, 1000, 1450];
@@ -84,15 +97,19 @@ async function spin() {
         let totalWin = 0;
 
         for (let win of wins) {
-            highlightPayline(win.line);
             messageEl.innerHTML = `Payline ${win.lineIndex + 1} → <strong>${win.amount} credits</strong>`;
+            
+            await highlightPayline(win.line, win.count);   // tijdelijke highlight
+            
             totalWin += win.amount;
-            await new Promise(res => setTimeout(res, 1300));
         }
 
         credits += totalWin;
         lastWin = totalWin;
         messageEl.innerHTML = `🎉 <strong>BIG WIN ${totalWin}!</strong>`;
+        
+        // Laat de laatste winnende lijn nog even staan
+        setTimeout(() => clearHighlights(), 2500);
     } else {
         lastWin = 0;
         messageEl.textContent = "Geen winst...";
@@ -112,13 +129,9 @@ function checkAllPaylines() {
         const first = lineSymbols[0];
         let count = 1;
 
-        // STRIKTE check: alleen opeenvolgend vanaf links
         for (let i = 1; i < lineSymbols.length; i++) {
-            if (lineSymbols[i] === first) {
-                count++;
-            } else {
-                break;   // stop meteen bij eerste verschil
-            }
+            if (lineSymbols[i] === first) count++;
+            else break;
         }
 
         if (count >= 3) {
@@ -127,6 +140,7 @@ function checkAllPaylines() {
                 wins.push({
                     lineIndex: index,
                     line: line,
+                    count: count,
                     amount: amount
                 });
             }
@@ -134,13 +148,6 @@ function checkAllPaylines() {
     });
 
     return wins;
-}
-
-function highlightPayline(line) {
-    line.forEach(pos => {
-        const symbolDiv = reelsContainer.children[pos];
-        if (symbolDiv) symbolDiv.classList.add("winning");
-    });
 }
 
 function updateUI() {
