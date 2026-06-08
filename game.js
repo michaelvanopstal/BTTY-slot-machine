@@ -1,4 +1,4 @@
-// game.js - SIMPELE & EERLIJKE VERSIE
+// game.js
 const symbolNames = ["btty1.png", "btty2.png", "btty3.png", "btty4.png"];
 
 const payouts = {
@@ -19,7 +19,6 @@ const messageEl = document.getElementById("message");
 const spinBtn = document.getElementById("spinBtn");
 const reelsContainer = document.getElementById("reels");
 
-// Simpele paylines: 3 horizontaal + 2 diagonalen
 const paylines = [
     [0,1,2,3],   // top rij
     [4,5,6,7],   // midden rij
@@ -54,9 +53,10 @@ function clearHighlights() {
 async function highlightPayline(line, count) {
     clearHighlights();
     for (let i = 0; i < count; i++) {
-        reelsContainer.children[line[i]].classList.add("winning");
+        const symbolDiv = reelsContainer.children[line[i]];
+        if (symbolDiv) symbolDiv.classList.add("winning");
     }
-    await new Promise(r => setTimeout(r, 1600));
+    await new Promise(res => setTimeout(res, 1700));
 }
 
 async function spin() {
@@ -88,12 +88,11 @@ async function spin() {
     const wins = checkAllPaylines();
 
     if (wins.length > 0) {
-        wins.sort((a, b) => b.count - a.count); // langste eerst
-
+        wins.sort((a, b) => a.amount - b.amount);
         let totalWin = 0;
 
         for (let win of wins) {
-            messageEl.innerHTML = `Payline ${win.lineIndex + 1} (${win.count}x) → <strong>${win.amount}</strong>`;
+            messageEl.innerHTML = `Payline ${win.lineIndex + 1} → <strong>${win.amount} credits</strong>`;
             await highlightPayline(win.line, win.count);
             totalWin += win.amount;
         }
@@ -101,7 +100,7 @@ async function spin() {
         credits += totalWin;
         lastWin = totalWin;
         messageEl.innerHTML = `🎉 <strong>BIG WIN ${totalWin}!</strong>`;
-        setTimeout(clearHighlights, 2500);
+        setTimeout(clearHighlights, 2800);
     } else {
         lastWin = 0;
         messageEl.textContent = "Geen winst...";
@@ -115,7 +114,6 @@ function checkAllPaylines() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
     const wins = [];
-    const used = new Set();
 
     paylines.forEach((line, index) => {
         const lineSymbols = line.map(pos => current[pos]);
@@ -123,18 +121,22 @@ function checkAllPaylines() {
         let count = 1;
 
         for (let i = 1; i < lineSymbols.length; i++) {
-            if (lineSymbols[i] === first) count++;
-            else break;
+            if (lineSymbols[i] === first) {
+                count++;
+            } else {
+                break;
+            }
         }
 
         if (count >= 3) {
-            const positions = line.slice(0, count);
-            if (!positions.some(p => used.has(p))) {
-                const amount = payouts[first]?.[count] || 0;
-                if (amount > 0) {
-                    wins.push({ lineIndex: index, line, count, amount });
-                    positions.forEach(p => used.add(p));
-                }
+            const amount = payouts[first]?.[count] || 0;
+            if (amount > 0) {
+                wins.push({
+                    lineIndex: index,
+                    line: line,
+                    count: count,
+                    amount: amount
+                });
             }
         }
     });
