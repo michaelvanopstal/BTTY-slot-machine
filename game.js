@@ -1,27 +1,23 @@
-const symbols = ["🟠", "🍒", "BAR", "BRC20", "⭐", "🔥"]; // later vervang je dit door images
+const symbols = ["🟠", "🍒", "BAR", "BRC20", "⭐", "🔥"]; // later jouw afbeeldingen
 
 let credits = 5000;
 let bet = 100;
-let score = 0;
 let lastWin = 0;
 
 const creditsEl = document.getElementById("credits");
 const betEl = document.getElementById("bet");
 const winEl = document.getElementById("win");
-const scoreEl = document.getElementById("score");
 const messageEl = document.getElementById("message");
 const spinBtn = document.getElementById("spinBtn");
+const reelsContainer = document.getElementById("reels");
 
-const reelsGrid = document.getElementById("reels");
-
-// Maak 3x4 grid
-function createGrid() {
-    reelsGrid.innerHTML = "";
+function createReels() {
+    reelsContainer.innerHTML = "";
     for (let i = 0; i < 12; i++) {
-        const symbolDiv = document.createElement("div");
-        symbolDiv.classList.add("symbol");
-        symbolDiv.textContent = "?";
-        reelsGrid.appendChild(symbolDiv);
+        const div = document.createElement("div");
+        div.classList.add("symbol");
+        div.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+        reelsContainer.appendChild(div);
     }
 }
 
@@ -29,7 +25,7 @@ function getRandomSymbol() {
     return symbols[Math.floor(Math.random() * symbols.length)];
 }
 
-// Spin animatie + logica
+// Hoofdfunctie met echte spin
 async function spin() {
     if (credits < bet) {
         alert("Niet genoeg credits!");
@@ -38,89 +34,69 @@ async function spin() {
 
     credits -= bet;
     updateUI();
-    messageEl.textContent = "Spinning...";
-
+    messageEl.textContent = "SPINNING...";
     spinBtn.disabled = true;
 
-    const allSymbols = Array.from(document.querySelectorAll(".symbol"));
+    const allSymbols = document.querySelectorAll(".symbol");
 
-    // Snelle spin animatie
-    for (let i = 0; i < 12; i++) {
-        allSymbols[i].style.transition = "transform 0.1s";
-        allSymbols[i].style.transform = "rotateX(360deg)";
+    // Start spinning animatie
+    allSymbols.forEach(s => s.classList.add("spinning"));
+
+    // Verschillende stop tijden per rij voor realistisch effect
+    const rowDelays = [800, 1100, 1500]; // rij 1, 2 en 3
+
+    for (let row = 0; row < 3; row++) {
+        await new Promise(resolve => setTimeout(resolve, rowDelays[row]));
+
+        // Stop deze rij
+        const start = row * 4;
+        for (let i = 0; i < 4; i++) {
+            const index = start + i;
+            allSymbols[index].classList.remove("spinning");
+            allSymbols[index].textContent = getRandomSymbol();
+        }
     }
 
-    // Stop animatie na korte tijd
-    await new Promise(r => setTimeout(r, 800));
-
-    // Vul met nieuwe random symbolen
-    const result = [];
-    allSymbols.forEach(symbol => {
-        const newSym = getRandomSymbol();
-        symbol.textContent = newSym;
-        result.push(newSym);
-    });
-
-    // Win check (3 rijen)
-    const winAmount = checkWins(result);
+    // Win check
+    const winAmount = calculateWin();
 
     if (winAmount > 0) {
         credits += winAmount;
-        score += winAmount;
         lastWin = winAmount;
-        messageEl.innerHTML = `🎉 WIN ${winAmount} !`;
+        messageEl.innerHTML = `🎉 <strong>BIG WIN ${winAmount}!</strong>`;
     } else {
         lastWin = 0;
-        messageEl.textContent = "Geen winst... Probeer opnieuw!";
+        messageEl.textContent = "Geen winst... volgende keer beter!";
     }
 
     updateUI();
     spinBtn.disabled = false;
 }
 
-// Eenvoudige win check voor 3 rijen (horizontale lijnen)
-function checkWins(result) {
-    let totalWin = 0;
-    const rows = [
-        result.slice(0, 4),   // rij 1
-        result.slice(4, 8),   // rij 2
-        result.slice(8, 12)   // rij 3
-    ];
+function calculateWin() {
+    const allSymbols = Array.from(document.querySelectorAll(".symbol")).map(s => s.textContent);
+    let total = 0;
 
-    rows.forEach(row => {
-        const count = {};
-        row.forEach(s => count[s] = (count[s] || 0) + 1);
+    for (let row = 0; row < 3; row++) {
+        const rowSymbols = allSymbols.slice(row*4, row*4 + 4);
+        const counts = {};
+        rowSymbols.forEach(s => counts[s] = (counts[s] || 0) + 1);
 
-        const best = Object.entries(count).sort((a, b) => b[1] - a[1])[0];
-
-        if (best[1] >= 3) {
-            totalWin += calculatePayout(best[0], best[1]);
+        const highest = Math.max(...Object.values(counts));
+        if (highest >= 3) {
+            total += highest * 150; // simpele payout
         }
-    });
-
-    return totalWin;
-}
-
-function calculatePayout(symbol, count) {
-    const payouts = {
-        "🟠": { 3: 400, 4: 1500 },
-        "BRC20": { 3: 300, 4: 1200 },
-        "⭐": { 3: 250, 4: 1000 },
-        "🔥": { 3: 200, 4: 800 },
-        "BAR": { 3: 80, 4: 400 },
-        "🍒": { 3: 50, 4: 200 }
-    };
-    return payouts[symbol]?.[count] || 0;
+    }
+    return total;
 }
 
 function updateUI() {
     creditsEl.textContent = credits;
     betEl.textContent = bet;
     winEl.textContent = lastWin;
-    scoreEl.textContent = score;
 }
 
 // Start
-createGrid();
+createReels();
 updateUI();
 spinBtn.addEventListener("click", spin);
