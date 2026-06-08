@@ -1,4 +1,10 @@
-const symbols = ["🟠", "🍒", "BAR", "BRC20", "⭐", "🔥"]; // later jouw afbeeldingen
+// game.js
+const symbols = [
+    "btty1.png",  // Hoogste payout
+    "btty2.png",
+    "btty3.png",
+    "btty4.png"
+];
 
 let credits = 5000;
 let bet = 100;
@@ -16,7 +22,14 @@ function createReels() {
     for (let i = 0; i < 12; i++) {
         const div = document.createElement("div");
         div.classList.add("symbol");
-        div.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+        
+        const img = document.createElement("img");
+        img.src = symbols[Math.floor(Math.random() * symbols.length)];
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "contain";
+        
+        div.appendChild(img);
         reelsContainer.appendChild(div);
     }
 }
@@ -25,7 +38,6 @@ function getRandomSymbol() {
     return symbols[Math.floor(Math.random() * symbols.length)];
 }
 
-// Hoofdfunctie met echte spin
 async function spin() {
     if (credits < bet) {
         alert("Niet genoeg credits!");
@@ -37,36 +49,36 @@ async function spin() {
     messageEl.textContent = "SPINNING...";
     spinBtn.disabled = true;
 
-    const allSymbols = document.querySelectorAll(".symbol");
+    const allSymbols = document.querySelectorAll(".symbol img");
 
-    // Start spinning animatie
-    allSymbols.forEach(s => s.classList.add("spinning"));
+    // Start spinning
+    allSymbols.forEach(img => {
+        img.style.transition = "transform 0.1s linear";
+        img.style.animation = "spin 0.08s linear infinite";
+    });
 
-    // Verschillende stop tijden per rij voor realistisch effect
-    const rowDelays = [800, 1100, 1500]; // rij 1, 2 en 3
+    const rowDelays = [700, 1050, 1450];
 
     for (let row = 0; row < 3; row++) {
-        await new Promise(resolve => setTimeout(resolve, rowDelays[row]));
+        await new Promise(r => setTimeout(r, rowDelays[row]));
 
-        // Stop deze rij
         const start = row * 4;
         for (let i = 0; i < 4; i++) {
             const index = start + i;
-            allSymbols[index].classList.remove("spinning");
-            allSymbols[index].textContent = getRandomSymbol();
+            allSymbols[index].style.animation = "none";
+            allSymbols[index].src = getRandomSymbol();
         }
     }
 
-    // Win check
     const winAmount = calculateWin();
 
     if (winAmount > 0) {
         credits += winAmount;
         lastWin = winAmount;
-        messageEl.innerHTML = `🎉 <strong>BIG WIN ${winAmount}!</strong>`;
+        messageEl.innerHTML = `🎉 BIG WIN ${winAmount}!`;
     } else {
         lastWin = 0;
-        messageEl.textContent = "Geen winst... volgende keer beter!";
+        messageEl.textContent = "Geen winst...";
     }
 
     updateUI();
@@ -74,20 +86,25 @@ async function spin() {
 }
 
 function calculateWin() {
-    const allSymbols = Array.from(document.querySelectorAll(".symbol")).map(s => s.textContent);
-    let total = 0;
+    const imgs = Array.from(document.querySelectorAll(".symbol img"));
+    let totalWin = 0;
 
     for (let row = 0; row < 3; row++) {
-        const rowSymbols = allSymbols.slice(row*4, row*4 + 4);
-        const counts = {};
-        rowSymbols.forEach(s => counts[s] = (counts[s] || 0) + 1);
+        const rowImgs = imgs.slice(row*4, row*4 + 4);
+        const srcList = rowImgs.map(img => img.src);
 
-        const highest = Math.max(...Object.values(counts));
-        if (highest >= 3) {
-            total += highest * 150; // simpele payout
+        const counts = {};
+        srcList.forEach(src => counts[src] = (counts[src] || 0) + 1);
+
+        const highestCount = Math.max(...Object.values(counts));
+
+        if (highestCount >= 3) {
+            // Hoe hoger het symbool, hoe meer punten
+            const payoutMultiplier = 4 - Object.keys(counts).indexOf(Object.keys(counts).find(s => counts[s] === highestCount));
+            totalWin += highestCount * 150 * payoutMultiplier;
         }
     }
-    return total;
+    return Math.floor(totalWin);
 }
 
 function updateUI() {
