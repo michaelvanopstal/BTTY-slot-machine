@@ -1,4 +1,4 @@
-// game.js - VERSIMPELD EN GECORRIGEERD
+// game.js - SIMPELE & EERLIJKE VERSIE
 const symbolNames = ["btty1.png", "btty2.png", "btty3.png", "btty4.png"];
 
 const payouts = {
@@ -19,11 +19,13 @@ const messageEl = document.getElementById("message");
 const spinBtn = document.getElementById("spinBtn");
 const reelsContainer = document.getElementById("reels");
 
+// Simpele paylines: 3 horizontaal + 2 diagonalen
 const paylines = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11],
-    [0,5,10,11], [8,5,2,3],
-    [0,1,6,11], [8,9,6,3],
-    [4,1,2,7], [4,9,10,7]
+    [0,1,2,3],   // top rij
+    [4,5,6,7],   // midden rij
+    [8,9,10,11], // bottom rij
+    [0,5,10,11], // diagonaal linksboven → rechtsonder
+    [8,5,2,3]    // diagonaal linksonder → rechtsboven
 ];
 
 function createReels() {
@@ -69,11 +71,11 @@ async function spin() {
     spinBtn.disabled = true;
     clearHighlights();
 
-    // Spin animatie
     const allImgs = document.querySelectorAll(".symbol img");
     allImgs.forEach(img => img.style.animation = "spin 0.08s linear infinite");
 
     const delays = [600, 1000, 1450];
+
     for (let r = 0; r < 3; r++) {
         await new Promise(res => setTimeout(res, delays[r]));
         const start = r * 4;
@@ -86,7 +88,7 @@ async function spin() {
     const wins = checkAllPaylines();
 
     if (wins.length > 0) {
-        wins.sort((a, b) => b.count - a.count || b.amount - a.amount); // langste eerst
+        wins.sort((a, b) => b.count - a.count); // langste eerst
 
         let totalWin = 0;
 
@@ -113,7 +115,7 @@ function checkAllPaylines() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
     const wins = [];
-    const usedPositions = new Set();   // voorkomt dubbele telling
+    const used = new Set();
 
     paylines.forEach((line, index) => {
         const lineSymbols = line.map(pos => current[pos]);
@@ -126,21 +128,12 @@ function checkAllPaylines() {
         }
 
         if (count >= 3) {
-            // Check of deze posities al gebruikt zijn
-            const linePositions = line.slice(0, count);
-            const alreadyUsed = linePositions.some(pos => usedPositions.has(pos));
-
-            if (!alreadyUsed) {
+            const positions = line.slice(0, count);
+            if (!positions.some(p => used.has(p))) {
                 const amount = payouts[first]?.[count] || 0;
                 if (amount > 0) {
-                    wins.push({
-                        lineIndex: index,
-                        line: line,
-                        count: count,
-                        amount: amount
-                    });
-                    // Markeer posities als gebruikt
-                    linePositions.forEach(pos => usedPositions.add(pos));
+                    wins.push({ lineIndex: index, line, count, amount });
+                    positions.forEach(p => used.add(p));
                 }
             }
         }
