@@ -47,37 +47,102 @@ function spin(){
     const r3 = randomSymbol();
     const r4 = randomSymbol();
 
-    reel1.textContent = r1;
-    reel2.textContent = r2;
-    reel3.textContent = r3;
-    reel4.textContent = r4;
+    reel1.textContent = r1.name;
+    reel2.textContent = r2.name;
+    reel3.textContent = r3.name;
+    reel4.textContent = r4.name;
 
     lastWin = 0;
 
-    if(
-        r1 === r2 &&
-        r2 === r3 &&
-        r3 === r4
-    ){
+    const results = [
+        r1.name,
+        r2.name,
+        r3.name,
+        r4.name
+    ];
 
-        lastWin = 500;
+    const counts = {};
 
-        if(r1 === "BITTY"){
-            lastWin = 5000;
+    results.forEach(symbol => {
+        counts[symbol] = (counts[symbol] || 0) + 1;
+    });
+
+    let winningSymbol = null;
+    let matchCount = 0;
+
+    for(const symbol in counts){
+
+        if(counts[symbol] > matchCount){
+
+            matchCount = counts[symbol];
+            winningSymbol = symbol;
         }
+    }
+
+    if(matchCount >= 2){
+
+        lastWin = calculateWin(
+            winningSymbol,
+            matchCount
+        );
 
         credits += lastWin;
+        score += lastWin;
 
         messageEl.textContent =
-        "🎉 JACKPOT! " + r1;
+            `🎉 ${matchCount}x ${winningSymbol} = ${lastWin} points`;
 
     }else{
 
         messageEl.textContent =
-        "Try Again";
+            "No Win";
     }
 
     updateUI();
+}
+
+function calculateWin(symbol, count){
+
+    const payouts = {
+
+        BITTY: {
+            2: 100,
+            3: 1000,
+            4: 5000
+        },
+
+        BRC20: {
+            2: 50,
+            3: 500,
+            4: 2500
+        },
+
+        BONUS: {
+            2: 25,
+            3: 300,
+            4: 1500
+        },
+
+        WILD: {
+            2: 20,
+            3: 200,
+            4: 1000
+        },
+
+        BAR: {
+            2: 10,
+            3: 100,
+            4: 500
+        },
+
+        CHERRY: {
+            2: 5,
+            3: 50,
+            4: 250
+        }
+    };
+
+    return payouts[symbol][count] || 0;
 }
 
 function updateUI(){
