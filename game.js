@@ -19,11 +19,25 @@ const messageEl = document.getElementById("message");
 const spinBtn = document.getElementById("spinBtn");
 const reelsContainer = document.getElementById("reels");
 
+// Veel betere paylines (18 lijnen) voor 3x4 grid
 const paylines = [
+    // Horizontale
     [0,1,2,3], [4,5,6,7], [8,9,10,11],
+    // Diagonalen
     [0,5,10,11], [8,5,2,3],
+    // V-vormen
     [0,1,6,11], [8,9,6,3],
-    [4,1,2,7], [4,9,10,7]
+    // Zigzag
+    [4,1,2,7], [4,9,10,7],
+    // Extra veelgebruikte lijnen
+    [0,5,6,11], [8,5,6,3],
+    [0,1,2,7], [8,9,10,3],
+    [4,5,2,3], [4,9,6,7],
+    // Nieuwe lijnen voor jouw screenshots
+    [0,5,2,7],   // gele lijn links
+    [4,1,6,11],  // gele lijn midden
+    [8,5,2,3],   // extra diagonaal
+    [0,5,10,3]   // extra zigzag
 ];
 
 function createReels() {
@@ -50,16 +64,11 @@ function clearHighlights() {
 }
 
 async function highlightPayline(line, count) {
-    // Eerst alles uit
     clearHighlights();
-    
-    // Highlight de juiste aantal vakjes
     for (let i = 0; i < count; i++) {
         const symbolDiv = reelsContainer.children[line[i]];
         if (symbolDiv) symbolDiv.classList.add("winning");
     }
-
-    // Wacht 1.8 seconde zodat je het goed ziet
     await new Promise(res => setTimeout(res, 1800));
 }
 
@@ -93,23 +102,18 @@ async function spin() {
 
     if (wins.length > 0) {
         wins.sort((a, b) => a.amount - b.amount);
-
         let totalWin = 0;
 
         for (let win of wins) {
             messageEl.innerHTML = `Payline ${win.lineIndex + 1} → <strong>${win.amount} credits</strong>`;
-            
-            await highlightPayline(win.line, win.count);   // tijdelijke highlight
-            
+            await highlightPayline(win.line, win.count);
             totalWin += win.amount;
         }
 
         credits += totalWin;
         lastWin = totalWin;
         messageEl.innerHTML = `🎉 <strong>BIG WIN ${totalWin}!</strong>`;
-        
-        // Laat de laatste winnende lijn nog even staan
-        setTimeout(() => clearHighlights(), 2500);
+        setTimeout(clearHighlights, 2500);
     } else {
         lastWin = 0;
         messageEl.textContent = "Geen winst...";
