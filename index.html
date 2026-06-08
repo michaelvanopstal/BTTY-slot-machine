@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BTTY Slot Machine</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTTY Slot Machine</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="slot-machine">
-
-    <h1>BTTY SLOT MACHINE</h1>
+    <h1>BTTY BRC-20 SLOT MACHINE</h1>
 
     <div class="scoreboard">
         <div>Credits: <span id="credits">5000</span></div>
@@ -19,22 +18,19 @@
         <div>Score: <span id="score">0</span></div>
     </div>
 
-    <div class="reels">
-
-        <div class="reel" id="reel1">?</div>
-        <div class="reel" id="reel2">?</div>
-        <div class="reel" id="reel3">?</div>
-        <div class="reel" id="reel4">?</div>
-
+    <div class="reels-container">
+        <div class="reels" id="reels">
+            <!-- 3 rows × 4 columns worden hier door JS gevuld -->
+        </div>
     </div>
 
-    <button id="spinBtn">SPIN</button>
+    <div class="controls">
+        <button id="spinBtn">SPIN</button>
+    </div>
 
     <div id="message"></div>
-
 </div>
 
 <script src="game.js"></script>
-
 </body>
 </html>
