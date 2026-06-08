@@ -7,8 +7,8 @@ const symbols = [
     "BONUS"
 ];
 
-let credits = 1000;
-let bet = 10;
+let credits = 5000;
+let bet = 100;
 let lastWin = 0;
 
 const reel1 = document.getElementById("reel1");
