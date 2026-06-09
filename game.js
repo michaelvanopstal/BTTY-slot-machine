@@ -28,13 +28,8 @@ const paylines5 = [
 ];
 
 const paylines12 = [
-    // Hoofdlijnen 4 symbolen
-    [0,1,2,3], [4,5,6,7], [8,9,10,11],
-    
-    // Extra 3-symbolen lijnen
-    [0,1,2], [4,5,6], [8,9,10],
-    
-    // Diagonale lijnen
+    [0,1,2,3], [4,5,6,7], [8,9,10,11],   // 4-symbolen
+    [0,1,2], [4,5,6], [8,9,10],           // 3-symbolen
     [0,5,10], [8,5,2],
     [0,1,6], [4,5,2], [4,5,10], [8,9,6],
     [0,1,6,11], [8,9,6,3]
@@ -67,9 +62,7 @@ function clearHighlights() {
 
 async function highlightPayline(positions) {
     positions.forEach(pos => {
-        if (reelsContainer.children[pos]) {
-            reelsContainer.children[pos].classList.add("winning");
-        }
+        if (reelsContainer.children[pos]) reelsContainer.children[pos].classList.add("winning");
     });
     await new Promise(r => setTimeout(r, 1200));
 }
@@ -109,7 +102,6 @@ async function spin() {
         for (let win of wins) {
             const winningPositions = win.line.slice(0, win.count);
             await highlightPayline(winningPositions);
-            
             winMessages.push(`Lijn ${win.lineIndex + 1} (${win.count}x) = ${win.amount}`);
             totalWin += win.amount;
         }
@@ -117,11 +109,7 @@ async function spin() {
         credits += totalWin;
         lastWin = totalWin;
 
-        if (winMessages.length > 3) {
-            messageEl.innerHTML = `🎉 <strong>${winMessages.length} WINS! BIG WIN ${totalWin}</strong>`;
-        } else {
-            messageEl.innerHTML = winMessages.join("<br>") + `<br>🎉 <strong>BIG WIN ${totalWin}!</strong>`;
-        }
+        messageEl.innerHTML = winMessages.join("<br>") + `<br>🎉 <strong>BIG WIN ${totalWin}!</strong>`;
 
         await new Promise(r => setTimeout(r, 2800));
         clearHighlights();
@@ -133,11 +121,12 @@ async function spin() {
     updateUI();
     spinBtn.disabled = false;
 }
+
 function checkAllPaylines() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
     const wins = [];
-    const used = new Set();   // voorkomt dubbel tellen van dezelfde symbolen
+    const used = new Set();
 
     console.clear();
     console.log("%c=== PAYLINE CHECK START ===", "color: red; font-size: 16px; font-weight: bold");
@@ -154,8 +143,8 @@ function checkAllPaylines() {
 
         if (count >= 3) {
             const positions = line.slice(0, count);
-            
-            // === ANTI-DUBBEL ===
+
+            // Strenge anti-dubbel: als ook maar 1 positie al gebruikt is → overslaan
             if (positions.some(p => used.has(p))) {
                 console.log(`❌ Lijn ${index + 1} OVERGESLAGEN (overlap)`);
                 return;
@@ -169,7 +158,7 @@ function checkAllPaylines() {
                     count: count,
                     amount: amount
                 });
-                
+
                 positions.forEach(p => used.add(p));
                 console.log(`✅ Lijn ${index + 1} → ${count}x ${first} | Pos: ${positions} | Win: ${amount}`);
             }
@@ -177,7 +166,7 @@ function checkAllPaylines() {
     });
 
     const total = wins.reduce((sum, w) => sum + w.amount, 0);
-    console.log(`%cEINDE → ${wins.length} wins | Totaal uitbetaling: ${total}`, "color: lime; font-size: 15px; font-weight: bold");
+    console.log(`%cEINDE → ${wins.length} wins | Totaal: ${total}`, "color: lime; font-size: 15px; font-weight: bold");
 
     return wins;
 }
