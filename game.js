@@ -71,46 +71,48 @@ let gambleInterval = null;
 async function startGamble(initialWin) {
     let currentWin = initialWin;
 
-    messageEl.innerHTML = `💰 Wil je <strong>${currentWin}</strong> verdubbelen?<br><small>Druk op KOP of MUNT om te gokken • Druk op SPIN om te stoppen</small>`;
+    messageEl.innerHTML = `💰 Wil je <strong>${currentWin}</strong> verdubbelen?<br><small>KOP / MUNT = gokken • SPIN = winst nemen</small>`;
 
-    const tryGamble = () => {
+    // Start knipperen
+    const startFlicker = () => {
         let isKopLit = true;
         gambleInterval = setInterval(() => {
             isKopLit = !isKopLit;
             kopGambleBtn.classList.toggle("active", isKopLit);
             muntGambleBtn.classList.toggle("active", !isKopLit);
-        }, 130);
-
-        kopGambleBtn.disabled = false;
-        muntGambleBtn.disabled = false;
+        }, 140);
     };
 
-    tryGamble();
+    startFlicker();
+    kopGambleBtn.disabled = false;
+    muntGambleBtn.disabled = false;
 
     return new Promise(resolve => {
-        const originalSpin = spinBtn.onclick;
 
+        // SPIN = neem winst en stop gokken
+        const originalSpin = spinBtn.onclick;
         spinBtn.onclick = () => {
             clearInterval(gambleInterval);
             kopGambleBtn.disabled = muntGambleBtn.disabled = true;
             kopGambleBtn.classList.remove("active");
             muntGambleBtn.classList.remove("active");
             spinBtn.onclick = originalSpin;
-            resolve(currentWin);           // winst teruggeven
+            resolve(currentWin);
         };
 
-        kopGambleBtn.onclick = () => handleClick(true);
-        muntGambleBtn.onclick = () => handleClick(false);
+        // Gamble klikken
+        kopGambleBtn.onclick = () => gambleClick(true);
+        muntGambleBtn.onclick = () => gambleClick(false);
 
-        function handleClick(isKop) {
+        function gambleClick(isKop) {
             clearInterval(gambleInterval);
             const won = (isKop && kopGambleBtn.classList.contains("active")) || 
                         (!isKop && muntGambleBtn.classList.contains("active"));
 
             if (won) {
                 currentWin *= 2;
-                messageEl.innerHTML = `✅ <strong style="color:lime">GOED! Nu ${currentWin}</strong><br>Druk opnieuw of op SPIN om te stoppen`;
-                setTimeout(tryGamble, 700);
+                messageEl.innerHTML = `✅ <strong style="color:lime">GOED! Nu ${currentWin}</strong><br>Druk opnieuw of op SPIN`;
+                setTimeout(startFlicker, 600);
             } else {
                 messageEl.innerHTML += `<br><strong style="color:red">❌ Mis! Je verliest alles.</strong>`;
                 currentWin = 0;
