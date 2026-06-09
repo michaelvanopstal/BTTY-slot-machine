@@ -9,31 +9,32 @@ const payouts = {
 
 let credits = 5000;
 let bet = 100;
-let isMaxLines = false;
+let numLines = 5;           // standaard 5 lijnen
 let lastWin = 0;
 
 const creditsEl = document.getElementById("credits");
 const betEl = document.getElementById("bet");
+const linesEl = document.getElementById("lines");   // nieuwe span
 const winEl = document.getElementById("win");
 const messageEl = document.getElementById("message");
 const spinBtn = document.getElementById("spinBtn");
-const maxLinesBtn = document.getElementById("maxLinesBtn");
+const linesBtn = document.getElementById("linesBtn");
 const reelsContainer = document.getElementById("reels");
 
-// === PAYLINES ===
-const basicPaylines = [          // 5 lijnen → 100 credits
-    [0,1,2,3], [4,5,6,7], [8,9,10,11],           // horizontale rijen
-    [0,5,10], [8,5,2]                            // diagonals
+// Paylines
+const paylines5 = [          // 5 lijnen
+    [0,1,2,3], [4,5,6,7], [8,9,10,11],
+    [0,5,10], [8,5,2]
 ];
 
-const fullPaylines = [           // 12 lijnen → 500 credits
-    [0,1,2,3], [4,5,6,7], [8,9,10,11],           // horizontaal
-    [0,5,10], [8,5,2],                           // diagonals
+const paylines12 = [         // 12 lijnen
+    [0,1,2,3], [4,5,6,7], [8,9,10,11],
+    [0,5,10], [8,5,2],
     [1,5,9], [3,7,11], [0,4,8], [3,6,9],
     [0,6,11], [3,5,8], [1,6,10], [2,5,11]
 ];
 
-let currentPaylines = basicPaylines;
+let currentPaylines = paylines5;
 
 function createReels() {
     reelsContainer.innerHTML = "";
@@ -61,11 +62,9 @@ function clearHighlights() {
 async function highlightPayline(line) {
     clearHighlights();
     line.forEach(pos => {
-        if (reelsContainer.children[pos]) {
-            reelsContainer.children[pos].classList.add("winning");
-        }
+        if (reelsContainer.children[pos]) reelsContainer.children[pos].classList.add("winning");
     });
-    await new Promise(r => setTimeout(r, 1600));
+    await new Promise(r => setTimeout(r, 1400));
 }
 
 async function spin() {
@@ -84,7 +83,6 @@ async function spin() {
     allImgs.forEach(img => img.style.animation = "spin 0.08s linear infinite");
 
     const delays = [600, 1000, 1450];
-
     for (let r = 0; r < 3; r++) {
         await new Promise(res => setTimeout(res, delays[r]));
         const start = r * 4;
@@ -101,7 +99,7 @@ async function spin() {
         let totalWin = 0;
 
         for (let win of wins) {
-            messageEl.innerHTML = `Payline ${win.lineIndex + 1} (${win.count}x) → <strong>${win.amount}</strong>`;
+            messageEl.innerHTML = `Lijn ${win.lineIndex + 1} (${win.count}x) → <strong>${win.amount}</strong>`;
             await highlightPayline(win.line);
             totalWin += win.amount;
         }
@@ -140,48 +138,32 @@ function checkAllPaylines() {
             if (!positions.some(p => used.has(p))) {
                 const amount = payouts[first]?.[count] || 0;
                 if (amount > 0) {
-                    wins.push({
-                        lineIndex: index,
-                        line: line,
-                        count: count,
-                        amount: amount
-                    });
+                    wins.push({ lineIndex: index, line: line, count: count, amount: amount });
                     positions.forEach(p => used.add(p));
                 }
             }
         }
     });
-
     return wins;
 }
 
 function updateUI() {
     creditsEl.textContent = credits;
     betEl.textContent = bet;
+    linesEl.textContent = numLines;
     winEl.textContent = lastWin;
-    
-    // Button styling
-    if (isMaxLines) {
-        maxLinesBtn.textContent = "STANDARD (100)";
-        maxLinesBtn.style.background = "#ff4444";
-    } else {
-        maxLinesBtn.textContent = "MAX LINES (500)";
-        maxLinesBtn.style.background = "#00cc00";
-    }
 }
 
-// Toggle Max Lines
-function toggleMaxLines() {
-    isMaxLines = !isMaxLines;
-    
-    if (isMaxLines) {
+function toggleLines() {
+    if (numLines === 5) {
+        numLines = 12;
         bet = 500;
-        currentPaylines = fullPaylines;
+        currentPaylines = paylines12;
     } else {
+        numLines = 5;
         bet = 100;
-        currentPaylines = basicPaylines;
+        currentPaylines = paylines5;
     }
-    
     updateUI();
 }
 
@@ -189,4 +171,4 @@ function toggleMaxLines() {
 createReels();
 updateUI();
 spinBtn.addEventListener("click", spin);
-maxLinesBtn.addEventListener("click", toggleMaxLines);
+linesBtn.addEventListener("click", toggleLines);
