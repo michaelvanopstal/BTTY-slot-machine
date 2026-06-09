@@ -69,42 +69,72 @@ async function highlightPayline(positions) {
 
 // ==================== TIMING GAMBLE (knipperend) ====================
 // ==================== TIMING GAMBLE (beter werkend) ====================
+// ==================== GAMBLE - Meerdere verdubbelingen mogelijk ====================
 let gambleInterval = null;
+let currentGambleWin = 0;
 
-async function startGamble(winAmount) {
-    if (winAmount <= 0) return winAmount;
+async function startGamble(initialWin) {
+    currentGambleWin = initialWin;
+    
+    messageEl.innerHTML = `💰 Wil je <strong>${currentGambleWin}</strong> verdubbelen?<br><small>Druk op SPIN om te stoppen en winst te nemen</small>`;
 
-    return new Promise(resolve => {
-        let isKopLit = true;   // start met KOP aan
+    const tryGamble = () => {
+        let isKopLit = true;
 
-        // Activeer knoppen
-        kopGambleBtn.disabled = false;
-        muntGambleBtn.disabled = false;
-
-        // Snelle knipper animatie
         gambleInterval = setInterval(() => {
             isKopLit = !isKopLit;
             kopGambleBtn.classList.toggle("active", isKopLit);
             muntGambleBtn.classList.toggle("active", !isKopLit);
-        }, 120);   // sneller knipperen = spannender
+        }, 130);
 
-        const finish = (won) => {
-            clearInterval(gambleInterval);
+        kopGambleBtn.disabled = false;
+        muntGambleBtn.disabled = false;
+    };
+
+    tryGamble();
+
+    // SPIN knop gebruiken om te stoppen met gokken
+    const originalSpinHandler = spinBtn.onclick;
+    spinBtn.onclick = () => {
+        clearInterval(gambleInterval);
+        kopGambleBtn.disabled = muntGambleBtn.disabled = true;
+        kopGambleBtn.classList.remove("active");
+        muntGambleBtn.classList.remove("active");
+        spinBtn.onclick = originalSpinHandler;   // terugzetten
+        return currentGambleWin;   // neem huidige winst mee
+    };
+
+    // Klik op KOP of MUNT
+    kopGambleBtn.onclick = () => handleGambleClick(true);
+    muntGambleBtn.onclick = () => handleGambleClick(false);
+
+    function handleGambleClick(isKopCorrect) {
+        clearInterval(gambleInterval);
+        kopGambleBtn.classList.remove("active");
+        muntGambleBtn.classList.remove("active");
+
+        const won = (isKopCorrect && kopGambleBtn.classList.contains("active")) || 
+                    (!isKopCorrect && muntGambleBtn.classList.contains("active"));
+
+        if (won) {
+            currentGambleWin *= 2;
+            messageEl.innerHTML = `✅ <strong style="color:lime">GOED! Nu ${currentGambleWin}</strong><br>Druk opnieuw of op SPIN om te stoppen`;
+            setTimeout(tryGamble, 600);   // blijf doorgaan
+        } else {
+            messageEl.innerHTML += `<br><strong style="color:red">❌ Mis! Je verliest alles.</strong>`;
+            currentGambleWin = 0;
             kopGambleBtn.disabled = muntGambleBtn.disabled = true;
-            kopGambleBtn.classList.remove("active");
-            muntGambleBtn.classList.remove("active");
+        }
+    }
 
-            if (won) {
-                messageEl.innerHTML += `<br><strong style="color:lime">✅ GOED GERADEN! JE WINT ×2 → ${winAmount * 2}</strong>`;
-            } else {
-                messageEl.innerHTML += `<br><strong style="color:red">❌ Mis! Je verliest de winst.</strong>`;
+    // Wacht tot SPIN wordt gedrukt (of verlies)
+    return new Promise(resolve => {
+        const checkStop = setInterval(() => {
+            if (currentGambleWin === 0 || spinBtn.onclick !== originalSpinHandler) {
+                clearInterval(checkStop);
+                resolve(currentGambleWin);
             }
-            resolve(won ? winAmount * 2 : 0);
-        };
-
-        // Klik handlers
-        kopGambleBtn.onclick = () => finish(isKopLit);
-        muntGambleBtn.onclick = () => finish(!isKopLit);
+        }, 200);
     });
 }
 
