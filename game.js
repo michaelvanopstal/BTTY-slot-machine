@@ -26,27 +26,15 @@ const linesBtn = document.getElementById("linesBtn");
 const reelsContainer = document.getElementById("reels");
 
 // ==================== PAYLINES ====================
-const paylines5 = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11], [0,1,6,11], [8,9,6,3]
-];
+const paylines5 = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[0,1,6,11],[8,9,6,3]];
 
-const paylines13 = [
-    [0,1,2,3],[4,5,6,7],[8,9,10,11],[0,1,6,11],[8,9,6,3],
-    [0,1,2,7],[4,5,6,3],[4,5,6,11],[8,9,10,7],
-    [0,5,6,7],[4,1,2,3],[4,9,10,11],[8,5,6,7]
-];
+const paylines13 = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[0,1,6,11],[8,9,6,3],[0,1,2,7],[4,5,6,3],[4,5,6,11],[8,9,10,7],[0,5,6,7],[4,1,2,3],[4,9,10,11],[9,5,6,7]];
 
-const paylines21 = [
-    [0,1,2,3],[4,5,6,7],[8,9,10,11],[0,1,6,11],[8,9,6,3],
-    [0,1,2,7],[4,5,6,3],[4,5,6,11],[8,9,10,7],
-    [0,5,6,7],[4,1,2,3],[4,9,10,11],[9,5,6,7],
-    [0,5,3,7],[4,1,6,3],[4,9,6,11],[8,5,10,7],
-    [0,1,6,7],[4,5,2,3],[4,5,10,11],[8,9,6,7]
-];
+const paylines21 = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[0,1,6,11],[8,9,6,3],[0,1,2,7],[4,5,6,3],[4,5,6,11],[8,9,10,7],[0,5,6,7],[4,1,2,3],[4,9,10,11],[9,5,6,7],[0,5,3,7],[4,1,6,3],[4,9,6,11],[8,5,10,7],[0,1,6,7],[4,5,2,3],[4,5,10,11],[8,9,6,7]];
 
 let currentPaylines = paylines5;
 
-// ==================== HELPER FUNCTIONS ====================
+// ==================== HELPERS ====================
 function createReels() {
     reelsContainer.innerHTML = "";
     for (let i = 0; i < 12; i++) {
@@ -72,14 +60,12 @@ function clearHighlights() {
 
 async function highlightPayline(positions) {
     positions.forEach(pos => {
-        if (reelsContainer.children[pos]) {
-            reelsContainer.children[pos].classList.add("winning");
-        }
+        if (reelsContainer.children[pos]) reelsContainer.children[pos].classList.add("winning");
     });
     await new Promise(r => setTimeout(r, 1200));
 }
 
-// ==================== KOP OF MUNT GAMBLE ====================
+// ==================== GAMBLE (KOP OF MUNT) ====================
 async function gambleWin(winAmount) {
     if (winAmount <= 0) return winAmount;
 
@@ -87,12 +73,10 @@ async function gambleWin(winAmount) {
         messageEl.innerHTML = `
             <div class="gamble-container">
                 <div class="gamble-title">💰 Wil je je winst van <strong>${winAmount}</strong> verdubbelen?</div>
-                
                 <div class="coin-buttons">
                     <div class="coin-btn" id="kopBtn">KOP<br><span style="font-size:18px">🔴</span></div>
                     <div class="coin-btn" id="muntBtn">MUNT<br><span style="font-size:18px">🪙</span></div>
                 </div>
-
                 <div class="gamble-actions">
                     <button id="noGambleBtn">Nee, neem winst veilig</button>
                 </div>
@@ -104,32 +88,13 @@ async function gambleWin(winAmount) {
         const noBtn = document.getElementById("noGambleBtn");
 
         const finish = (won) => {
-            kopBtn.style.pointerEvents = "none";
-            muntBtn.style.pointerEvents = "none";
-            noBtn.style.pointerEvents = "none";
+            kopBtn.style.pointerEvents = muntBtn.style.pointerEvents = noBtn.style.pointerEvents = "none";
             setTimeout(() => resolve(won ? winAmount * 2 : 0), 2200);
         };
 
-        kopBtn.onclick = () => {
-            const won = Math.random() < 0.5;
-            messageEl.innerHTML += won ?
-                `<br><br><strong style="color:lime">✅ KOP! Je hebt verdubbeld!</strong>` :
-                `<br><br><strong style="color:red">❌ Helaas... Je verliest alles.</strong>`;
-            finish(won);
-        };
-
-        muntBtn.onclick = () => {
-            const won = Math.random() < 0.5;
-            messageEl.innerHTML += won ?
-                `<br><br><strong style="color:lime">✅ MUNT! Je hebt verdubbeld!</strong>` :
-                `<br><br><strong style="color:red">❌ Helaas... Je verliest alles.</strong>`;
-            finish(won);
-        };
-
-        noBtn.onclick = () => {
-            messageEl.innerHTML += `<br><br><strong style="color:#ffd700">✅ Winst veilig opgenomen.</strong>`;
-            finish(true);
-        };
+        kopBtn.onclick = () => { const won = Math.random() < 0.5; messageEl.innerHTML += won ? `<br><br><strong style="color:lime">✅ KOP! Verdubbeld!</strong>` : `<br><br><strong style="color:red">❌ Verloren...</strong>`; finish(won); };
+        muntBtn.onclick = () => { const won = Math.random() < 0.5; messageEl.innerHTML += won ? `<br><br><strong style="color:lime">✅ MUNT! Verdubbeld!</strong>` : `<br><br><strong style="color:red">❌ Verloren...</strong>`; finish(won); };
+        noBtn.onclick = () => { messageEl.innerHTML += `<br><br><strong style="color:#ffd700">✅ Winst veilig genomen.</strong>`; finish(true); };
     });
 }
 
@@ -149,9 +114,7 @@ function checkAllPaylines() {
         }
         if (count === 4 && first !== "golden.png") {
             const amount = payouts[first]?.[4];
-            if (amount) {
-                wins.push({ lineIndex: index, line: line, count: 4, amount: amount });
-            }
+            if (amount) wins.push({lineIndex: index, line, count:4, amount});
         }
     });
     return wins;
@@ -160,14 +123,11 @@ function checkAllPaylines() {
 function checkJackpot() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
+    const horizontal = [[0,1,2,3],[4,5,6,7],[8,9,10,11]];
 
-    const horizontalLines = [[0,1,2,3], [4,5,6,7], [8,9,10,11]];
-
-    for (let line of horizontalLines) {
+    for (let line of horizontal) {
         if (line.every(pos => current[pos] === "golden.png")) {
-            line.forEach(pos => {
-                if (reelsContainer.children[pos]) reelsContainer.children[pos].classList.add("winning");
-            });
+            line.forEach(pos => reelsContainer.children[pos]?.classList.add("winning"));
             return jackpot;
         }
     }
@@ -188,19 +148,9 @@ function updateLinesButton() {
 }
 
 function toggleLines() {
-    if (numLines === 5) {
-        numLines = 13;
-        bet = 300;
-        currentPaylines = paylines13;
-    } else if (numLines === 13) {
-        numLines = 21;
-        bet = 500;
-        currentPaylines = paylines21;
-    } else {
-        numLines = 5;
-        bet = 100;
-        currentPaylines = paylines5;
-    }
+    if (numLines === 5) { numLines = 13; bet = 300; currentPaylines = paylines13; }
+    else if (numLines === 13) { numLines = 21; bet = 500; currentPaylines = paylines21; }
+    else { numLines = 5; bet = 100; currentPaylines = paylines5; }
     updateUI();
     updateLinesButton();
 }
@@ -235,7 +185,6 @@ async function spin() {
     if (wins.length > 0) {
         wins.sort((a, b) => b.amount - a.amount);
         let messages = [];
-
         for (const win of wins) {
             await highlightPayline(win.line.slice(0, win.count));
             messages.push(`Lijn ${win.lineIndex + 1} (${win.count}x) = ${win.amount}`);
@@ -247,15 +196,12 @@ async function spin() {
         await new Promise(r => setTimeout(r, 1500));
         clearHighlights();
 
-        // Gamble
         const finalWin = await gambleWin(totalWin);
         totalWin = finalWin;
     } else {
-        lastWin = 0;
         messageEl.textContent = "Geen winst...";
     }
 
-    // Jackpot check
     const jackpotWin = checkJackpot();
     if (jackpotWin > 0) {
         credits += jackpotWin;
@@ -265,7 +211,6 @@ async function spin() {
 
     credits += totalWin;
     lastWin = totalWin;
-
     updateUI();
     spinBtn.disabled = linesBtn.disabled = false;
 }
