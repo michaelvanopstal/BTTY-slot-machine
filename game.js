@@ -339,22 +339,25 @@ function toggleLines() {
     if (numLines === 5) {
 
         numLines = 12;
-        bet = 500;
+        bet = 300;
         currentPaylines = paylines12;
+
+    } else if (numLines === 12) {
+
+        numLines = 18;
+        bet = 500;
+        currentPaylines = paylines18;
 
     } else {
 
         numLines = 5;
         bet = 100;
         currentPaylines = paylines5;
+
     }
 
     updateUI();
     updateLinesButton();
-
-    console.log(
-        `MODE GEWIJZIGD -> ${numLines} lijnen`
-    );
 }
 
 // ==================== START ====================
