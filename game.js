@@ -194,10 +194,9 @@ async function spin() {
 function checkAllPaylines() {
 
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
-
     const current = imgs.map(img => getFileName(img.src));
 
-    const wins = [];
+    let wins = [];
 
     console.clear();
 
@@ -207,27 +206,9 @@ function checkAllPaylines() {
     console.log("ACTIVE PAYLINES:", currentPaylines.length);
     console.log("=================================");
 
-    console.log("ACTIEVE PAYLINES:");
-
-    currentPaylines.forEach((line, i) => {
-        console.log(`Lijn ${i + 1}:`, line);
-    });
-
-    console.log("=================================");
-    console.log("PAYLINE ANALYSE");
-    console.log("=================================");
-
     currentPaylines.forEach((line, index) => {
 
         const symbols = line.map(pos => current[pos]);
-
-        console.log(
-            `Lijn ${index + 1}`,
-            "Posities:",
-            line,
-            "Symbolen:",
-            symbols
-        );
 
         const firstSymbol = symbols[0];
 
@@ -240,51 +221,56 @@ function checkAllPaylines() {
             } else {
                 break;
             }
+
         }
 
-        console.log(
-            ` -> Eerste symbool: ${firstSymbol}`
-        );
-
-        console.log(
-            ` -> Match count: ${count}`
-        );
-
-        if (count < 3) {
-
-            console.log(
-                ` -> GEEN WIN (minder dan 3)`
-            );
-
-            return;
-        }
+        if (count < 3) return;
 
         const amount = payouts[firstSymbol]?.[count];
 
-        if (!amount) {
-
-            console.log(
-                ` -> GEEN UITBETALING GEDEFINIEERD`
-            );
-
-            return;
-        }
+        if (!amount) return;
 
         wins.push({
             lineIndex: index,
-            line,
-            count,
-            amount
+            line: line,
+            count: count,
+            amount: amount,
+            symbol: firstSymbol
         });
 
-        console.log(
-            ` -> WIN! ${count}x ${firstSymbol} = ${amount}`
-        );
+    });
+
+    // ==================================================
+    // VERWIJDER KORTERE WINS DIE IN LANGERE WINS ZITTEN
+    // ==================================================
+
+    wins = wins.filter(win => {
+
+        return !wins.some(other => {
+
+            if (other === win) return false;
+
+            // alleen kijken naar langere combinaties
+            if (other.count <= win.count) return false;
+
+            // zelfde symbool
+            if (other.symbol !== win.symbol) return false;
+
+            // begin van langere lijn vergelijken
+            const otherPrefix =
+                other.line.slice(0, win.line.length).join(",");
+
+            const thisLine =
+                win.line.join(",");
+
+            return thisLine === otherPrefix;
+
+        });
 
     });
 
     console.log("=================================");
-    console.log("GEVONDEN WINS");
+    console.log("WINS");
     console.log("=================================");
 
     let totalWin = 0;
@@ -294,20 +280,17 @@ function checkAllPaylines() {
         totalWin += win.amount;
 
         console.log(
-            `Lijn ${win.lineIndex + 1} | Posities ${win.line.join("-")} | ${win.count}x | Win ${win.amount}`
+            `Lijn ${win.lineIndex + 1} | Posities ${win.line.join("-")} | ${win.count}x ${win.symbol} | Win ${win.amount}`
         );
 
     });
 
     console.log("=================================");
-    console.log("TOTALE UITBETALING:", totalWin);
+    console.log("TOTAL WIN:", totalWin);
     console.log("=================================");
 
     return wins;
 }
-
-// ==================== UI ====================
-
 function updateUI() {
 
     creditsEl.textContent = credits;
