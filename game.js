@@ -66,11 +66,12 @@ async function highlightPayline(positions) {
 }
 
 // ==================== GAMBLE - Meerdere verdubbelingen ====================
+// ==================== GAMBLE - Meerdere verdubbelingen ====================
 let gambleInterval = null;
 
 async function startGamble(initialWin) {
     let currentWin = initialWin;
-
+    
     messageEl.innerHTML = `💰 Wil je <strong>${currentWin}</strong> verdubbelen?<br><small>Druk op SPIN om te stoppen en winst mee te nemen</small>`;
 
     const tryGamble = () => {
@@ -88,23 +89,31 @@ async function startGamble(initialWin) {
 
     tryGamble();
 
+    // Wacht tot de speler SPIN drukt of verliest
     return new Promise(resolve => {
-        const originalSpin = spinBtn.onclick;
+        const originalSpinHandler = spinBtn.onclick;
 
-        spinBtn.onclick = () => {
+        // Tijdelijke SPIN handler
+        spinBtn.onclick = async () => {
             clearInterval(gambleInterval);
             kopGambleBtn.disabled = muntGambleBtn.disabled = true;
             kopGambleBtn.classList.remove("active");
             muntGambleBtn.classList.remove("active");
-            spinBtn.onclick = originalSpin;
-            resolve(currentWin);                    // winst meenemen
+            
+            spinBtn.onclick = originalSpinHandler; // terugzetten originele handler
+
+            resolve(currentWin); // winst teruggeven zodat hij bij credits komt
         };
 
+        // Klik op KOP of MUNT
         kopGambleBtn.onclick = () => handleClick(true);
         muntGambleBtn.onclick = () => handleClick(false);
 
         function handleClick(isKop) {
             clearInterval(gambleInterval);
+            kopGambleBtn.classList.remove("active");
+            muntGambleBtn.classList.remove("active");
+
             const won = (isKop && kopGambleBtn.classList.contains("active")) || 
                         (!isKop && muntGambleBtn.classList.contains("active"));
 
@@ -113,7 +122,7 @@ async function startGamble(initialWin) {
                 messageEl.innerHTML = `✅ <strong style="color:lime">GOED! Nu ${currentWin}</strong><br>Druk opnieuw of op SPIN om te stoppen`;
                 setTimeout(tryGamble, 700);
             } else {
-                messageEl.innerHTML += `<br><strong style="color:red">❌ Mis! Je verliest de winst.</strong>`;
+                messageEl.innerHTML += `<br><strong style="color:red">❌ Mis! Je verliest alles.</strong>`;
                 currentWin = 0;
                 kopGambleBtn.disabled = muntGambleBtn.disabled = true;
                 resolve(0);
