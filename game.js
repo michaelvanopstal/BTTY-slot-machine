@@ -27,12 +27,26 @@ const paylines5 = [
     [0,5,10], [8,5,2]
 ];
 
-const paylines12 = [
+// === PAYLINES ===
+const paylines5 = [
     [0,1,2,3], [4,5,6,7], [8,9,10,11],
+    [0,5,10], [8,5,2]
+];
+
+const paylines12 = [
+    // Hoofdlijnen (4 symbolen)
+    [0,1,2,3], [4,5,6,7], [8,9,10,11],
+    
+    // Extra 3-symbolen lijnen
+    [0,1,2], [4,5,6], [8,9,10],
+    
+    // Diagonale lijnen
     [0,5,10], [8,5,2],
     [0,1,6], [4,5,2], [4,5,10], [8,9,6],
     [0,1,6,11], [8,9,6,3]
 ];
+
+let currentPaylines = paylines5;
 
 let currentPaylines = paylines5;
 
@@ -132,10 +146,9 @@ function checkAllPaylines() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
     const wins = [];
-    const usedPositions = new Set();
 
     console.clear();
-    console.log("%c=== PAYLINE CHECK START ===", "color: yellow; font-size: 16px; font-weight: bold");
+    console.log("%c=== PAYLINE CHECK START ===", "color: orange; font-size: 16px; font-weight: bold");
 
     currentPaylines.forEach((line, index) => {
         const lineSymbols = line.map(pos => current[pos]);
@@ -148,35 +161,43 @@ function checkAllPaylines() {
         }
 
         if (count >= 3) {
-            const positions = line.slice(0, count);
-            
-            // Anti-dubbel check
-            if (positions.some(p => usedPositions.has(p))) {
-                console.log(`❌ Lijn ${index + 1} → Overlapt met vorige win (wordt overgeslagen)`);
-                return;
-            }
-
             const amount = payouts[first]?.[count] || 0;
             if (amount > 0) {
                 wins.push({
                     lineIndex: index,
                     line: line,
                     count: count,
-                    amount: amount
+                    amount: amount,
+                    isMainHorizontal: line.length === 4 && (index === 0 || index === 1 || index === 2)
                 });
                 
-                positions.forEach(p => usedPositions.add(p));
-
-                console.log(`✅ Lijn ${index + 1} → ${count}x ${first} | Posities: ${positions} | Win: ${amount}`);
+                console.log(`✅ Lijn ${index + 1} → ${count}x ${first} | Pos: ${line.slice(0,count)} | Win: ${amount}`);
             }
         }
     });
 
-    const total = wins.reduce((sum, w) => sum + w.amount, 0);
-    console.log(`%cEINDE → Totaal ${wins.length} wins | Uitbetaling: ${total}`, 
-                "color: lime; font-size: 14px; font-weight: bold");
+    // === Belangrijke logica: 4x gaat voor 3x op dezelfde horizontale lijn ===
+    const filteredWins = [];
+    const mainHorizontalWins = {};
 
-    return wins;
+    wins.forEach(win => {
+        if (win.isMainHorizontal) {
+            const row = win.lineIndex; // 0,1 of 2
+            if (!mainHorizontalWins[row] || win.count > mainHorizontalWins[row].count) {
+                mainHorizontalWins[row] = win;
+            }
+        } else {
+            filteredWins.push(win);
+        }
+    });
+
+    // Voeg de beste horizontale win toe
+    Object.values(mainHorizontalWins).forEach(win => filteredWins.push(win));
+
+    const total = filteredWins.reduce((sum, w) => sum + w.amount, 0);
+    console.log(`%cEINDE → ${filteredWins.length} wins | Totaal uitbetaling: ${total}`, "color: lime; font-size: 15px; font-weight: bold");
+
+    return filteredWins;
 }
 
 function updateUI() {
