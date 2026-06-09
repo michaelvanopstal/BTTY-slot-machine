@@ -133,14 +133,14 @@ async function spin() {
     updateUI();
     spinBtn.disabled = false;
 }
-
 function checkAllPaylines() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
     const wins = [];
+    const used = new Set();   // voorkomt dubbel tellen van dezelfde symbolen
 
     console.clear();
-    console.log("%c=== PAYLINE CHECK START ===", "color: orange; font-size: 16px; font-weight: bold");
+    console.log("%c=== PAYLINE CHECK START ===", "color: red; font-size: 16px; font-weight: bold");
 
     currentPaylines.forEach((line, index) => {
         const lineSymbols = line.map(pos => current[pos]);
@@ -153,42 +153,33 @@ function checkAllPaylines() {
         }
 
         if (count >= 3) {
+            const positions = line.slice(0, count);
+            
+            // === ANTI-DUBBEL ===
+            if (positions.some(p => used.has(p))) {
+                console.log(`❌ Lijn ${index + 1} OVERGESLAGEN (overlap)`);
+                return;
+            }
+
             const amount = payouts[first]?.[count] || 0;
             if (amount > 0) {
                 wins.push({
                     lineIndex: index,
                     line: line,
                     count: count,
-                    amount: amount,
-                    isMainHorizontal: (line.length === 4 && index <= 2) || line.length === 3
+                    amount: amount
                 });
                 
-                console.log(`✅ Lijn ${index + 1} → ${count}x ${first} | Pos: ${line.slice(0,count)} | Win: ${amount}`);
+                positions.forEach(p => used.add(p));
+                console.log(`✅ Lijn ${index + 1} → ${count}x ${first} | Pos: ${positions} | Win: ${amount}`);
             }
         }
     });
 
-    // 4x gaat voor 3x op horizontale lijnen
-    const filteredWins = [];
-    const mainHorizontal = {};
+    const total = wins.reduce((sum, w) => sum + w.amount, 0);
+    console.log(`%cEINDE → ${wins.length} wins | Totaal uitbetaling: ${total}`, "color: lime; font-size: 15px; font-weight: bold");
 
-    wins.forEach(win => {
-        if (win.isMainHorizontal && win.line.length === 4) {
-            const rowIndex = win.lineIndex; 
-            if (!mainHorizontal[rowIndex] || win.count > mainHorizontal[rowIndex].count) {
-                mainHorizontal[rowIndex] = win;
-            }
-        } else {
-            filteredWins.push(win);
-        }
-    });
-
-    Object.values(mainHorizontal).forEach(win => filteredWins.push(win));
-
-    const total = filteredWins.reduce((sum, w) => sum + w.amount, 0);
-    console.log(`%cEINDE → ${filteredWins.length} wins | Totaal: ${total}`, "color: lime; font-weight: bold");
-
-    return filteredWins;
+    return wins;
 }
 
 function updateUI() {
