@@ -68,31 +68,41 @@ async function highlightPayline(positions) {
 }
 
 // ==================== TIMING GAMBLE (knipperend) ====================
+// ==================== TIMING GAMBLE (beter werkend) ====================
 let gambleInterval = null;
 
-function startGamble(winAmount) {
+async function startGamble(winAmount) {
     if (winAmount <= 0) return winAmount;
 
-    let isKopLit = true;
-
-    kopGambleBtn.disabled = false;
-    muntGambleBtn.disabled = false;
-
-    gambleInterval = setInterval(() => {
-        isKopLit = !isKopLit;
-        kopGambleBtn.classList.toggle("active", isKopLit);
-        muntGambleBtn.classList.toggle("active", !isKopLit);
-    }, 140);
-
     return new Promise(resolve => {
+        let isKopLit = true;   // start met KOP aan
+
+        // Activeer knoppen
+        kopGambleBtn.disabled = false;
+        muntGambleBtn.disabled = false;
+
+        // Snelle knipper animatie
+        gambleInterval = setInterval(() => {
+            isKopLit = !isKopLit;
+            kopGambleBtn.classList.toggle("active", isKopLit);
+            muntGambleBtn.classList.toggle("active", !isKopLit);
+        }, 120);   // sneller knipperen = spannender
+
         const finish = (won) => {
             clearInterval(gambleInterval);
             kopGambleBtn.disabled = muntGambleBtn.disabled = true;
             kopGambleBtn.classList.remove("active");
             muntGambleBtn.classList.remove("active");
+
+            if (won) {
+                messageEl.innerHTML += `<br><strong style="color:lime">✅ GOED GERADEN! JE WINT ×2 → ${winAmount * 2}</strong>`;
+            } else {
+                messageEl.innerHTML += `<br><strong style="color:red">❌ Mis! Je verliest de winst.</strong>`;
+            }
             resolve(won ? winAmount * 2 : 0);
         };
 
+        // Klik handlers
         kopGambleBtn.onclick = () => finish(isKopLit);
         muntGambleBtn.onclick = () => finish(!isKopLit);
     });
