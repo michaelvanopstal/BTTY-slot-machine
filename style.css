@@ -19,10 +19,7 @@ body {
     box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
 }
 
-h1 { 
-    color: #ffd700; 
-    margin-bottom: 10px; 
-}
+h1 { color: #ffd700; margin-bottom: 10px; }
 
 .scoreboard {
     display: flex;
@@ -50,11 +47,6 @@ h1 {
     background: #222;
     border: 6px solid #ffd700;
     border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 65px;
-    transition: all 0.1s;
     overflow: hidden;
 }
 
@@ -62,10 +54,17 @@ h1 {
     box-shadow: 0 0 20px #ffd700, 0 0 40px #ffeb3b;
     border-color: #ffff00;
     transform: scale(1.1);
-    transition: all 0.4s;
 }
 
-/* ==================== BUTTONS ==================== */
+.button-bar {
+    margin: 25px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 button {
     padding: 16px 70px;
     font-size: 28px;
@@ -77,50 +76,20 @@ button {
     cursor: pointer;
 }
 
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* Kleine gamble knoppen naast LINES */
 .gamble-btn {
-    padding: 12px 24px;
-    font-size: 18px;
+    padding: 14px 32px;
+    font-size: 20px;
     font-weight: bold;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    transition: all 0.2s;
 }
 
-#kopGambleBtn {
-    background: #ff4444;
-    color: white;
-}
+#kopGambleBtn { background: #ff4444; color: white; }
+#muntGambleBtn { background: #ffd700; color: black; }
 
-#muntGambleBtn {
-    background: #ffd700;
-    color: black;
-}
-
-.gamble-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.gamble-btn.active {
-    animation: flicker 0.12s infinite alternate;
-    box-shadow: 0 0 25px currentColor;
-    transform: scale(1.08);
-}
-
-/* ==================== MESSAGE & ANIMATIES ==================== */
-#message {
-    margin-top: 20px;
-    font-size: 26px;
-    color: #ffd700;
-    min-height: 40px;
-}
+.gamble-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.gamble-btn.active { animation: flicker 0.1s infinite alternate; }
 
 @keyframes spin {
     from { transform: rotateX(0deg); }
@@ -128,6 +97,13 @@ button:disabled {
 }
 
 @keyframes flicker {
-    from { opacity: 0.6; }
-    to { opacity: 1; }
+    from { opacity: 0.5; transform: scale(1); }
+    to { opacity: 1; transform: scale(1.12); }
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 26px;
+    color: #ffd700;
+    min-height: 80px;
 }
