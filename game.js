@@ -1,4 +1,3 @@
-// game.js - MEERDERE COMBINATIES GOED TELLEN
 const symbolNames = ["btty1.png", "btty2.png", "btty3.png", "btty4.png"];
 
 const payouts = {
@@ -10,6 +9,7 @@ const payouts = {
 
 let credits = 5000;
 let bet = 100;
+let isMaxLines = false;
 let lastWin = 0;
 
 const creditsEl = document.getElementById("credits");
@@ -17,12 +17,23 @@ const betEl = document.getElementById("bet");
 const winEl = document.getElementById("win");
 const messageEl = document.getElementById("message");
 const spinBtn = document.getElementById("spinBtn");
+const maxLinesBtn = document.getElementById("maxLinesBtn");
 const reelsContainer = document.getElementById("reels");
 
-const paylines = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11],
-    [0,5,10], [8,5,2]
+// === PAYLINES ===
+const basicPaylines = [          // 5 lijnen → 100 credits
+    [0,1,2,3], [4,5,6,7], [8,9,10,11],           // horizontale rijen
+    [0,5,10], [8,5,2]                            // diagonals
 ];
+
+const fullPaylines = [           // 12 lijnen → 500 credits
+    [0,1,2,3], [4,5,6,7], [8,9,10,11],           // horizontaal
+    [0,5,10], [8,5,2],                           // diagonals
+    [1,5,9], [3,7,11], [0,4,8], [3,6,9],
+    [0,6,11], [3,5,8], [1,6,10], [2,5,11]
+];
+
+let currentPaylines = basicPaylines;
 
 function createReels() {
     reelsContainer.innerHTML = "";
@@ -86,9 +97,7 @@ async function spin() {
     const wins = checkAllPaylines();
 
     if (wins.length > 0) {
-        // Langste combinaties eerst
         wins.sort((a, b) => b.count - a.count);
-
         let totalWin = 0;
 
         for (let win of wins) {
@@ -116,7 +125,7 @@ function checkAllPaylines() {
     const wins = [];
     const used = new Set();
 
-    paylines.forEach((line, index) => {
+    currentPaylines.forEach((line, index) => {
         const lineSymbols = line.map(pos => current[pos]);
         const first = lineSymbols[0];
         let count = 1;
@@ -128,8 +137,6 @@ function checkAllPaylines() {
 
         if (count >= 3) {
             const positions = line.slice(0, count);
-            
-            // Check of deze posities al gebruikt zijn in een vorige win
             if (!positions.some(p => used.has(p))) {
                 const amount = payouts[first]?.[count] || 0;
                 if (amount > 0) {
@@ -139,7 +146,7 @@ function checkAllPaylines() {
                         count: count,
                         amount: amount
                     });
-                    positions.forEach(p => used.add(p));   // markeer als gebruikt
+                    positions.forEach(p => used.add(p));
                 }
             }
         }
@@ -152,9 +159,34 @@ function updateUI() {
     creditsEl.textContent = credits;
     betEl.textContent = bet;
     winEl.textContent = lastWin;
+    
+    // Button styling
+    if (isMaxLines) {
+        maxLinesBtn.textContent = "STANDARD (100)";
+        maxLinesBtn.style.background = "#ff4444";
+    } else {
+        maxLinesBtn.textContent = "MAX LINES (500)";
+        maxLinesBtn.style.background = "#00cc00";
+    }
+}
+
+// Toggle Max Lines
+function toggleMaxLines() {
+    isMaxLines = !isMaxLines;
+    
+    if (isMaxLines) {
+        bet = 500;
+        currentPaylines = fullPaylines;
+    } else {
+        bet = 100;
+        currentPaylines = basicPaylines;
+    }
+    
+    updateUI();
 }
 
 // Start
 createReels();
 updateUI();
 spinBtn.addEventListener("click", spin);
+maxLinesBtn.addEventListener("click", toggleMaxLines);
