@@ -126,7 +126,6 @@ function checkAllPaylines() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
     const wins = [];
-    const used = new Set();
 
     console.clear();
     console.log("%c=== PAYLINE CHECK START ===", "color: red; font-size: 16px; font-weight: bold");
@@ -143,14 +142,8 @@ function checkAllPaylines() {
 
         if (count >= 3) {
             const positions = line.slice(0, count);
-
-            // Strenge anti-dubbel: als ook maar 1 positie al gebruikt is → overslaan
-            if (positions.some(p => used.has(p))) {
-                console.log(`❌ Lijn ${index + 1} OVERGESLAGEN (overlap)`);
-                return;
-            }
-
             const amount = payouts[first]?.[count] || 0;
+
             if (amount > 0) {
                 wins.push({
                     lineIndex: index,
@@ -159,18 +152,16 @@ function checkAllPaylines() {
                     amount: amount
                 });
 
-                positions.forEach(p => used.add(p));
                 console.log(`✅ Lijn ${index + 1} → ${count}x ${first} | Pos: ${positions} | Win: ${amount}`);
             }
         }
     });
 
     const total = wins.reduce((sum, w) => sum + w.amount, 0);
-    console.log(`%cEINDE → ${wins.length} wins | Totaal: ${total}`, "color: lime; font-size: 15px; font-weight: bold");
+    console.log(`%cEINDE → ${wins.length} wins | Totaal uitbetaling: ${total}`, "color: lime; font-size: 15px; font-weight: bold");
 
     return wins;
 }
-
 function updateUI() {
     creditsEl.textContent = credits;
     betEl.textContent = bet;
