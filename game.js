@@ -313,25 +313,25 @@ function updateLinesButton() {
 
 function toggleLines() {
 
-    if (numLines === 5) {
+  if (numLines === 5) {
 
-        numLines = 12;
-        bet = 300;
-        currentPaylines = paylines12;
+    numLines = 13;
+    bet = 300;
+    currentPaylines = paylines13;
 
-    } else if (numLines === 12) {
+} else if (numLines === 13) {
 
-        numLines = 18;
-        bet = 500;
-        currentPaylines = paylines18;
+    numLines = 17;
+    bet = 500;
+    currentPaylines = paylines17;
 
-    } else {
+} else {
 
-        numLines = 5;
-        bet = 100;
-        currentPaylines = paylines5;
+    numLines = 5;
+    bet = 100;
+    currentPaylines = paylines5;
 
-    }
+}
 
     updateUI();
     updateLinesButton();
