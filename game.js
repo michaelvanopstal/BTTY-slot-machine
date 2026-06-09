@@ -271,30 +271,7 @@ function checkAllPaylines() {
     // VERWIJDER KORTERE WINS DIE IN LANGERE WINS ZITTEN
     // ==================================================
 
-    wins = wins.filter(win => {
 
-        return !wins.some(other => {
-
-            if (other === win) return false;
-
-            // alleen kijken naar langere combinaties
-            if (other.count <= win.count) return false;
-
-            // zelfde symbool
-            if (other.symbol !== win.symbol) return false;
-
-            // begin van langere lijn vergelijken
-            const otherPrefix =
-                other.line.slice(0, win.line.length).join(",");
-
-            const thisLine =
-                win.line.join(",");
-
-            return thisLine === otherPrefix;
-
-        });
-
-    });
 
     console.log("=================================");
     console.log("WINS");
