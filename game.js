@@ -201,13 +201,33 @@ function checkAllPaylines() {
 
     console.clear();
 
+    console.log("=================================");
     console.log("MODE:", numLines);
     console.log("BET:", bet);
     console.log("ACTIVE PAYLINES:", currentPaylines.length);
+    console.log("=================================");
+
+    console.log("ACTIEVE PAYLINES:");
+
+    currentPaylines.forEach((line, i) => {
+        console.log(`Lijn ${i + 1}:`, line);
+    });
+
+    console.log("=================================");
+    console.log("PAYLINE ANALYSE");
+    console.log("=================================");
 
     currentPaylines.forEach((line, index) => {
 
         const symbols = line.map(pos => current[pos]);
+
+        console.log(
+            `Lijn ${index + 1}`,
+            "Posities:",
+            line,
+            "Symbolen:",
+            symbols
+        );
 
         const firstSymbol = symbols[0];
 
@@ -220,14 +240,35 @@ function checkAllPaylines() {
             } else {
                 break;
             }
-
         }
 
-        if (count < 3) return;
+        console.log(
+            ` -> Eerste symbool: ${firstSymbol}`
+        );
+
+        console.log(
+            ` -> Match count: ${count}`
+        );
+
+        if (count < 3) {
+
+            console.log(
+                ` -> GEEN WIN (minder dan 3)`
+            );
+
+            return;
+        }
 
         const amount = payouts[firstSymbol]?.[count];
 
-        if (!amount) return;
+        if (!amount) {
+
+            console.log(
+                ` -> GEEN UITBETALING GEDEFINIEERD`
+            );
+
+            return;
+        }
 
         wins.push({
             lineIndex: index,
@@ -237,9 +278,30 @@ function checkAllPaylines() {
         });
 
         console.log(
-            `Lijn ${index + 1} | ${count}x ${firstSymbol} | Win ${amount}`
+            ` -> WIN! ${count}x ${firstSymbol} = ${amount}`
         );
+
     });
+
+    console.log("=================================");
+    console.log("GEVONDEN WINS");
+    console.log("=================================");
+
+    let totalWin = 0;
+
+    wins.forEach(win => {
+
+        totalWin += win.amount;
+
+        console.log(
+            `Lijn ${win.lineIndex + 1} | Posities ${win.line.join("-")} | ${win.count}x | Win ${win.amount}`
+        );
+
+    });
+
+    console.log("=================================");
+    console.log("TOTALE UITBETALING:", totalWin);
+    console.log("=================================");
 
     return wins;
 }
