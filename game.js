@@ -21,7 +21,7 @@ const spinBtn = document.getElementById("spinBtn");
 const linesBtn = document.getElementById("linesBtn");
 const reelsContainer = document.getElementById("reels");
 
-// Paylines
+// === JOUW PAYLINES (exact zoals je ze gaf, alleen foute index 12 gefixt) ===
 const paylines5 = [
     [0,1,2,3], [4,5,6,7], [8,9,10,11],
     [0,5,10], [8,5,2]
@@ -31,7 +31,8 @@ const paylines12 = [
     [0,1,2,3], [4,5,6,7], [8,9,10,11],
     [0,5,10], [8,5,2],
     [0,1,6], [4,5,2], [4,5,10], [8,9,6],
-    [0,1,6,12], [8,9,6,3]
+    [0,1,6,11],   // 12 → 11 (waarschijnlijk bedoeld)
+    [8,9,6,3]
 ];
 
 let currentPaylines = paylines5;
@@ -66,7 +67,7 @@ async function highlightPayline(positions) {
             reelsContainer.children[pos].classList.add("winning");
         }
     });
-    await new Promise(r => setTimeout(r, 1600));
+    await new Promise(r => setTimeout(r, 1400));
 }
 
 async function spin() {
@@ -98,15 +99,13 @@ async function spin() {
 
     if (wins.length > 0) {
         wins.sort((a, b) => b.count - a.count);
+
         let totalWin = 0;
 
         for (let win of wins) {
             messageEl.innerHTML = `Lijn ${win.lineIndex + 1} (${win.count}x) → <strong>${win.amount}</strong>`;
-            
-            // ✅ BELANGRIJK: alleen de winnende posities highlighten!
             const winningPositions = win.line.slice(0, win.count);
             await highlightPayline(winningPositions);
-            
             totalWin += win.amount;
         }
 
@@ -127,34 +126,31 @@ function checkAllPaylines() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
     const wins = [];
-    const used = new Set();
 
     currentPaylines.forEach((line, index) => {
         const lineSymbols = line.map(pos => current[pos]);
         const first = lineSymbols[0];
         let count = 1;
 
+        // Tel hoeveel dezelfde symbolen vanaf het begin
         for (let i = 1; i < lineSymbols.length; i++) {
             if (lineSymbols[i] === first) count++;
             else break;
         }
 
         if (count >= 3) {
-            const positions = line.slice(0, count);
-            if (!positions.some(p => used.has(p))) {
-                const amount = payouts[first]?.[count] || 0;
-                if (amount > 0) {
-                    wins.push({
-                        lineIndex: index,
-                        line: line,           // volledige lijn bewaren
-                        count: count,
-                        amount: amount
-                    });
-                    positions.forEach(p => used.add(p));
-                }
+            const amount = payouts[first]?.[count] || 0;
+            if (amount > 0) {
+                wins.push({
+                    lineIndex: index,
+                    line: line,
+                    count: count,
+                    amount: amount
+                });
             }
         }
     });
+
     return wins;
 }
 
