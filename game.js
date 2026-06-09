@@ -21,20 +21,14 @@ const spinBtn = document.getElementById("spinBtn");
 const linesBtn = document.getElementById("linesBtn");
 const reelsContainer = document.getElementById("reels");
 
-// === JOUW PAYLINES ===
-const paylines5 = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11],
-    [0,5,10], [8,5,2]
-];
-
-// === PAYLINES ===
+// ==================== PAYLINES ====================
 const paylines5 = [
     [0,1,2,3], [4,5,6,7], [8,9,10,11],
     [0,5,10], [8,5,2]
 ];
 
 const paylines12 = [
-    // Hoofdlijnen (4 symbolen)
+    // Hoofdlijnen 4 symbolen
     [0,1,2,3], [4,5,6,7], [8,9,10,11],
     
     // Extra 3-symbolen lijnen
@@ -45,8 +39,6 @@ const paylines12 = [
     [0,1,6], [4,5,2], [4,5,10], [8,9,6],
     [0,1,6,11], [8,9,6,3]
 ];
-
-let currentPaylines = paylines5;
 
 let currentPaylines = paylines5;
 
@@ -168,7 +160,7 @@ function checkAllPaylines() {
                     line: line,
                     count: count,
                     amount: amount,
-                    isMainHorizontal: line.length === 4 && (index === 0 || index === 1 || index === 2)
+                    isMainHorizontal: (line.length === 4 && index <= 2) || line.length === 3
                 });
                 
                 console.log(`✅ Lijn ${index + 1} → ${count}x ${first} | Pos: ${line.slice(0,count)} | Win: ${amount}`);
@@ -176,26 +168,25 @@ function checkAllPaylines() {
         }
     });
 
-    // === Belangrijke logica: 4x gaat voor 3x op dezelfde horizontale lijn ===
+    // 4x gaat voor 3x op horizontale lijnen
     const filteredWins = [];
-    const mainHorizontalWins = {};
+    const mainHorizontal = {};
 
     wins.forEach(win => {
-        if (win.isMainHorizontal) {
-            const row = win.lineIndex; // 0,1 of 2
-            if (!mainHorizontalWins[row] || win.count > mainHorizontalWins[row].count) {
-                mainHorizontalWins[row] = win;
+        if (win.isMainHorizontal && win.line.length === 4) {
+            const rowIndex = win.lineIndex; 
+            if (!mainHorizontal[rowIndex] || win.count > mainHorizontal[rowIndex].count) {
+                mainHorizontal[rowIndex] = win;
             }
         } else {
             filteredWins.push(win);
         }
     });
 
-    // Voeg de beste horizontale win toe
-    Object.values(mainHorizontalWins).forEach(win => filteredWins.push(win));
+    Object.values(mainHorizontal).forEach(win => filteredWins.push(win));
 
     const total = filteredWins.reduce((sum, w) => sum + w.amount, 0);
-    console.log(`%cEINDE → ${filteredWins.length} wins | Totaal uitbetaling: ${total}`, "color: lime; font-size: 15px; font-weight: bold");
+    console.log(`%cEINDE → ${filteredWins.length} wins | Totaal: ${total}`, "color: lime; font-weight: bold");
 
     return filteredWins;
 }
