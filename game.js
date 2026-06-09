@@ -21,7 +21,7 @@ const spinBtn = document.getElementById("spinBtn");
 const linesBtn = document.getElementById("linesBtn");
 const reelsContainer = document.getElementById("reels");
 
-// === JOUW PAYLINES (exact zoals je ze gaf, alleen foute index 12 gefixt) ===
+// === JOUW PAYLINES ===
 const paylines5 = [
     [0,1,2,3], [4,5,6,7], [8,9,10,11],
     [0,5,10], [8,5,2]
@@ -31,8 +31,7 @@ const paylines12 = [
     [0,1,2,3], [4,5,6,7], [8,9,10,11],
     [0,5,10], [8,5,2],
     [0,1,6], [4,5,2], [4,5,10], [8,9,6],
-    [0,1,6,11],   // 12 → 11 (waarschijnlijk bedoeld)
-    [8,9,6,3]
+    [0,1,6,11], [8,9,6,3]
 ];
 
 let currentPaylines = paylines5;
@@ -61,13 +60,12 @@ function clearHighlights() {
 }
 
 async function highlightPayline(positions) {
-    clearHighlights();
     positions.forEach(pos => {
         if (reelsContainer.children[pos]) {
             reelsContainer.children[pos].classList.add("winning");
         }
     });
-    await new Promise(r => setTimeout(r, 1400));
+    await new Promise(r => setTimeout(r, 1200));
 }
 
 async function spin() {
@@ -82,6 +80,7 @@ async function spin() {
     spinBtn.disabled = true;
     clearHighlights();
 
+    // Spin animatie
     const allImgs = document.querySelectorAll(".symbol img");
     allImgs.forEach(img => img.style.animation = "spin 0.08s linear infinite");
 
@@ -101,18 +100,28 @@ async function spin() {
         wins.sort((a, b) => b.count - a.count);
 
         let totalWin = 0;
+        let winMessages = [];
 
         for (let win of wins) {
-            messageEl.innerHTML = `Lijn ${win.lineIndex + 1} (${win.count}x) → <strong>${win.amount}</strong>`;
             const winningPositions = win.line.slice(0, win.count);
             await highlightPayline(winningPositions);
+            
+            winMessages.push(`Lijn ${win.lineIndex + 1} (${win.count}x) = ${win.amount}`);
             totalWin += win.amount;
         }
 
         credits += totalWin;
         lastWin = totalWin;
-        messageEl.innerHTML = `🎉 <strong>BIG WIN ${totalWin}!</strong>`;
-        setTimeout(clearHighlights, 2800);
+
+        // Mooie weergave bij veel wins
+        if (winMessages.length > 3) {
+            messageEl.innerHTML = `🎉 <strong>${winMessages.length} WINS! BIG WIN ${totalWin}</strong>`;
+        } else {
+            messageEl.innerHTML = winMessages.join("<br>") + `<br>🎉 <strong>BIG WIN ${totalWin}!</strong>`;
+        }
+
+        await new Promise(r => setTimeout(r, 2800));
+        clearHighlights();
     } else {
         lastWin = 0;
         messageEl.textContent = "Geen winst...";
@@ -132,7 +141,6 @@ function checkAllPaylines() {
         const first = lineSymbols[0];
         let count = 1;
 
-        // Tel hoeveel dezelfde symbolen vanaf het begin
         for (let i = 1; i < lineSymbols.length; i++) {
             if (lineSymbols[i] === first) count++;
             else break;
