@@ -136,6 +136,9 @@ function checkAllPaylines() {
     const current = imgs.map(img => getFileName(img.src));
     const wins = [];
 
+    console.clear(); // schoon debug venster
+    console.log("%c=== PAYLINE CHECK START ===", "color: yellow; font-size: 14px");
+
     currentPaylines.forEach((line, index) => {
         const lineSymbols = line.map(pos => current[pos]);
         const first = lineSymbols[0];
@@ -153,11 +156,18 @@ function checkAllPaylines() {
                     lineIndex: index,
                     line: line,
                     count: count,
-                    amount: amount
+                    amount: amount,
+                    symbols: lineSymbols
                 });
+                
+                // Debug in console
+                console.log(`✅ Lijn ${index + 1} → ${count}x ${first} | Posities: ${line.slice(0,count)} | Win: ${amount}`);
             }
         }
     });
+
+    console.log(`%cTotaal wins gevonden: ${wins.length} → Uitbetaling: ${wins.reduce((sum, w) => sum + w.amount, 0)}`, 
+                "color: lime; font-weight: bold");
 
     return wins;
 }
