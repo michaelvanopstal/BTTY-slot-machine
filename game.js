@@ -123,42 +123,52 @@ async function spin() {
 }
 
 function checkAllPaylines() {
+
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
-    const wins = [];
 
-    console.clear();
-    console.log("%c=== PAYLINE CHECK START ===", "color: red; font-size: 16px; font-weight: bold");
+    let wins = [];
+    let usedLines = new Set();
 
     currentPaylines.forEach((line, index) => {
-        const lineSymbols = line.map(pos => current[pos]);
-        const first = lineSymbols[0];
+
+        const symbols = line.map(pos => current[pos]);
+
+        let symbol = symbols[0];
         let count = 1;
 
-        for (let i = 1; i < lineSymbols.length; i++) {
-            if (lineSymbols[i] === first) count++;
-            else break;
-        }
+        for (let i = 1; i < symbols.length; i++) {
 
-        if (count >= 3) {
-            const positions = line.slice(0, count);
-            const amount = payouts[first]?.[count] || 0;
-
-            if (amount > 0) {
-                wins.push({
-                    lineIndex: index,
-                    line: line,
-                    count: count,
-                    amount: amount
-                });
-
-                console.log(`✅ Lijn ${index + 1} → ${count}x ${first} | Pos: ${positions} | Win: ${amount}`);
+            if (symbols[i] === symbol) {
+                count++;
+            } else {
+                break;
             }
-        }
-    });
 
-    const total = wins.reduce((sum, w) => sum + w.amount, 0);
-    console.log(`%cEINDE → ${wins.length} wins | Totaal uitbetaling: ${total}`, "color: lime; font-size: 15px; font-weight: bold");
+        }
+
+        if (count < 3) return;
+
+        const payout = payouts[symbol]?.[count];
+
+        if (!payout) return;
+
+        const key = line.slice(0, count).join(",");
+
+        if (usedLines.has(key)) {
+            return;
+        }
+
+        usedLines.add(key);
+
+        wins.push({
+            lineIndex: index,
+            line: line,
+            count: count,
+            amount: payout
+        });
+
+    });
 
     return wins;
 }
