@@ -65,8 +65,8 @@ h1 {
     transition: all 0.4s;
 }
 
+/* ==================== BUTTONS ==================== */
 button {
-    margin-top: 20px;
     padding: 16px 70px;
     font-size: 28px;
     font-weight: bold;
@@ -82,6 +82,39 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* Kleine gamble knoppen naast LINES */
+.gamble-btn {
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#kopGambleBtn {
+    background: #ff4444;
+    color: white;
+}
+
+#muntGambleBtn {
+    background: #ffd700;
+    color: black;
+}
+
+.gamble-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.gamble-btn.active {
+    animation: flicker 0.12s infinite alternate;
+    box-shadow: 0 0 25px currentColor;
+    transform: scale(1.08);
+}
+
+/* ==================== MESSAGE & ANIMATIES ==================== */
 #message {
     margin-top: 20px;
     font-size: 26px;
@@ -89,158 +122,12 @@ button:disabled {
     min-height: 40px;
 }
 
-/* ==================== ANIMATIES ==================== */
 @keyframes spin {
     from { transform: rotateX(0deg); }
     to { transform: rotateX(360deg); }
 }
 
-/* ==================== KOP OF MUNT GAMBLE STYLE ==================== */
-.gamble-container {
-    margin: 25px 0;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.8);
-    border: 4px solid #ffd700;
-    border-radius: 20px;
-}
-
-.gamble-title {
-    font-size: 28px;
-    color: #ffd700;
-    margin-bottom: 15px;
-}
-
-.coin-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    margin: 20px 0;
-}
-
-.coin-btn {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
-    border: 8px solid #333;
-}
-
-#kopBtn {
-    background: linear-gradient(#ff4444, #cc0000);
-    border-color: #ff6666;
-}
-
-#muntBtn {
-    background: linear-gradient(#ffd700, #b8860b);
-    border-color: #ffeb3b;
-    color: black;
-}
-
-.coin-btn.active {
-    animation: flicker 0.15s infinite alternate;
-    transform: scale(1.15);
-    box-shadow: 0 0 40px currentColor;
-}
-
 @keyframes flicker {
-    from { opacity: 0.7; }
+    from { opacity: 0.6; }
     to { opacity: 1; }
-}
-
-.gamble-actions {
-    margin-top: 20px;
-}
-
-#noGambleBtn {
-    background: #555;
-    color: white;
-    padding: 12px 30px;
-    font-size: 18px;
-}
-
-#message button {
-    margin: 8px;
-}
-/* ==================== KOP OF MUNT GAMBLE STYLE ==================== */
-
-.gamble-container {
-    margin: 25px 0;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 4px solid #ffd700;
-    border-radius: 20px;
-}
-
-.gamble-title {
-    font-size: 28px;
-    color: #ffd700;
-    margin-bottom: 15px;
-}
-
-.coin-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    margin: 20px 0;
-}
-
-.coin-btn {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
-    border: 8px solid #333;
-}
-
-#kopBtn {
-    background: linear-gradient(#ff4444, #cc0000);
-    border-color: #ff6666;
-}
-
-#muntBtn {
-    background: linear-gradient(#ffd700, #b8860b);
-    border-color: #ffeb3b;
-    color: black;
-}
-
-.coin-btn.active {
-    animation: flicker 0.15s infinite alternate;
-    transform: scale(1.15);
-    box-shadow: 0 0 40px currentColor;
-}
-
-@keyframes flicker {
-    from { opacity: 0.7; }
-    to { opacity: 1; }
-}
-
-.gamble-actions {
-    margin-top: 20px;
-}
-
-#noGambleBtn {
-    background: #555;
-    color: white;
-    padding: 12px 30px;
-    font-size: 18px;
-}
-
-#message button {
-    margin: 8px;
 }
