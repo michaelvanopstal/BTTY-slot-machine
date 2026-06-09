@@ -67,12 +67,13 @@ async function highlightPayline(positions) {
 
 // ==================== GAMBLE - Meerdere verdubbelingen ====================
 // ==================== GAMBLE - Meerdere verdubbelingen ====================
+// ==================== GAMBLE - Meerdere verdubbelingen ====================
 let gambleInterval = null;
 
 async function startGamble(initialWin) {
     let currentWin = initialWin;
-    
-    messageEl.innerHTML = `💰 Wil je <strong>${currentWin}</strong> verdubbelen?<br><small>Druk op SPIN om te stoppen en winst mee te nemen</small>`;
+
+    messageEl.innerHTML = `💰 Wil je <strong>${currentWin}</strong> verdubbelen?<br><small>Druk op KOP/MUNT om te gokken of op SPIN om winst te nemen</small>`;
 
     const tryGamble = () => {
         let isKopLit = true;
@@ -89,31 +90,28 @@ async function startGamble(initialWin) {
 
     tryGamble();
 
-    // Wacht tot de speler SPIN drukt of verliest
     return new Promise(resolve => {
         const originalSpinHandler = spinBtn.onclick;
 
-        // Tijdelijke SPIN handler
-        spinBtn.onclick = async () => {
+        // SPIN = stop gokken en neem huidige winst
+        spinBtn.onclick = () => {
             clearInterval(gambleInterval);
             kopGambleBtn.disabled = muntGambleBtn.disabled = true;
             kopGambleBtn.classList.remove("active");
             muntGambleBtn.classList.remove("active");
-            
-            spinBtn.onclick = originalSpinHandler; // terugzetten originele handler
+            spinBtn.onclick = originalSpinHandler;   // terugzetten
 
-            resolve(currentWin); // winst teruggeven zodat hij bij credits komt
+            resolve(currentWin);   // winst teruggeven naar credits
         };
 
-        // Klik op KOP of MUNT
-        kopGambleBtn.onclick = () => handleClick(true);
-        muntGambleBtn.onclick = () => handleClick(false);
+        // KOP klik
+        kopGambleBtn.onclick = () => handleGamble(true);
 
-        function handleClick(isKop) {
+        // MUNT klik
+        muntGambleBtn.onclick = () => handleGamble(false);
+
+        function handleGamble(isKop) {
             clearInterval(gambleInterval);
-            kopGambleBtn.classList.remove("active");
-            muntGambleBtn.classList.remove("active");
-
             const won = (isKop && kopGambleBtn.classList.contains("active")) || 
                         (!isKop && muntGambleBtn.classList.contains("active"));
 
