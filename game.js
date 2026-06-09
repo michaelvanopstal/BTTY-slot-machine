@@ -80,7 +80,6 @@ async function spin() {
     spinBtn.disabled = true;
     clearHighlights();
 
-    // Spin animatie
     const allImgs = document.querySelectorAll(".symbol img");
     allImgs.forEach(img => img.style.animation = "spin 0.08s linear infinite");
 
@@ -98,7 +97,6 @@ async function spin() {
 
     if (wins.length > 0) {
         wins.sort((a, b) => b.count - a.count);
-
         let totalWin = 0;
         let winMessages = [];
 
@@ -113,7 +111,6 @@ async function spin() {
         credits += totalWin;
         lastWin = totalWin;
 
-        // Mooie weergave bij veel wins
         if (winMessages.length > 3) {
             messageEl.innerHTML = `🎉 <strong>${winMessages.length} WINS! BIG WIN ${totalWin}</strong>`;
         } else {
@@ -135,9 +132,10 @@ function checkAllPaylines() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
     const wins = [];
+    const usedPositions = new Set();
 
-    console.clear(); // schoon debug venster
-    console.log("%c=== PAYLINE CHECK START ===", "color: yellow; font-size: 14px");
+    console.clear();
+    console.log("%c=== PAYLINE CHECK START ===", "color: yellow; font-size: 16px; font-weight: bold");
 
     currentPaylines.forEach((line, index) => {
         const lineSymbols = line.map(pos => current[pos]);
@@ -150,24 +148,33 @@ function checkAllPaylines() {
         }
 
         if (count >= 3) {
+            const positions = line.slice(0, count);
+            
+            // Anti-dubbel check
+            if (positions.some(p => usedPositions.has(p))) {
+                console.log(`❌ Lijn ${index + 1} → Overlapt met vorige win (wordt overgeslagen)`);
+                return;
+            }
+
             const amount = payouts[first]?.[count] || 0;
             if (amount > 0) {
                 wins.push({
                     lineIndex: index,
                     line: line,
                     count: count,
-                    amount: amount,
-                    symbols: lineSymbols
+                    amount: amount
                 });
                 
-                // Debug in console
-                console.log(`✅ Lijn ${index + 1} → ${count}x ${first} | Posities: ${line.slice(0,count)} | Win: ${amount}`);
+                positions.forEach(p => usedPositions.add(p));
+
+                console.log(`✅ Lijn ${index + 1} → ${count}x ${first} | Posities: ${positions} | Win: ${amount}`);
             }
         }
     });
 
-    console.log(`%cTotaal wins gevonden: ${wins.length} → Uitbetaling: ${wins.reduce((sum, w) => sum + w.amount, 0)}`, 
-                "color: lime; font-weight: bold");
+    const total = wins.reduce((sum, w) => sum + w.amount, 0);
+    console.log(`%cEINDE → Totaal ${wins.length} wins | Uitbetaling: ${total}`, 
+                "color: lime; font-size: 14px; font-weight: bold");
 
     return wins;
 }
