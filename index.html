@@ -8,20 +8,23 @@
 </head>
 <body>
 
-    <div class="slot-machine">
+  <div class="slot-machine">
     <h1>BTTY BRC-20 SLOT MACHINE</h1>
 
     <div class="scoreboard">
         <div>Credits: <span id="credits">5000</span></div>
         <div>Bet: <span id="bet">100</span></div>
+        <div>Lines: <span id="lines">5</span></div>
         <div>Win: <span id="win">0</span></div>
     </div>
 
     <div class="reels" id="reels"></div>
 
-    <div style="margin-top: 15px;">
-        <button id="spinBtn">SPIN</button>
-        <button id="maxLinesBtn" style="margin-left: 15px; padding: 16px 30px;">MAX LINES (500)</button>
+    <div style="margin: 20px 0;">
+        <button id="spinBtn" style="padding: 16px 70px;">SPIN</button>
+        <button id="linesBtn" style="margin-left: 15px; padding: 16px 35px; font-size: 22px;">
+            LINES: <strong>5</strong>
+        </button>
     </div>
 
     <div id="message"></div>
