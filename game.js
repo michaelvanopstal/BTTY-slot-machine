@@ -1,67 +1,4 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-<meta charset="UTF-8">
-<title>Slot Machine - 21 Lijnen</title>
-<style>
-    body { font-family: Arial, sans-serif; text-align: center; background: #111; color: #0f0; }
-    #reels { 
-        display: grid; 
-        grid-template-columns: repeat(4, 120px); 
-        gap: 8px; 
-        margin: 20px auto; 
-        width: fit-content; 
-        padding: 15px; 
-        background: #222; 
-        border: 4px solid #0f0; 
-        border-radius: 12px;
-    }
-    .symbol { 
-        width: 120px; 
-        height: 120px; 
-        background: #000; 
-        border: 2px solid #0f0; 
-        border-radius: 8px; 
-        overflow: hidden;
-    }
-    .symbol img { width: 100%; height: 100%; object-fit: contain; }
-    .winning { 
-        border: 4px solid gold !important; 
-        box-shadow: 0 0 20px gold; 
-        animation: winpulse 0.6s infinite alternate; 
-    }
-    @keyframes winpulse { from { transform: scale(1); } to { transform: scale(1.08); } }
-    button { 
-        font-size: 18px; padding: 12px 24px; margin: 10px; 
-        background: #0f0; color: #000; border: none; border-radius: 8px; cursor: pointer;
-    }
-    button:disabled { opacity: 0.5; }
-    .info { font-size: 22px; margin: 10px; }
-</style>
-</head>
-<body>
-
-<h1>SLOT MACHINE - 21 Lijnen</h1>
-
-<div class="info">
-    Credits: <span id="credits">5000</span> | 
-    Bet: <span id="bet">100</span> | 
-    Lines: <span id="lines">5</span> | 
-    Last Win: <span id="win">0</span>
-</div>
-
-<div id="reels"></div>
-
-<div>
-    <button id="spinBtn">SPIN</button>
-    <button id="linesBtn">LINES: <strong>5</strong></button>
-</div>
-
-<div id="message" style="margin-top:15px; font-size:20px; min-height:70px;"></div>
-
-<script>
 // ==================== CONFIG ====================
-
 const symbolNames = ["btty1.png", "btty2.png", "btty3.png", "btty4.png"];
 
 const payouts = {
@@ -86,39 +23,39 @@ const linesBtn = document.getElementById("linesBtn");
 const reelsContainer = document.getElementById("reels");
 
 // ==================== PAYLINES ====================
-
 const paylines5 = [
     [0,1,2,3], [4,5,6,7], [8,9,10,11], [0,1,6,11], [8,9,6,3]
 ];
 
 const paylines13 = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11], [0,1,6,11], [8,9,6,3],
-    [0,1,2,7], [4,5,6,3], [4,5,6,11], [8,9,10,7],
-    [0,5,6,7], [4,1,2,3], [4,9,10,11], [9,5,6,7]
+    [0,1,2,3],[4,5,6,7],[8,9,10,11],[0,1,6,11],[8,9,6,3],
+    [0,1,2,7],[4,5,6,3],[4,5,6,11],[8,9,10,7],
+    [0,5,6,7],[4,1,2,3],[4,9,10,11],[9,5,6,7]
 ];
 
 const paylines21 = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11], [0,1,6,11], [8,9,6,3],     // 5
-    [0,1,2,7], [4,5,6,3], [4,5,6,11], [8,9,10,7],                 // 9
-    [0,5,6,7], [4,1,2,3], [4,9,10,11], [9,5,6,7],                 // 13
-    [0,5,3,7], [4,1,6,3], [4,9,6,11], [8,5,10,7],                 // 17
-    [0,1,6,7], [4,5,2,3], [4,5,10,11], [8,9,6,7]                  // 21
+    [0,1,2,3],[4,5,6,7],[8,9,10,11],[0,1,6,11],[8,9,6,3],
+    [0,1,2,7],[4,5,6,3],[4,5,6,11],[8,9,10,7],
+    [0,5,6,7],[4,1,2,3],[4,9,10,11],[9,5,6,7],
+    [0,5,3,7],[4,1,6,3],[4,9,6,11],[8,5,10,7],
+    [0,1,6,7],[4,5,2,3],[4,5,10,11],[8,9,6,7]
 ];
 
 let currentPaylines = paylines5;
 
-// ==================== FUNCTIONS ====================
-
+// ==================== HELPER FUNCTIONS ====================
 function createReels() {
     reelsContainer.innerHTML = "";
     for (let i = 0; i < 12; i++) {
         const div = document.createElement("div");
         div.classList.add("symbol");
+
         const img = document.createElement("img");
         img.src = symbolNames[Math.floor(Math.random() * symbolNames.length)];
         img.style.width = "100%";
         img.style.height = "100%";
         img.style.objectFit = "contain";
+
         div.appendChild(img);
         reelsContainer.appendChild(div);
     }
@@ -134,16 +71,23 @@ function clearHighlights() {
 
 async function highlightPayline(positions) {
     positions.forEach(pos => {
-        if (reelsContainer.children[pos]) reelsContainer.children[pos].classList.add("winning");
+        if (reelsContainer.children[pos]) {
+            reelsContainer.children[pos].classList.add("winning");
+        }
     });
     await new Promise(r => setTimeout(r, 1200));
 }
 
+// ==================== SPIN FUNCTION ====================
 async function spin() {
-    if (credits < bet) { alert("Niet genoeg credits!"); return; }
+    if (credits < bet) {
+        alert("Niet genoeg credits!");
+        return;
+    }
 
     spinBtn.disabled = true;
     linesBtn.disabled = true;
+
     credits -= bet;
     updateUI();
 
@@ -151,11 +95,17 @@ async function spin() {
     clearHighlights();
 
     const allImgs = document.querySelectorAll(".symbol img");
-    allImgs.forEach(img => img.style.animation = "spin 0.08s linear infinite");
+
+    // Spin animatie
+    allImgs.forEach(img => {
+        img.style.animation = "spin 0.08s linear infinite";
+    });
 
     const delays = [600, 1000, 1450];
+
     for (let r = 0; r < 3; r++) {
         await new Promise(res => setTimeout(res, delays[r]));
+
         const start = r * 4;
         for (let i = 0; i < 4; i++) {
             allImgs[start + i].style.animation = "none";
@@ -179,6 +129,7 @@ async function spin() {
         credits += totalWin;
         lastWin = totalWin;
         messageEl.innerHTML = messages.join("<br>") + `<br><strong>🎉 BIG WIN ${totalWin}!</strong>`;
+
         await new Promise(r => setTimeout(r, 2500));
         clearHighlights();
     } else {
@@ -191,6 +142,7 @@ async function spin() {
     linesBtn.disabled = false;
 }
 
+// ==================== CHECK PAYLINES ====================
 function checkAllPaylines() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
@@ -223,6 +175,7 @@ function checkAllPaylines() {
     return wins;
 }
 
+// ==================== UI FUNCTIONS ====================
 function updateUI() {
     creditsEl.textContent = credits;
     betEl.textContent = bet;
@@ -241,7 +194,7 @@ function toggleLines() {
         currentPaylines = paylines13;
     } else if (numLines === 13) {
         numLines = 21;
-        bet = 500;           // of hoger als je wilt (bijv. 700)
+        bet = 500;
         currentPaylines = paylines21;
     } else {
         numLines = 5;
@@ -252,13 +205,10 @@ function toggleLines() {
     updateLinesButton();
 }
 
-// ==================== START ====================
+// ==================== INIT ====================
 createReels();
 updateUI();
 updateLinesButton();
 
 spinBtn.addEventListener("click", spin);
 linesBtn.addEventListener("click", toggleLines);
-</script>
-</body>
-</html>
