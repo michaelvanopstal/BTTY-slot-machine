@@ -66,63 +66,84 @@ async function highlightPayline(positions) {
 }
 
 // ==================== GAMBLE ====================
+// ==================== GAMBLE - SPIN blijft altijd werken ====================
 let gambleInterval = null;
+let isInGambleMode = false;
 
 async function startGamble(initialWin) {
     let currentWin = initialWin;
+    isInGambleMode = true;
 
-    messageEl.innerHTML = `💰 Wil je <strong>${currentWin}</strong> verdubbelen?<br><small>KOP / MUNT = gokken • SPIN = winst nemen</small>`;
+    messageEl.innerHTML = `💰 Wil je <strong>${currentWin}</strong> verdubbelen?<br><small>Klik KOP of MUNT om te gokken • SPIN = winst nemen</small>`;
 
     // Start knipperen
-    const startFlicker = () => {
-        let isKopLit = true;
-        gambleInterval = setInterval(() => {
-            isKopLit = !isKopLit;
-            kopGambleBtn.classList.toggle("active", isKopLit);
-            muntGambleBtn.classList.toggle("active", !isKopLit);
-        }, 140);
-    };
+    let isKopLit = true;
+    gambleInterval = setInterval(() => {
+        isKopLit = !isKopLit;
+        kopGambleBtn.classList.toggle("active", isKopLit);
+        muntGambleBtn.classList.toggle("active", !isKopLit);
+    }, 140);
 
-    startFlicker();
     kopGambleBtn.disabled = false;
     muntGambleBtn.disabled = false;
 
     return new Promise(resolve => {
 
-        // SPIN = neem winst en stop gokken
-        const originalSpin = spinBtn.onclick;
-        spinBtn.onclick = () => {
+        // Klik op KOP
+        kopGambleBtn.onclick = () => {
             clearInterval(gambleInterval);
-            kopGambleBtn.disabled = muntGambleBtn.disabled = true;
-            kopGambleBtn.classList.remove("active");
-            muntGambleBtn.classList.remove("active");
-            spinBtn.onclick = originalSpin;
-            resolve(currentWin);
-        };
-
-        // Gamble klikken
-        kopGambleBtn.onclick = () => gambleClick(true);
-        muntGambleBtn.onclick = () => gambleClick(false);
-
-        function gambleClick(isKop) {
-            clearInterval(gambleInterval);
-            const won = (isKop && kopGambleBtn.classList.contains("active")) || 
-                        (!isKop && muntGambleBtn.classList.contains("active"));
+            const won = kopGambleBtn.classList.contains("active");
 
             if (won) {
                 currentWin *= 2;
-                messageEl.innerHTML = `✅ <strong style="color:lime">GOED! Nu ${currentWin}</strong><br>Druk opnieuw of op SPIN`;
-                setTimeout(startFlicker, 600);
+                messageEl.innerHTML = `✅ <strong style="color:lime">GOED! Nu ${currentWin}</strong><br>Druk opnieuw of SPIN`;
+                setTimeout(() => {
+                    let isKopLit = true;
+                    gambleInterval = setInterval(() => {
+                        isKopLit = !isKopLit;
+                        kopGambleBtn.classList.toggle("active", isKopLit);
+                        muntGambleBtn.classList.toggle("active", !isKopLit);
+                    }, 140);
+                }, 600);
             } else {
-                messageEl.innerHTML += `<br><strong style="color:red">❌ Mis! Je verliest alles.</strong>`;
+                messageEl.innerHTML += `<br><strong style="color:red">❌ Mis! Verloren.</strong>`;
                 currentWin = 0;
                 kopGambleBtn.disabled = muntGambleBtn.disabled = true;
+                isInGambleMode = false;
                 resolve(0);
             }
-        }
+        };
+
+        // Klik op MUNT
+        muntGambleBtn.onclick = () => {
+            clearInterval(gambleInterval);
+            const won = muntGambleBtn.classList.contains("active");
+
+            if (won) {
+                currentWin *= 2;
+                messageEl.innerHTML = `✅ <strong style="color:lime">GOED! Nu ${currentWin}</strong><br>Druk opnieuw of SPIN`;
+                setTimeout(() => {
+                    let isKopLit = true;
+                    gambleInterval = setInterval(() => {
+                        isKopLit = !isKopLit;
+                        kopGambleBtn.classList.toggle("active", isKopLit);
+                        muntGambleBtn.classList.toggle("active", !isKopLit);
+                    }, 140);
+                }, 600);
+            } else {
+                messageEl.innerHTML += `<br><strong style="color:red">❌ Mis! Verloren.</strong>`;
+                currentWin = 0;
+                kopGambleBtn.disabled = muntGambleBtn.disabled = true;
+                isInGambleMode = false;
+                resolve(0);
+            }
+        };
+
+        // SPIN werkt altijd (geen overschrijven meer)
+        // We checken in de spin functie zelf of we in gamble mode zitten
+        resolve(currentWin); // dit wordt niet meteen opgelost, we wachten op SPIN
     });
 }
-
 // ==================== CHECK FUNCTIONS ====================
 function checkAllPaylines() {
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
@@ -182,12 +203,35 @@ function toggleLines() {
 
 // ==================== SPIN ====================
 async function spin() {
-    if (credits < bet) { alert("Niet genoeg credits!"); return; }
+    if (credits < bet) { 
+        alert("Niet genoeg credits!"); 
+        return; 
+    }
 
     spinBtn.disabled = linesBtn.disabled = true;
     credits -= bet;
     updateUI();
 
+    // === BELANGRIJK: Als we in gamble mode zitten ===
+    if (isInGambleMode) {
+        clearInterval(gambleInterval);
+        kopGambleBtn.disabled = muntGambleBtn.disabled = true;
+        kopGambleBtn.classList.remove("active");
+        muntGambleBtn.classList.remove("active");
+        isInGambleMode = false;
+
+        const winToAdd = currentGambleWin;
+        currentGambleWin = 0;
+
+        credits += winToAdd;
+        lastWin = winToAdd;
+        updateUI();
+        messageEl.innerHTML = `✅ Winst van <strong>${winToAdd}</strong> opgenomen!`;
+        spinBtn.disabled = linesBtn.disabled = false;
+        return;
+    }
+
+    // Normale spin
     messageEl.textContent = "SPINNING...";
     clearHighlights();
 
@@ -238,7 +282,6 @@ async function spin() {
     updateUI();
     spinBtn.disabled = linesBtn.disabled = false;
 }
-
 // ==================== START ====================
 createReels();
 updateUI();
