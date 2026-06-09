@@ -1,11 +1,12 @@
 const symbolNames = ["btty1.png", "btty2.png", "btty3.png", "btty4.png"];
 
 const payouts = {
-    "btty1.png": { 3: 600, 4: 3000 },
-    "btty2.png": { 3: 350, 4: 1800 },
-    "btty3.png": { 3: 250, 4: 1200 },
-    "btty4.png": { 3: 120, 4: 600 }
+    "btty1.png": { 4: 3000 },
+    "btty2.png": { 4: 1800 },
+    "btty3.png": { 4: 1200 },
+    "btty4.png": { 4: 600 }
 };
+
 
 let credits = 5000;
 let bet = 100;
@@ -250,7 +251,7 @@ function checkAllPaylines() {
 
         }
 
-        if (count < 3) return;
+        if (count !== 4) return;
 
         const amount = payouts[firstSymbol]?.[count];
 
