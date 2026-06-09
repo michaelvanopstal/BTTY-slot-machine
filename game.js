@@ -9,12 +9,12 @@ const payouts = {
 
 let credits = 5000;
 let bet = 100;
-let numLines = 5;           // standaard 5 lijnen
+let numLines = 5;
 let lastWin = 0;
 
 const creditsEl = document.getElementById("credits");
 const betEl = document.getElementById("bet");
-const linesEl = document.getElementById("lines");   // nieuwe span
+const linesEl = document.getElementById("lines");
 const winEl = document.getElementById("win");
 const messageEl = document.getElementById("message");
 const spinBtn = document.getElementById("spinBtn");
@@ -22,12 +22,12 @@ const linesBtn = document.getElementById("linesBtn");
 const reelsContainer = document.getElementById("reels");
 
 // Paylines
-const paylines5 = [          // 5 lijnen
+const paylines5 = [
     [0,1,2,3], [4,5,6,7], [8,9,10,11],
     [0,5,10], [8,5,2]
 ];
 
-const paylines12 = [         // 12 lijnen
+const paylines12 = [
     [0,1,2,3], [4,5,6,7], [8,9,10,11],
     [0,5,10], [8,5,2],
     [1,5,9], [3,7,11], [0,4,8], [3,6,9],
@@ -59,12 +59,14 @@ function clearHighlights() {
     document.querySelectorAll(".symbol").forEach(s => s.classList.remove("winning"));
 }
 
-async function highlightPayline(line) {
+async function highlightPayline(positions) {
     clearHighlights();
-    line.forEach(pos => {
-        if (reelsContainer.children[pos]) reelsContainer.children[pos].classList.add("winning");
+    positions.forEach(pos => {
+        if (reelsContainer.children[pos]) {
+            reelsContainer.children[pos].classList.add("winning");
+        }
     });
-    await new Promise(r => setTimeout(r, 1400));
+    await new Promise(r => setTimeout(r, 1600));
 }
 
 async function spin() {
@@ -100,7 +102,11 @@ async function spin() {
 
         for (let win of wins) {
             messageEl.innerHTML = `Lijn ${win.lineIndex + 1} (${win.count}x) → <strong>${win.amount}</strong>`;
-            await highlightPayline(win.line);
+            
+            // ✅ BELANGRIJK: alleen de winnende posities highlighten!
+            const winningPositions = win.line.slice(0, win.count);
+            await highlightPayline(winningPositions);
+            
             totalWin += win.amount;
         }
 
@@ -138,7 +144,12 @@ function checkAllPaylines() {
             if (!positions.some(p => used.has(p))) {
                 const amount = payouts[first]?.[count] || 0;
                 if (amount > 0) {
-                    wins.push({ lineIndex: index, line: line, count: count, amount: amount });
+                    wins.push({
+                        lineIndex: index,
+                        line: line,           // volledige lijn bewaren
+                        count: count,
+                        amount: amount
+                    });
                     positions.forEach(p => used.add(p));
                 }
             }
