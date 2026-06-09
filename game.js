@@ -22,112 +22,188 @@ const linesBtn = document.getElementById("linesBtn");
 const reelsContainer = document.getElementById("reels");
 
 // ==================== PAYLINES ====================
+
 const paylines5 = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11],
-    [0,5,10], [8,5,2]
+    [0,1,2,3],
+    [4,5,6,7],
+    [8,9,10,11],
+    [0,5,10],
+    [8,5,2]
 ];
 
+// Echte 12 lijnen, geen dubbele 3-symbolen versies
 const paylines12 = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11],   // 4-symbolen
-    [0,1,2], [4,5,6], [8,9,10],           // 3-symbolen
-    [0,5,10], [8,5,2],
-    [0,1,6], [4,5,2], [4,5,10], [8,9,6],
-    [0,1,6,11], [8,9,6,3]
+    [0,1,2,3],
+    [4,5,6,7],
+    [8,9,10,11],
+
+    [0,5,10],
+    [8,5,2],
+
+    [0,1,6],
+    [4,5,2],
+    [4,5,10],
+    [8,9,6],
+
+    [0,1,6,11],
+    [8,9,6,3],
+
+    [0,5,6,11]
 ];
 
 let currentPaylines = paylines5;
 
+// ==================== CREATE REELS ====================
+
 function createReels() {
+
     reelsContainer.innerHTML = "";
+
     for (let i = 0; i < 12; i++) {
+
         const div = document.createElement("div");
         div.classList.add("symbol");
+
         const img = document.createElement("img");
+
         img.src = symbolNames[Math.floor(Math.random() * symbolNames.length)];
         img.style.width = "100%";
         img.style.height = "100%";
         img.style.objectFit = "contain";
+
         div.appendChild(img);
         reelsContainer.appendChild(div);
+
     }
 }
 
 function getFileName(src) {
-    return src.split('/').pop().split('?')[0];
+    return src.split("/").pop().split("?")[0];
 }
 
 function clearHighlights() {
-    document.querySelectorAll(".symbol").forEach(s => s.classList.remove("winning"));
+    document
+        .querySelectorAll(".symbol")
+        .forEach(s => s.classList.remove("winning"));
 }
 
 async function highlightPayline(positions) {
+
     positions.forEach(pos => {
-        if (reelsContainer.children[pos]) reelsContainer.children[pos].classList.add("winning");
+
+        if (reelsContainer.children[pos]) {
+            reelsContainer.children[pos].classList.add("winning");
+        }
+
     });
+
     await new Promise(r => setTimeout(r, 1200));
 }
 
+// ==================== SPIN ====================
+
 async function spin() {
+
     if (credits < bet) {
         alert("Niet genoeg credits!");
         return;
     }
 
-    credits -= bet;
-    updateUI();
-    messageEl.textContent = "SPINNING...";
     spinBtn.disabled = true;
+    linesBtn.disabled = true;
+
+    credits -= bet;
+
+    updateUI();
+
+    messageEl.textContent = "SPINNING...";
+
     clearHighlights();
 
     const allImgs = document.querySelectorAll(".symbol img");
-    allImgs.forEach(img => img.style.animation = "spin 0.08s linear infinite");
+
+    allImgs.forEach(img => {
+        img.style.animation = "spin 0.08s linear infinite";
+    });
 
     const delays = [600, 1000, 1450];
+
     for (let r = 0; r < 3; r++) {
+
         await new Promise(res => setTimeout(res, delays[r]));
+
         const start = r * 4;
+
         for (let i = 0; i < 4; i++) {
+
             allImgs[start + i].style.animation = "none";
-            allImgs[start + i].src = symbolNames[Math.floor(Math.random() * symbolNames.length)];
+
+            allImgs[start + i].src =
+                symbolNames[Math.floor(Math.random() * symbolNames.length)];
+
         }
     }
 
     const wins = checkAllPaylines();
 
     if (wins.length > 0) {
-        wins.sort((a, b) => b.count - a.count);
-        let totalWin = 0;
-        let winMessages = [];
 
-        for (let win of wins) {
+        wins.sort((a, b) => b.count - a.count);
+
+        let totalWin = 0;
+        let messages = [];
+
+        for (const win of wins) {
+
             const winningPositions = win.line.slice(0, win.count);
+
             await highlightPayline(winningPositions);
-            winMessages.push(`Lijn ${win.lineIndex + 1} (${win.count}x) = ${win.amount}`);
+
+            messages.push(
+                `Lijn ${win.lineIndex + 1} (${win.count}x) = ${win.amount}`
+            );
+
             totalWin += win.amount;
         }
 
         credits += totalWin;
         lastWin = totalWin;
 
-        messageEl.innerHTML = winMessages.join("<br>") + `<br>🎉 <strong>BIG WIN ${totalWin}!</strong>`;
+        messageEl.innerHTML =
+            messages.join("<br>") +
+            `<br><strong>🎉 BIG WIN ${totalWin}!</strong>`;
 
-        await new Promise(r => setTimeout(r, 2800));
+        await new Promise(r => setTimeout(r, 2500));
+
         clearHighlights();
+
     } else {
+
         lastWin = 0;
         messageEl.textContent = "Geen winst...";
     }
 
     updateUI();
+
     spinBtn.disabled = false;
+    linesBtn.disabled = false;
 }
+
+// ==================== PAYLINE CHECK ====================
 
 function checkAllPaylines() {
 
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
+
     const current = imgs.map(img => getFileName(img.src));
 
-    let wins = [];
+    const wins = [];
+
+    console.clear();
+
+    console.log("MODE:", numLines);
+    console.log("BET:", bet);
+    console.log("ACTIVE PAYLINES:", currentPaylines.length);
 
     currentPaylines.forEach((line, index) => {
 
@@ -138,11 +214,13 @@ function checkAllPaylines() {
         let count = 1;
 
         for (let i = 1; i < symbols.length; i++) {
+
             if (symbols[i] === firstSymbol) {
                 count++;
             } else {
                 break;
             }
+
         }
 
         if (count < 3) return;
@@ -153,69 +231,65 @@ function checkAllPaylines() {
 
         wins.push({
             lineIndex: index,
-            line: line,
-            count: count,
-            amount: amount
+            line,
+            count,
+            amount
         });
-
-    });
-
-    // Verwijder dubbele 3-match als dezelfde lijn ook een 4-match heeft
-    wins = wins.filter(win => {
-
-        if (win.count !== 3) return true;
-
-        return !wins.some(other => {
-
-            if (other.count !== 4) return false;
-
-            const first3Other = other.line.slice(0, 3).join(",");
-            const thisLine = win.line.join(",");
-
-            return first3Other === thisLine;
-
-        });
-
-    });
-
-    console.clear();
-
-    let totalWin = 0;
-
-    wins.forEach(win => {
-        totalWin += win.amount;
 
         console.log(
-            `Lijn ${win.lineIndex + 1} | ${win.count}x | Win ${win.amount}`
+            `Lijn ${index + 1} | ${count}x ${firstSymbol} | Win ${amount}`
         );
     });
 
-    console.log("Totaal:", totalWin);
-
     return wins;
 }
+
+// ==================== UI ====================
+
 function updateUI() {
+
     creditsEl.textContent = credits;
     betEl.textContent = bet;
     linesEl.textContent = numLines;
     winEl.textContent = lastWin;
 }
 
+function updateLinesButton() {
+
+    linesBtn.innerHTML =
+        `LINES: <strong>${numLines}</strong>`;
+}
+
+// ==================== TOGGLE ====================
+
 function toggleLines() {
+
     if (numLines === 5) {
+
         numLines = 12;
         bet = 500;
         currentPaylines = paylines12;
+
     } else {
+
         numLines = 5;
         bet = 100;
         currentPaylines = paylines5;
     }
+
     updateUI();
+    updateLinesButton();
+
+    console.log(
+        `MODE GEWIJZIGD -> ${numLines} lijnen`
+    );
 }
 
-// Start
+// ==================== START ====================
+
 createReels();
 updateUI();
+updateLinesButton();
+
 spinBtn.addEventListener("click", spin);
 linesBtn.addEventListener("click", toggleLines);
