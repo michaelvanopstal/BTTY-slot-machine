@@ -22,7 +22,7 @@ const spinBtn = document.getElementById("spinBtn");
 const linesBtn = document.getElementById("linesBtn");
 const reelsContainer = document.getElementById("reels");
 
-// ==================== PAYLINES ====================
+// ==================== PAYLINES (5 → 13 → 21) ====================
 const paylines5 = [
     [0,1,2,3], [4,5,6,7], [8,9,10,11], [0,1,6,11], [8,9,6,3]
 ];
@@ -43,7 +43,7 @@ const paylines21 = [
 
 let currentPaylines = paylines5;
 
-// ==================== HELPER FUNCTIONS ====================
+// ==================== CREATE REELS ====================
 function createReels() {
     reelsContainer.innerHTML = "";
     for (let i = 0; i < 12; i++) {
@@ -78,7 +78,7 @@ async function highlightPayline(positions) {
     await new Promise(r => setTimeout(r, 1200));
 }
 
-// ==================== SPIN FUNCTION ====================
+// ==================== SPIN ====================
 async function spin() {
     if (credits < bet) {
         alert("Niet genoeg credits!");
@@ -96,7 +96,6 @@ async function spin() {
 
     const allImgs = document.querySelectorAll(".symbol img");
 
-    // Spin animatie
     allImgs.forEach(img => {
         img.style.animation = "spin 0.08s linear infinite";
     });
@@ -175,7 +174,7 @@ function checkAllPaylines() {
     return wins;
 }
 
-// ==================== UI FUNCTIONS ====================
+// ==================== UI ====================
 function updateUI() {
     creditsEl.textContent = credits;
     betEl.textContent = bet;
@@ -205,7 +204,7 @@ function toggleLines() {
     updateLinesButton();
 }
 
-// ==================== INIT ====================
+// ==================== START ====================
 createReels();
 updateUI();
 updateLinesButton();
