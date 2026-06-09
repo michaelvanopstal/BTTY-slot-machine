@@ -128,47 +128,69 @@ function checkAllPaylines() {
     const current = imgs.map(img => getFileName(img.src));
 
     let wins = [];
-    let usedLines = new Set();
 
     currentPaylines.forEach((line, index) => {
 
         const symbols = line.map(pos => current[pos]);
 
-        let symbol = symbols[0];
+        const firstSymbol = symbols[0];
+
         let count = 1;
 
         for (let i = 1; i < symbols.length; i++) {
-
-            if (symbols[i] === symbol) {
+            if (symbols[i] === firstSymbol) {
                 count++;
             } else {
                 break;
             }
-
         }
 
         if (count < 3) return;
 
-        const payout = payouts[symbol]?.[count];
+        const amount = payouts[firstSymbol]?.[count];
 
-        if (!payout) return;
-
-        const key = line.slice(0, count).join(",");
-
-        if (usedLines.has(key)) {
-            return;
-        }
-
-        usedLines.add(key);
+        if (!amount) return;
 
         wins.push({
             lineIndex: index,
             line: line,
             count: count,
-            amount: payout
+            amount: amount
         });
 
     });
+
+    // Verwijder dubbele 3-match als dezelfde lijn ook een 4-match heeft
+    wins = wins.filter(win => {
+
+        if (win.count !== 3) return true;
+
+        return !wins.some(other => {
+
+            if (other.count !== 4) return false;
+
+            const first3Other = other.line.slice(0, 3).join(",");
+            const thisLine = win.line.join(",");
+
+            return first3Other === thisLine;
+
+        });
+
+    });
+
+    console.clear();
+
+    let totalWin = 0;
+
+    wins.forEach(win => {
+        totalWin += win.amount;
+
+        console.log(
+            `Lijn ${win.lineIndex + 1} | ${win.count}x | Win ${win.amount}`
+        );
+    });
+
+    console.log("Totaal:", totalWin);
 
     return wins;
 }
