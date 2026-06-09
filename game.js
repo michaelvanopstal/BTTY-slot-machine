@@ -14,6 +14,9 @@ let bet = 100;
 let numLines = 5;
 let lastWin = 0;
 let jackpot = 500;
+let isGambleActive = false;
+let currentGambleWin = 0;
+let gambleInterval = null;
 
 const creditsEl = document.getElementById("credits");
 const betEl = document.getElementById("bet");
@@ -27,14 +30,13 @@ const kopGambleBtn = document.getElementById("kopGambleBtn");
 const muntGambleBtn = document.getElementById("muntGambleBtn");
 const reelsContainer = document.getElementById("reels");
 
-// ==================== PAYLINES ====================
+// ==================== PAYLINES & HELPERS (verkort) ====================
 const paylines5 = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[0,1,6,11],[8,9,6,3]];
 const paylines13 = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[0,1,6,11],[8,9,6,3],[0,1,2,7],[4,5,6,3],[4,5,6,11],[8,9,10,7],[0,5,6,7],[4,1,2,3],[4,9,10,11],[9,5,6,7]];
 const paylines21 = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[0,1,6,11],[8,9,6,3],[0,1,2,7],[4,5,6,3],[4,5,6,11],[8,9,10,7],[0,5,6,7],[4,1,2,3],[4,9,10,11],[9,5,6,7],[0,5,3,7],[4,1,6,3],[4,9,6,11],[8,5,10,7],[0,1,6,7],[4,5,2,3],[4,5,10,11],[8,9,6,7]];
 
 let currentPaylines = paylines5;
 
-// ==================== REELS & HELPERS ====================
 function createReels() {
     reelsContainer.innerHTML = "";
     for (let i = 0; i < 12; i++) {
@@ -50,33 +52,20 @@ function createReels() {
     }
 }
 
-function getFileName(src) {
-    return src.split("/").pop().split("?")[0];
-}
-
-function clearHighlights() {
-    document.querySelectorAll(".symbol").forEach(s => s.classList.remove("winning"));
-}
-
+function getFileName(src) { return src.split("/").pop().split("?")[0]; }
+function clearHighlights() { document.querySelectorAll(".symbol").forEach(s => s.classList.remove("winning")); }
 async function highlightPayline(positions) {
-    positions.forEach(pos => {
-        if (reelsContainer.children[pos]) reelsContainer.children[pos].classList.add("winning");
-    });
+    positions.forEach(pos => reelsContainer.children[pos]?.classList.add("winning"));
     await new Promise(r => setTimeout(r, 1200));
 }
 
 // ==================== GAMBLE ====================
-// ==================== GAMBLE - SPIN blijft altijd werken ====================
-let gambleInterval = null;
-let isInGambleMode = false;
+async function startGamble(winAmount) {
+    currentGambleWin = winAmount;
+    isGambleActive = true;
 
-async function startGamble(initialWin) {
-    let currentWin = initialWin;
-    isInGambleMode = true;
+    messageEl.innerHTML = `💰 Wil je <strong>${winAmount}</strong> verdubbelen?<br><small>Klik KOP/MUNT of druk SPIN om te stoppen</small>`;
 
-    messageEl.innerHTML = `💰 Wil je <strong>${currentWin}</strong> verdubbelen?<br><small>Klik KOP of MUNT om te gokken • SPIN = winst nemen</small>`;
-
-    // Start knipperen
     let isKopLit = true;
     gambleInterval = setInterval(() => {
         isKopLit = !isKopLit;
@@ -86,152 +75,33 @@ async function startGamble(initialWin) {
 
     kopGambleBtn.disabled = false;
     muntGambleBtn.disabled = false;
-
-    return new Promise(resolve => {
-
-        // Klik op KOP
-        kopGambleBtn.onclick = () => {
-            clearInterval(gambleInterval);
-            const won = kopGambleBtn.classList.contains("active");
-
-            if (won) {
-                currentWin *= 2;
-                messageEl.innerHTML = `✅ <strong style="color:lime">GOED! Nu ${currentWin}</strong><br>Druk opnieuw of SPIN`;
-                setTimeout(() => {
-                    let isKopLit = true;
-                    gambleInterval = setInterval(() => {
-                        isKopLit = !isKopLit;
-                        kopGambleBtn.classList.toggle("active", isKopLit);
-                        muntGambleBtn.classList.toggle("active", !isKopLit);
-                    }, 140);
-                }, 600);
-            } else {
-                messageEl.innerHTML += `<br><strong style="color:red">❌ Mis! Verloren.</strong>`;
-                currentWin = 0;
-                kopGambleBtn.disabled = muntGambleBtn.disabled = true;
-                isInGambleMode = false;
-                resolve(0);
-            }
-        };
-
-        // Klik op MUNT
-        muntGambleBtn.onclick = () => {
-            clearInterval(gambleInterval);
-            const won = muntGambleBtn.classList.contains("active");
-
-            if (won) {
-                currentWin *= 2;
-                messageEl.innerHTML = `✅ <strong style="color:lime">GOED! Nu ${currentWin}</strong><br>Druk opnieuw of SPIN`;
-                setTimeout(() => {
-                    let isKopLit = true;
-                    gambleInterval = setInterval(() => {
-                        isKopLit = !isKopLit;
-                        kopGambleBtn.classList.toggle("active", isKopLit);
-                        muntGambleBtn.classList.toggle("active", !isKopLit);
-                    }, 140);
-                }, 600);
-            } else {
-                messageEl.innerHTML += `<br><strong style="color:red">❌ Mis! Verloren.</strong>`;
-                currentWin = 0;
-                kopGambleBtn.disabled = muntGambleBtn.disabled = true;
-                isInGambleMode = false;
-                resolve(0);
-            }
-        };
-
-        // SPIN werkt altijd (geen overschrijven meer)
-        // We checken in de spin functie zelf of we in gamble mode zitten
-        resolve(currentWin); // dit wordt niet meteen opgelost, we wachten op SPIN
-    });
-}
-// ==================== CHECK FUNCTIONS ====================
-function checkAllPaylines() {
-    const imgs = Array.from(document.querySelectorAll(".symbol img"));
-    const current = imgs.map(img => getFileName(img.src));
-    let wins = [];
-
-    currentPaylines.forEach((line, index) => {
-        const symbols = line.map(pos => current[pos]);
-        const first = symbols[0];
-        let count = 1;
-        for (let i = 1; i < symbols.length; i++) {
-            if (symbols[i] === first) count++;
-            else break;
-        }
-        if (count === 4 && first !== "golden.png") {
-            const amount = payouts[first]?.[4];
-            if (amount) wins.push({lineIndex: index, line, count: 4, amount});
-        }
-    });
-    return wins;
-}
-
-function checkJackpot() {
-    const imgs = Array.from(document.querySelectorAll(".symbol img"));
-    const current = imgs.map(img => getFileName(img.src));
-    const horizontal = [[0,1,2,3],[4,5,6,7],[8,9,10,11]];
-
-    for (let line of horizontal) {
-        if (line.every(pos => current[pos] === "golden.png")) {
-            line.forEach(pos => reelsContainer.children[pos]?.classList.add("winning"));
-            return jackpot;
-        }
-    }
-    return 0;
-}
-
-// ==================== UI ====================
-function updateUI() {
-    creditsEl.textContent = credits;
-    betEl.textContent = bet;
-    linesEl.textContent = numLines;
-    winEl.textContent = lastWin;
-    if (jackpotEl) jackpotEl.textContent = jackpot;
-}
-
-function updateLinesButton() {
-    linesBtn.innerHTML = `LINES: <strong>${numLines}</strong>`;
-}
-
-function toggleLines() {
-    if (numLines === 5) { numLines = 13; bet = 300; currentPaylines = paylines13; }
-    else if (numLines === 13) { numLines = 21; bet = 500; currentPaylines = paylines21; }
-    else { numLines = 5; bet = 100; currentPaylines = paylines5; }
-    updateUI();
-    updateLinesButton();
 }
 
 // ==================== SPIN ====================
 async function spin() {
-    if (credits < bet) { 
-        alert("Niet genoeg credits!"); 
-        return; 
-    }
+    if (credits < bet) { alert("Niet genoeg credits!"); return; }
 
-    spinBtn.disabled = linesBtn.disabled = true;
-    credits -= bet;
-    updateUI();
-
-    // === BELANGRIJK: Als we in gamble mode zitten ===
-    if (isInGambleMode) {
+    // === GAMBLE MODE ===
+    if (isGambleActive) {
         clearInterval(gambleInterval);
         kopGambleBtn.disabled = muntGambleBtn.disabled = true;
         kopGambleBtn.classList.remove("active");
         muntGambleBtn.classList.remove("active");
-        isInGambleMode = false;
+        isGambleActive = false;
 
-        const winToAdd = currentGambleWin;
-        currentGambleWin = 0;
-
-        credits += winToAdd;
-        lastWin = winToAdd;
+        credits += currentGambleWin;
+        lastWin = currentGambleWin;
         updateUI();
-        messageEl.innerHTML = `✅ Winst van <strong>${winToAdd}</strong> opgenomen!`;
+        messageEl.textContent = `✅ Winst van ${currentGambleWin} opgenomen!`;
         spinBtn.disabled = linesBtn.disabled = false;
         return;
     }
 
     // Normale spin
+    spinBtn.disabled = linesBtn.disabled = true;
+    credits -= bet;
+    updateUI();
+
     messageEl.textContent = "SPINNING...";
     clearHighlights();
 
@@ -265,7 +135,7 @@ async function spin() {
         await new Promise(r => setTimeout(r, 1200));
         clearHighlights();
 
-        totalWin = await startGamble(totalWin);
+        await startGamble(totalWin);
     } else {
         messageEl.textContent = "Geen winst...";
     }
@@ -273,7 +143,7 @@ async function spin() {
     const jackpotWin = checkJackpot();
     if (jackpotWin > 0) {
         credits += jackpotWin;
-        messageEl.innerHTML += `<br><strong>🔥 BTTY JACKPOT HIT! +${jackpotWin} 🔥</strong>`;
+        messageEl.innerHTML += `<br><strong>🔥 JACKPOT! +${jackpotWin}</strong>`;
         jackpot = 500;
     }
 
@@ -282,6 +152,58 @@ async function spin() {
     updateUI();
     spinBtn.disabled = linesBtn.disabled = false;
 }
+
+// ==================== OVERIGE FUNCTIES ====================
+function checkAllPaylines() { /* je huidige code */ 
+    const imgs = Array.from(document.querySelectorAll(".symbol img"));
+    const current = imgs.map(img => getFileName(img.src));
+    let wins = [];
+    currentPaylines.forEach((line, index) => {
+        const symbols = line.map(pos => current[pos]);
+        const first = symbols[0];
+        let count = 1;
+        for (let i = 1; i < symbols.length; i++) if (symbols[i] === first) count++; else break;
+        if (count === 4 && first !== "golden.png") {
+            const amount = payouts[first]?.[4];
+            if (amount) wins.push({lineIndex: index, line, count:4, amount});
+        }
+    });
+    return wins;
+}
+
+function checkJackpot() { /* je huidige code */ 
+    const imgs = Array.from(document.querySelectorAll(".symbol img"));
+    const current = imgs.map(img => getFileName(img.src));
+    const horizontal = [[0,1,2,3],[4,5,6,7],[8,9,10,11]];
+    for (let line of horizontal) {
+        if (line.every(pos => current[pos] === "golden.png")) {
+            line.forEach(pos => reelsContainer.children[pos]?.classList.add("winning"));
+            return jackpot;
+        }
+    }
+    return 0;
+}
+
+function updateUI() {
+    creditsEl.textContent = credits;
+    betEl.textContent = bet;
+    linesEl.textContent = numLines;
+    winEl.textContent = lastWin;
+    if (jackpotEl) jackpotEl.textContent = jackpot;
+}
+
+function updateLinesButton() {
+    linesBtn.innerHTML = `LINES: <strong>${numLines}</strong>`;
+}
+
+function toggleLines() {
+    if (numLines === 5) { numLines = 13; bet = 300; currentPaylines = paylines13; }
+    else if (numLines === 13) { numLines = 21; bet = 500; currentPaylines = paylines21; }
+    else { numLines = 5; bet = 100; currentPaylines = paylines5; }
+    updateUI();
+    updateLinesButton();
+}
+
 // ==================== START ====================
 createReels();
 updateUI();
