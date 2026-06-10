@@ -121,6 +121,7 @@ async function spin() {
     if (isGambleActive) {
 
         clearInterval(gambleInterval);
+        gambleInterval = null;
 
         kopGambleBtn.disabled = true;
         muntGambleBtn.disabled = true;
@@ -140,9 +141,30 @@ async function spin() {
 
         updateUI();
 
+        // GEEN return!
+        // De functie loopt gewoon door
+        // en start direct een nieuwe spin.
+    }
+
+    // ==========================
+    // NORMALE SPIN
+    // ==========================
+    if (credits < bet) {
+        alert("Niet genoeg credits!");
         return;
     }
 
+    spinBtn.disabled = true;
+    linesBtn.disabled = true;
+
+    credits -= bet;
+
+    updateUI();
+
+    messageEl.textContent = "SPINNING...";
+
+    // HIERONDER LAAT JE DE REST VAN JE
+    // HUIDIGE SPIN-CODE GEWOON STAAN
     // ==========================
     // NORMALE SPIN
     // ==========================
