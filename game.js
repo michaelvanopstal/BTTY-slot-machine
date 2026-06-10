@@ -18,6 +18,8 @@ let jackpot = 500;
 let isGambleActive = false;
 let currentGambleWin = 0;
 let gambleInterval = null;
+let gambleSide = null; // wat speler kiest
+let gambleResultSide = null; // echte uitkomst
 
 const creditsEl = document.getElementById("credits");
 const betEl = document.getElementById("bet");
@@ -61,13 +63,9 @@ async function highlightPayline(positions) {
 }
 
 // ==================== GAMBLE ====================
-async function startGamble(winAmount) {
+function startGamble(winAmount) {
 
-    // Vorige gamble netjes opruimen
-    if (gambleInterval) {
-        clearInterval(gambleInterval);
-        gambleInterval = null;
-    }
+    clearInterval(gambleInterval);
 
     currentGambleWin = winAmount;
     isGambleActive = true;
@@ -75,42 +73,19 @@ async function startGamble(winAmount) {
     kopGambleBtn.disabled = false;
     muntGambleBtn.disabled = false;
 
-    kopGambleBtn.classList.remove("active");
-    muntGambleBtn.classList.remove("active");
-
     messageEl.innerHTML =
         `💰 Winst: <strong>${currentGambleWin}</strong><br>
-        <small>
-            KLIK KOP of MUNT om te verdubbelen.<br>
-            Druk SPIN om je winst te pakken.
-        </small>`;
+        Kies KOP of MUNT of druk SPIN om te cashen`;
 
-    let isKopLit = true;
+    let flip = true;
 
     gambleInterval = setInterval(() => {
+        flip = !flip;
 
-        if (!isGambleActive) {
+        kopGambleBtn.classList.toggle("active", flip);
+        muntGambleBtn.classList.toggle("active", !flip);
 
-            clearInterval(gambleInterval);
-            gambleInterval = null;
-
-            kopGambleBtn.classList.remove("active");
-            muntGambleBtn.classList.remove("active");
-
-            return;
-        }
-
-        isKopLit = !isKopLit;
-
-        if (isKopLit) {
-            kopGambleBtn.classList.add("active");
-            muntGambleBtn.classList.remove("active");
-        } else {
-            kopGambleBtn.classList.remove("active");
-            muntGambleBtn.classList.add("active");
-        }
-
-    }, 140);
+    }, 150);
 }
 
 // ==================== SPIN ====================
@@ -121,26 +96,18 @@ async function spin() {
     // ==========================
     if (isGambleActive) {
 
-        clearInterval(gambleInterval);
-        gambleInterval = null;
+    resetGamble();
 
-        kopGambleBtn.disabled = true;
-        muntGambleBtn.disabled = true;
+    credits += currentGambleWin;
+    lastWin = currentGambleWin;
 
-        kopGambleBtn.classList.remove("active");
-        muntGambleBtn.classList.remove("active");
+    messageEl.innerHTML =
+        `💰 Geclaimed: ${currentGambleWin}`;
 
-        isGambleActive = false;
+    currentGambleWin = 0;
 
-        credits += currentGambleWin;
-        lastWin = currentGambleWin;
-
-        messageEl.innerHTML =
-            `✅ Winst van ${currentGambleWin} opgenomen!`;
-
-        currentGambleWin = 0;
-
-        updateUI();
+    updateUI();
+}
 
         // GEEN return!
         // De functie loopt gewoon door
@@ -289,54 +256,43 @@ function checkAllPaylines() { /* je huidige code */
 }
 
 function gambleChoice(choice) {
-
     if (!isGambleActive) return;
 
-    const kopActive =
-        kopGambleBtn.classList.contains("active");
+    // 🎲 echte uitkomst per klik
+    gambleResultSide = Math.random() < 0.5 ? "kop" : "munt";
 
-    const winningSide =
-        kopActive ? "kop" : "munt";
-
-    if (choice === winningSide) {
+    if (choice === gambleResultSide) {
 
         currentGambleWin *= 2;
-
         lastWin = currentGambleWin;
 
         messageEl.innerHTML =
-            `🎉 Goed!<br>
-             Nieuwe winst: <strong>${currentGambleWin}</strong><br>
-             Kies opnieuw KOP/MUNT of druk SPIN om te cashen`;
+            `🎉 Goed! Nieuwe winst: <strong>${currentGambleWin}</strong><br>
+            Nog een keer of SPIN om te cashen`;
 
         updateUI();
 
     } else {
 
-        currentGambleWin = 0;
+        messageEl.innerHTML = "❌ Verloren!";
 
-        lastWin = 0;
+        resetGamble();
 
-        messageEl.innerHTML =
-            "❌ Verloren!";
-
-        clearInterval(gambleInterval);
-        gambleInterval = null;
-
-        isGambleActive = false;
-
-        kopGambleBtn.disabled = true;
-        muntGambleBtn.disabled = true;
-
-        kopGambleBtn.classList.remove("active");
-        muntGambleBtn.classList.remove("active");
-
-        updateUI();
-
-        setTimeout(() => {
-            spin();
-        }, 500);
+        setTimeout(() => spin(), 600);
     }
+}
+
+function resetGamble() {
+    clearInterval(gambleInterval);
+
+    gambleInterval = null;
+    isGambleActive = false;
+
+    kopGambleBtn.disabled = true;
+    muntGambleBtn.disabled = true;
+
+    kopGambleBtn.classList.remove("active");
+    muntGambleBtn.classList.remove("active");
 }
 function checkJackpot() { /* je huidige code */ 
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
