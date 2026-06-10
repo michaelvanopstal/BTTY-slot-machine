@@ -10,7 +10,7 @@ body {
 }
 
 .slot-machine {
-    width: 820px;           /* iets smaller */
+    width: 820px;
     background: linear-gradient(180deg, #5c0000 0%, #2b0000 30%, #120000 100%);
     border: 12px solid #ffd700;
     border-radius: 30px;
@@ -40,7 +40,7 @@ h1 {
     color: #00ff66;
 }
 
-/* Reels - compacter */
+/* Reels */
 .reels {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -69,9 +69,9 @@ h1 {
     object-fit: contain;
 }
 
-/* Buttons - compacter en hoger */
+/* ================= BUTTON BAR - BETER UITGELIJND ================= */
 .button-bar {
-    margin-top: 18px;     /* dichter bij de reels */
+    margin-top: 15px;          /* dichter bij de reels */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -79,9 +79,17 @@ h1 {
     flex-wrap: wrap;
 }
 
+/* Alle buttons op dezelfde hoogte */
+#spinBtn, #linesBtn, .gamble-btn {
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* SPIN */
 #spinBtn {
-    width: 140px;
-    height: 62px;
+    width: 145px;
     font-size: 26px;
     font-weight: bold;
     background: radial-gradient(circle, #00ff00, #00aa00);
@@ -97,16 +105,20 @@ h1 {
     box-shadow: 0 3px 0 #006600;
 }
 
-/* LINES knop */
+/* LINES - kleiner en in lijn */
 #linesBtn {
-    padding: 16px 32px;
-    font-size: 21px;
-    min-width: 160px;
+    padding: 12px 28px;
+    font-size: 20px;
+    background: #ffd700;
+    color: black;
+    border-radius: 12px;
+    font-weight: bold;
+    min-width: 145px;
 }
 
+/* Gamble knoppen */
 .gamble-btn {
-    width: 110px;
-    height: 58px;
+    width: 108px;
     font-size: 20px;
     font-weight: bold;
     border-radius: 10px;
