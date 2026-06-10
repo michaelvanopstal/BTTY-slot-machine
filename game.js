@@ -96,22 +96,22 @@ async function spin() {
     // ==========================
     if (isGambleActive) {
 
-    resetGamble();
+        const cashoutAmount = currentGambleWin;
 
-    credits += currentGambleWin;
-    lastWin = currentGambleWin;
+        resetGamble();
 
-    messageEl.innerHTML =
-        `💰 Geclaimed: ${currentGambleWin}`;
+        credits += cashoutAmount;
+        lastWin = cashoutAmount;
 
-    currentGambleWin = 0;
+        messageEl.innerHTML =
+            `💰 Geclaimed: ${cashoutAmount}`;
 
-    updateUI();
-}
+        currentGambleWin = 0;
 
-        // GEEN return!
-        // De functie loopt gewoon door
-        // en start direct een nieuwe spin.
+        updateUI();
+
+        // geen return
+        // direct verder met nieuwe spin
     }
 
     if (credits < bet) {
@@ -162,6 +162,8 @@ async function spin() {
         }
     }
 
+    // vanaf hier gaat je bestaande wincontrole verder...
+}
     const wins = checkAllPaylines();
 
     let totalWin = 0;
