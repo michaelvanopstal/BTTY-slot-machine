@@ -144,3 +144,21 @@ body {
     box-shadow: 0 0 20px #ffff00, 0 0 40px #ffd700;
     transform: scale(1.08);
 }
+/* ================= GAMBLE FLASH ================= */
+
+.gamble-btn {
+    transition: all 0.12s ease;
+}
+
+.gamble-btn.active {
+    transform: scale(1.12);
+    border: 4px solid #ffffff;
+
+    box-shadow:
+        0 0 10px #ffffff,
+        0 0 20px #ffffff,
+        0 0 40px #ffd700,
+        0 0 60px #ffd700;
+
+    filter: brightness(1.8);
+}
