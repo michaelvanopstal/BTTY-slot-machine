@@ -303,39 +303,39 @@ function gambleChoice(choice) {
         lastWin = currentGambleWin;
 
         messageEl.innerHTML =
-    `🎉 Goed!<br>
-     Nieuwe winst: <strong>${currentGambleWin}</strong><br>
-     Kies opnieuw KOP/MUNT of druk SPIN om te cashen`;
+            `🎉 Goed!<br>
+             Nieuwe winst: <strong>${currentGambleWin}</strong><br>
+             Kies opnieuw KOP/MUNT of druk SPIN om te cashen`;
 
         updateUI();
 
-else {
+    } else {
 
-    currentGambleWin = 0;
+        currentGambleWin = 0;
 
-    lastWin = 0;
+        lastWin = 0;
 
-    messageEl.innerHTML =
-        "❌ Verloren!";
+        messageEl.innerHTML =
+            "❌ Verloren!";
 
-    clearInterval(gambleInterval);
-    gambleInterval = null;
+        clearInterval(gambleInterval);
+        gambleInterval = null;
 
-    isGambleActive = false;
+        isGambleActive = false;
 
-    kopGambleBtn.disabled = true;
-    muntGambleBtn.disabled = true;
+        kopGambleBtn.disabled = true;
+        muntGambleBtn.disabled = true;
 
-    kopGambleBtn.classList.remove("active");
-    muntGambleBtn.classList.remove("active");
+        kopGambleBtn.classList.remove("active");
+        muntGambleBtn.classList.remove("active");
 
-    updateUI();
+        updateUI();
 
-    setTimeout(() => {
-        spin();
-    }, 500);
+        setTimeout(() => {
+            spin();
+        }, 500);
+    }
 }
-
 function checkJackpot() { /* je huidige code */ 
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
