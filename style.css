@@ -193,7 +193,7 @@ body {
 .gamble-btn:active {
     transform: scale(0.95);
 }
-#lineBtn {
+#linesBtn {
     position: relative;
 
     margin-top: -15px; /* hoger zetten */
@@ -222,11 +222,11 @@ body {
         inset 0 2px 4px rgba(255,255,255,.4);
 }
 
-#lineBtn:hover {
+#linesBtn:hover {
     transform: scale(1.05);
 }
 
-#lineBtn:active {
+#linesBtn:active {
     transform: scale(0.95);
 }
 
