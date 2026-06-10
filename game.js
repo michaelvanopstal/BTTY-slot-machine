@@ -396,3 +396,11 @@ updateLinesButton();
 
 spinBtn.addEventListener("click", spin);
 linesBtn.addEventListener("click", toggleLines);
+
+kopGambleBtn.addEventListener("click", () => {
+    gambleChoice("kop");
+});
+
+muntGambleBtn.addEventListener("click", () => {
+    gambleChoice("munt");
+});
