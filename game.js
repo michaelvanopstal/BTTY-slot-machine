@@ -61,20 +61,55 @@ async function highlightPayline(positions) {
 
 // ==================== GAMBLE ====================
 async function startGamble(winAmount) {
+
+    // Vorige gamble netjes opruimen
+    if (gambleInterval) {
+        clearInterval(gambleInterval);
+        gambleInterval = null;
+    }
+
     currentGambleWin = winAmount;
     isGambleActive = true;
 
-    messageEl.innerHTML = `💰 Wil je <strong>${winAmount}</strong> verdubbelen?<br><small>Klik KOP/MUNT of druk SPIN om te stoppen</small>`;
-
-    let isKopLit = true;
-    gambleInterval = setInterval(() => {
-        isKopLit = !isKopLit;
-        kopGambleBtn.classList.toggle("active", isKopLit);
-        muntGambleBtn.classList.toggle("active", !isKopLit);
-    }, 140);
-
     kopGambleBtn.disabled = false;
     muntGambleBtn.disabled = false;
+
+    kopGambleBtn.classList.remove("active");
+    muntGambleBtn.classList.remove("active");
+
+    messageEl.innerHTML =
+        `💰 Winst: <strong>${currentGambleWin}</strong><br>
+        <small>
+            KLIK KOP of MUNT om te verdubbelen.<br>
+            Druk SPIN om je winst te pakken.
+        </small>`;
+
+    let isKopLit = true;
+
+    gambleInterval = setInterval(() => {
+
+        if (!isGambleActive) {
+
+            clearInterval(gambleInterval);
+            gambleInterval = null;
+
+            kopGambleBtn.classList.remove("active");
+            muntGambleBtn.classList.remove("active");
+
+            return;
+        }
+
+        isKopLit = !isKopLit;
+
+        if (isKopLit) {
+            kopGambleBtn.classList.add("active");
+            muntGambleBtn.classList.remove("active");
+        } else {
+            kopGambleBtn.classList.remove("active");
+            muntGambleBtn.classList.add("active");
+        }
+
+    }, 140);
 }
 
 // ==================== SPIN ====================
