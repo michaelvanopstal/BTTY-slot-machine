@@ -146,28 +146,6 @@ async function spin() {
         // en start direct een nieuwe spin.
     }
 
-    // ==========================
-    // NORMALE SPIN
-    // ==========================
-    if (credits < bet) {
-        alert("Niet genoeg credits!");
-        return;
-    }
-
-    spinBtn.disabled = true;
-    linesBtn.disabled = true;
-
-    credits -= bet;
-
-    updateUI();
-
-    messageEl.textContent = "SPINNING...";
-
-    // HIERONDER LAAT JE DE REST VAN JE
-    // HUIDIGE SPIN-CODE GEWOON STAAN
-    // ==========================
-    // NORMALE SPIN
-    // ==========================
     if (credits < bet) {
         alert("Niet genoeg credits!");
         return;
