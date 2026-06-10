@@ -268,29 +268,7 @@ async function spin() {
     spinBtn.disabled = false;
     linesBtn.disabled = false;
 }
-function finishGambleAndSpin() {
 
-    credits += currentGambleWin;
-
-    lastWin = currentGambleWin;
-
-    currentGambleWin = 0;
-    isGambleActive = false;
-
-    clearInterval(gambleInterval);
-
-    kopGambleBtn.disabled = true;
-    muntGambleBtn.disabled = true;
-
-    kopGambleBtn.classList.remove("active");
-    muntGambleBtn.classList.remove("active");
-
-    updateUI();
-
-    setTimeout(() => {
-        spin();
-    }, 200);
-}
 // ==================== OVERIGE FUNCTIES ====================
 function checkAllPaylines() { /* je huidige code */ 
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
