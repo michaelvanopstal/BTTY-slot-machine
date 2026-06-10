@@ -193,7 +193,42 @@ body {
 .gamble-btn:active {
     transform: scale(0.95);
 }
+#lineBtn {
+    position: relative;
 
+    margin-top: -15px; /* hoger zetten */
+
+    padding: 8px 18px;
+
+    background: linear-gradient(
+        180deg,
+        #2f8cff 0%,
+        #0055cc 100%
+    );
+
+    border: 2px solid #ffffff;
+
+    border-radius: 6px;
+
+    color: white;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 8px #2f8cff,
+        inset 0 2px 4px rgba(255,255,255,.4);
+}
+
+#lineBtn:hover {
+    transform: scale(1.05);
+}
+
+#lineBtn:active {
+    transform: scale(0.95);
+}
 /* ================= ACTIVE FLASH ================= */
 
 .gamble-btn.active {
