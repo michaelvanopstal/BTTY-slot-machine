@@ -77,9 +77,12 @@ async function startGamble(winAmount) {
     kopGambleBtn.classList.remove("active");
     muntGambleBtn.classList.remove("active");
 
-   messageEl.innerHTML = `
-    💰 <strong>${currentGambleWin}</strong>
-`;
+    messageEl.innerHTML =
+        `💰 Winst: <strong>${currentGambleWin}</strong><br>
+        <small>
+            KLIK KOP of MUNT om te verdubbelen.<br>
+            Druk SPIN om je winst te pakken.
+        </small>`;
 
     let isKopLit = true;
 
