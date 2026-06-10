@@ -88,7 +88,6 @@ function startGamble(winAmount) {
     }, 150);
 }
 
-// ==================== SPIN ====================
 async function spin() {
 
     // ==========================
@@ -109,9 +108,6 @@ async function spin() {
         currentGambleWin = 0;
 
         updateUI();
-
-        // geen return
-        // direct verder met nieuwe spin
     }
 
     if (credits < bet) {
@@ -162,8 +158,79 @@ async function spin() {
         }
     }
 
-    // vanaf hier gaat je bestaande wincontrole verder...
+    const wins = checkAllPaylines();
+
+    let totalWin = 0;
+
+    if (wins.length > 0) {
+
+        wins.sort((a, b) => b.amount - a.amount);
+
+        let messages = [];
+
+        for (const win of wins) {
+
+            await highlightPayline(
+                win.line.slice(0, win.count)
+            );
+
+            messages.push(
+                `Lijn ${win.lineIndex + 1} (${win.count}x) = ${win.amount}`
+            );
+
+            totalWin += win.amount;
+
+            jackpot += 5;
+        }
+
+        messageEl.innerHTML =
+            messages.join("<br>") +
+            `<br><strong>🎉 WIN ${totalWin}!</strong>`;
+
+        await new Promise(r =>
+            setTimeout(r, 1200)
+        );
+
+        clearHighlights();
+
+        lastWin = totalWin;
+        updateUI();
+
+        currentGambleWin = totalWin;
+
+        startGamble(totalWin);
+
+    } else {
+
+        lastWin = 0;
+
+        messageEl.textContent =
+            "Geen winst...";
+
+        updateUI();
+    }
+
+    // ==========================
+    // JACKPOT
+    // ==========================
+    const jackpotWin = checkJackpot();
+
+    if (jackpotWin > 0) {
+
+        credits += jackpotWin;
+
+        messageEl.innerHTML +=
+            `<br><strong>🔥 JACKPOT! +${jackpotWin}</strong>`;
+
+        jackpot = 500;
+
+        updateUI();
+    }
+
+    spinBtn.disabled = false;
+    linesBtn.disabled = false;
 }
+
     const wins = checkAllPaylines();
 
     let totalWin = 0;
