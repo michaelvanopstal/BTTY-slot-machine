@@ -309,31 +309,31 @@ function gambleChoice(choice) {
 
         updateUI();
 
-    } else {
+else {
 
-        currentGambleWin = 0;
+    currentGambleWin = 0;
 
-        lastWin = 0;
+    lastWin = 0;
 
-        messageEl.innerHTML =
-            "❌ Verloren!";
+    messageEl.innerHTML =
+        "❌ Verloren!";
 
-        clearInterval(gambleInterval);
+    clearInterval(gambleInterval);
+    gambleInterval = null;
 
-        isGambleActive = false;
+    isGambleActive = false;
 
-        kopGambleBtn.disabled = true;
-        muntGambleBtn.disabled = true;
+    kopGambleBtn.disabled = true;
+    muntGambleBtn.disabled = true;
 
-        kopGambleBtn.classList.remove("active");
-        muntGambleBtn.classList.remove("active");
+    kopGambleBtn.classList.remove("active");
+    muntGambleBtn.classList.remove("active");
 
-        updateUI();
+    updateUI();
 
-        setTimeout(() => {
-            spin();
-        }, 500);
-    }
+    setTimeout(() => {
+        spin();
+    }, 500);
 }
 
 function checkJackpot() { /* je huidige code */ 
