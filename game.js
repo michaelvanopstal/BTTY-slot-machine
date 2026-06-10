@@ -6,6 +6,7 @@ const payouts = {
     "btty2.png": { 4: 1800 },
     "btty3.png": { 4: 1200 },
     "btty4.png": { 4: 600 },
+
     "golden.png": { 4: 0 }
 };
 
