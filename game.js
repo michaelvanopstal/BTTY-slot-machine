@@ -171,6 +171,29 @@ function checkAllPaylines() { /* je huidige code */
     return wins;
 }
 
+function finishGambleAndSpin() {
+
+    credits += currentGambleWin;
+
+    lastWin = currentGambleWin;
+
+    currentGambleWin = 0;
+    isGambleActive = false;
+
+    clearInterval(gambleInterval);
+
+    kopGambleBtn.disabled = true;
+    muntGambleBtn.disabled = true;
+
+    kopGambleBtn.classList.remove("active");
+    muntGambleBtn.classList.remove("active");
+
+    updateUI();
+
+    setTimeout(() => {
+        spin();
+    }, 200);
+}
 function checkJackpot() { /* je huidige code */ 
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
     const current = imgs.map(img => getFileName(img.src));
