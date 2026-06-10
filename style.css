@@ -229,6 +229,14 @@ body {
 #lineBtn:active {
     transform: scale(0.95);
 }
+
+.symbol.winning {
+    box-shadow:
+        0 0 20px #ffd700,
+        0 0 40px #ffeb3b;
+    border-color: #ffff00;
+    transform: scale(1.08);
+}
 /* ================= ACTIVE FLASH ================= */
 
 .gamble-btn.active {
@@ -245,3 +253,26 @@ body {
 
     filter: brightness(2);
 }
+.symbol img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* ================= REEL SPIN ================= */
+
+.symbol.spinning img {
+    animation: spin 0.12s linear infinite;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+@keyframes spin {
+    from {
+        transform: rotateX(0deg);
+    }
+    to {
+        transform: rotateX(360deg);
+    }
+}
+
