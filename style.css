@@ -69,9 +69,9 @@ h1 {
     object-fit: contain;
 }
 
-/* ================= BUTTON BAR - BETER UITGELIJND ================= */
+/* ================= BUTTON BAR ================= */
 .button-bar {
-    margin-top: 15px;          /* dichter bij de reels */
+    margin-top: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -79,60 +79,50 @@ h1 {
     flex-wrap: wrap;
 }
 
-/* Alle buttons op dezelfde hoogte */
+/* Alle buttons op dezelfde hoogte en stijl */
 #spinBtn, #linesBtn, .gamble-btn {
-    height: 58px;
+    height: 58px;           /* dezelfde hoogte */
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
 }
 
 /* SPIN */
 #spinBtn {
     width: 145px;
     font-size: 26px;
-    font-weight: bold;
     background: radial-gradient(circle, #00ff00, #00aa00);
     color: white;
     border: 4px solid white;
-    border-radius: 12px;
-    cursor: pointer;
     box-shadow: 0 6px 0 #006600;
 }
 
-#spinBtn:active {
-    transform: translateY(3px);
-    box-shadow: 0 3px 0 #006600;
-}
-
-/* LINES - kleiner en in lijn */
+/* LINES - nu goed uitgelijnd */
 #linesBtn {
-    padding: 12px 28px;
+    padding: 0 28px;
     font-size: 20px;
     background: #ffd700;
     color: black;
-    border-radius: 12px;
-    font-weight: bold;
-    min-width: 145px;
+    min-width: 155px;
 }
 
 /* Gamble knoppen */
 .gamble-btn {
-    width: 108px;
+    width: 110px;
     font-size: 20px;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
 }
 
 #kopGambleBtn { background: #ff2a2a; color: white; }
 #muntGambleBtn { background: #ffd700; color: black; }
 
+/* Actieve state */
 .gamble-btn.active {
     box-shadow: 0 0 20px white;
     transform: scale(1.08);
 }
-
 /* Message */
 #message {
     margin-top: 18px;
