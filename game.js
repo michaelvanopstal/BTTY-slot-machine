@@ -77,12 +77,9 @@ async function startGamble(winAmount) {
     kopGambleBtn.classList.remove("active");
     muntGambleBtn.classList.remove("active");
 
-    messageEl.innerHTML =
-        `💰 Winst: <strong>${currentGambleWin}</strong><br>
-        <small>
-            KLIK KOP of MUNT om te verdubbelen.<br>
-            Druk SPIN om je winst te pakken.
-        </small>`;
+   messageEl.innerHTML = `
+    💰 <strong>${currentGambleWin}</strong>
+`;
 
     let isKopLit = true;
 
@@ -147,7 +144,7 @@ async function spin() {
     }
 
     if (credits < bet) {
-        alert("Niet genoeg credits!");
+        alert("No credits!");
         return;
     }
 
@@ -294,7 +291,7 @@ function gambleChoice(choice) {
         kopGambleBtn.classList.contains("active");
 
     const winningSide =
-        kopActive ? "kop" : "munt";
+        kopActive ? "heads" : "tails";
 
     if (choice === winningSide) {
 
@@ -302,13 +299,12 @@ function gambleChoice(choice) {
 
         lastWin = currentGambleWin;
 
-        messageEl.innerHTML =
-            `🎉 Goed!<br>
-             Nieuwe winst: <strong>${currentGambleWin}</strong><br>
-             Kies opnieuw KOP/MUNT of druk SPIN om te cashen`;
+       messageEl.innerHTML = `
+    🎉 Good!<br>
+    Nieuwe winst: <strong>${currentGambleWin}</strong>
+`;
 
-        updateUI();
-
+updateUI();
     } else {
 
         currentGambleWin = 0;
@@ -378,9 +374,9 @@ spinBtn.addEventListener("click", spin);
 linesBtn.addEventListener("click", toggleLines);
 
 kopGambleBtn.addEventListener("click", () => {
-    gambleChoice("kop");
+    gambleChoice("heads");
 });
 
 muntGambleBtn.addEventListener("click", () => {
-    gambleChoice("munt");
+    gambleChoice("tails");
 });
