@@ -1,111 +1,68 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> </title>
-
-```
-<link rel="stylesheet" href="style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
-```
-
+    <title>BTTY BRC-20 SLOT MACHINE</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div class="slot-machine">
 
-```
-<!-- TOP JACKPOT DISPLAY -->
-
-<div class="jackpot-header">
-    <div class="jackpot-title">
-        ★ MEGA JACKPOT ★
+    <!-- TOP JACKPOT DISPLAY -->
+    <div class="jackpot-header">
+        <div class="jackpot-title">
+            ★ MEGA JACKPOT ★
+        </div>
+        <div class="jackpot-value">
+            <span id="jackpot">500</span>
+        </div>
     </div>
 
-    <div class="jackpot-value">
-        <span id="jackpot">500</span>
-    </div>
-</div>
-
-<!-- TITLE -->
-
-<h1>BTTY BRC-20 SLOT MACHINE</h1>
-
-<!-- SCOREBOARD -->
-
-<div class="scoreboard">
-
-    <div class="score-box">
-        <div class="label">CREDITS</div>
-        <div class="value" id="credits">5000</div>
-    </div>
-
-    <div class="score-box">
-        <div class="label">BET</div>
-        <div class="value" id="bet">100</div>
+    <!-- SCOREBOARD -->
+    <div class="scoreboard">
+        <div class="score-box">
+            <div class="label">CREDITS</div>
+            <div class="value" id="credits">5000</div>
+        </div>
+        <div class="score-box">
+            <div class="label">BET</div>
+            <div class="value" id="bet">100</div>
+        </div>
+        <div class="score-box">
+            <div class="label">LINES</div>
+            <div class="value" id="lines">5</div>
+        </div>
+        <div class="score-box">
+            <div class="label">WIN</div>
+            <div class="value" id="win">0</div>
+        </div>
     </div>
 
-    <div class="score-box">
-        <div class="label">LINES</div>
-        <div class="value" id="lines">5</div>
+    <!-- SLOT WINDOW -->
+    <div class="slot-window">
+        <div class="reels" id="reels"></div>
     </div>
 
-    <div class="score-box">
-        <div class="label">WIN</div>
-        <div class="value" id="win">0</div>
+    <!-- MESSAGE -->
+    <div id="message"></div>
+
+    <!-- BUTTONS -->
+    <div class="button-bar">
+        <button id="kopGambleBtn" class="gamble-btn">HEADS</button>
+        <button id="spinBtn">SPIN</button>
+        <button id="muntGambleBtn" class="gamble-btn">TAILS</button>
     </div>
 
-</div>
-
-<!-- SLOT WINDOW -->
-
-<div class="slot-window">
-
-    <div class="reels" id="reels"></div>
-
-</div>
-
-<!-- MESSAGE -->
-
-<div id="message">
-
-</div>
-
-<!-- BUTTONS -->
-
-<div class="button-bar">
-
-    <button id="kopGambleBtn" class="gamble-btn">
-        heads
-    </button>
-
-    <button id="spinBtn">
-        SPIN
-    </button>
-
-    <button id="muntGambleBtn" class="gamble-btn">
-        tails
-    </button>
-
-</div>
-
-<!-- LINES BUTTON -->
-
-<div class="lines-wrapper">
-
-    <button id="linesBtn">
-        LINES: <strong>5</strong>
-    </button>
-
-</div>
-```
+    <!-- LINES BUTTON -->
+    <div class="lines-wrapper">
+        <button id="linesBtn">LINES: <strong>5</strong></button>
+    </div>
 
 </div>
 
 <script src="game.js"></script>
-
 </body>
 </html>
