@@ -1,109 +1,316 @@
 body {
     margin: 0;
-    background: #0a0a0a;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at center,
+            #2b2b2b 0%,
+            #111 50%,
+            #000 100%);
     color: white;
     font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
 
 .slot-machine {
-    width: 880px;
-    background: #1a1a2e;
-    border: 10px solid #ffd700;
-    border-radius: 25px;
+    width: 950px;
+    background:
+        linear-gradient(
+            180deg,
+            #5c0000 0%,
+            #2b0000 30%,
+            #120000 100%
+        );
+
+    border: 12px solid #ffd700;
+    border-radius: 35px;
     padding: 25px;
-    text-align: center;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+
+    box-shadow:
+        0 0 20px #ffd700,
+        0 0 40px #ffcc00,
+        0 0 80px rgba(255,215,0,.4);
+
+    position: relative;
 }
 
-h1 { color: #ffd700; margin-bottom: 10px; }
+.slot-machine::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+
+    border-radius: 40px;
+
+    box-shadow:
+        inset 0 0 25px rgba(255,255,255,.15),
+        inset 0 0 50px rgba(255,215,0,.3);
+
+    pointer-events: none;
+}
+
+h1 {
+    margin: 0 0 15px;
+    font-size: 46px;
+    color: #ffd700;
+    text-shadow:
+        0 0 10px #ffd700,
+        0 0 25px #ffcc00;
+}
+
+/* ================= DISPLAY ================= */
 
 .scoreboard {
     display: flex;
     justify-content: space-around;
-    background: rgba(0,0,0,0.5);
-    padding: 12px;
-    border-radius: 12px;
+
     margin-bottom: 20px;
-    font-size: 23px;
+
+    background: #000;
+
+    border: 4px solid #ffd700;
+
+    border-radius: 15px;
+
+    padding: 15px;
+
+    box-shadow:
+        inset 0 0 20px rgba(0,255,0,.25);
+
+    font-size: 24px;
+    font-weight: bold;
+
+    color: #00ff66;
+    text-shadow: 0 0 8px #00ff66;
 }
 
+/* ================= REELS ================= */
+
 .reels {
+    position: relative;
+
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(3, 1fr);
+
     gap: 12px;
-    background: #000;
-    padding: 15px;
-    border-radius: 15px;
+
+    padding: 18px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #111,
+            #000
+        );
+
+    border: 6px solid #ffd700;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.reels::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255,255,255,.18),
+            transparent 30%,
+            transparent 70%,
+            rgba(0,0,0,.25)
+        );
+
+    pointer-events: none;
 }
 
 .symbol {
     width: 145px;
     height: 145px;
-    background: #222;
-    border: 6px solid #ffd700;
-    border-radius: 15px;
+
+    background:
+        radial-gradient(
+            circle,
+            #444 0%,
+            #111 100%
+        );
+
+    border: 4px solid #999;
+
+    border-radius: 16px;
+
     overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow:
+        inset 0 0 15px rgba(255,255,255,.15);
 }
+
+.symbol img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* ================= WIN EFFECT ================= */
 
 .symbol.winning {
-    box-shadow: 0 0 20px #ffd700, 0 0 40px #ffeb3b;
     border-color: #ffff00;
-    transform: scale(1.1);
+
+    box-shadow:
+        0 0 15px #ffff00,
+        0 0 30px #ffff00,
+        0 0 50px #ffd700;
+
+    transform: scale(1.08);
 }
 
+/* ================= BUTTONS ================= */
+
 .button-bar {
-    margin: 25px 0;
+    margin-top: 25px;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 12px;
+
+    gap: 20px;
     flex-wrap: wrap;
 }
 
-button {
-    padding: 16px 70px;
-    font-size: 28px;
+/* SPIN KNOP */
+
+#spinBtn {
+    width: 170px;
+    height: 170px;
+
+    border-radius: 50%;
+
+    border: 6px solid white;
+
+    background:
+        radial-gradient(
+            circle,
+            #00ff00 0%,
+            #00aa00 70%,
+            #006600 100%
+        );
+
+    color: white;
+
+    font-size: 34px;
     font-weight: bold;
-    background: #ffd700;
-    color: black;
-    border: none;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 20px #00ff00,
+        0 0 40px #00ff00,
+        inset 0 0 25px rgba(255,255,255,.35);
+
+    transition: .1s;
+}
+
+#spinBtn:hover {
+    transform: scale(1.05);
+}
+
+#spinBtn:active {
+    transform: scale(.95);
+}
+
+/* LINES */
+
+#linesBtn {
+    padding: 18px 40px;
+
+    font-size: 24px;
+
     border-radius: 12px;
+
+    border: none;
+
+    background: #ffd700;
+
+    color: black;
+
+    font-weight: bold;
+
     cursor: pointer;
 }
+
+/* GAMBLE */
 
 .gamble-btn {
-    padding: 14px 32px;
-    font-size: 20px;
+    width: 140px;
+    height: 80px;
+
+    font-size: 26px;
     font-weight: bold;
+
+    border-radius: 14px;
+
     border: none;
-    border-radius: 10px;
+
     cursor: pointer;
+
+    transition: .15s;
 }
 
-#kopGambleBtn { background: #ff4444; color: white; }
-#muntGambleBtn { background: #ffd700; color: black; }
-
-.gamble-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.gamble-btn.active { animation: flicker 0.1s infinite alternate; }
-
-@keyframes spin {
-    from { transform: rotateX(0deg); }
-    to { transform: rotateX(360deg); }
+#kopGambleBtn {
+    background: #ff2a2a;
+    color: white;
 }
 
-@keyframes flicker {
-    from { opacity: 0.5; transform: scale(1); }
-    to { opacity: 1; transform: scale(1.12); }
+#muntGambleBtn {
+    background: #ffd700;
+    color: black;
 }
+
+.gamble-btn.active {
+    box-shadow:
+        0 0 15px white,
+        0 0 30px white,
+        0 0 50px white;
+
+    transform: scale(1.12);
+}
+
+.gamble-btn:disabled {
+    opacity: .35;
+}
+
+/* ================= MESSAGE ================= */
 
 #message {
     margin-top: 20px;
-    font-size: 26px;
+
+    min-height: 90px;
+
+    font-size: 28px;
+
     color: #ffd700;
-    min-height: 80px;
+
+    text-shadow:
+        0 0 10px #ffd700;
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes spin {
+    from {
+        transform: rotateX(0deg);
+    }
+
+    to {
+        transform: rotateX(360deg);
+    }
 }
