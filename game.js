@@ -326,9 +326,7 @@ function gambleChoice(choice) {
         lastWin = currentGambleWin;
 
         messageEl.innerHTML =
-            `🎉 Goed!<br>
-             Nieuwe winst: <strong>${currentGambleWin}</strong><br>
-             Kies opnieuw KOP/MUNT of druk SPIN om te cashen`;
+            `🎉 Goed! Nieuwe winst: ${currentGambleWin}`;
 
         updateUI();
 
@@ -342,7 +340,6 @@ function gambleChoice(choice) {
             "❌ Verloren!";
 
         clearInterval(gambleInterval);
-        gambleInterval = null;
 
         isGambleActive = false;
 
@@ -407,3 +404,4 @@ kopGambleBtn.addEventListener("click", () => {
 muntGambleBtn.addEventListener("click", () => {
     gambleChoice("munt");
 });
+
