@@ -206,7 +206,7 @@ async function spin() {
         // winst NIET naar credits
         currentGambleWin = totalWin;
 
-        await startGamble(totalWin);
+      startGamble(totalWin);
 
     } else {
 
