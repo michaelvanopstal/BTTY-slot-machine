@@ -171,6 +171,53 @@ function checkAllPaylines() { /* je huidige code */
     return wins;
 }
 
+function gambleChoice(choice) {
+
+    if (!isGambleActive) return;
+
+    const kopActive =
+        kopGambleBtn.classList.contains("active");
+
+    const winningSide =
+        kopActive ? "kop" : "munt";
+
+    if (choice === winningSide) {
+
+        currentGambleWin *= 2;
+
+        lastWin = currentGambleWin;
+
+        messageEl.innerHTML =
+            `🎉 Goed! Nieuwe winst: ${currentGambleWin}`;
+
+        updateUI();
+
+    } else {
+
+        currentGambleWin = 0;
+
+        lastWin = 0;
+
+        messageEl.innerHTML =
+            "❌ Verloren!";
+
+        clearInterval(gambleInterval);
+
+        isGambleActive = false;
+
+        kopGambleBtn.disabled = true;
+        muntGambleBtn.disabled = true;
+
+        kopGambleBtn.classList.remove("active");
+        muntGambleBtn.classList.remove("active");
+
+        updateUI();
+
+        setTimeout(() => {
+            spin();
+        }, 500);
+    }
+}
 function finishGambleAndSpin() {
 
     credits += currentGambleWin;
