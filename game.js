@@ -79,80 +79,160 @@ async function startGamble(winAmount) {
 
 // ==================== SPIN ====================
 async function spin() {
-    if (credits < bet) { alert("Niet genoeg credits!"); return; }
 
-    // === GAMBLE MODE ===
+    // ==========================
+    // CASH OUT VAN GAMBLE
+    // ==========================
     if (isGambleActive) {
+
         clearInterval(gambleInterval);
-        kopGambleBtn.disabled = muntGambleBtn.disabled = true;
+
+        kopGambleBtn.disabled = true;
+        muntGambleBtn.disabled = true;
+
         kopGambleBtn.classList.remove("active");
         muntGambleBtn.classList.remove("active");
+
         isGambleActive = false;
 
         credits += currentGambleWin;
         lastWin = currentGambleWin;
+
+        messageEl.innerHTML =
+            `✅ Winst van ${currentGambleWin} opgenomen!`;
+
+        currentGambleWin = 0;
+
         updateUI();
-        messageEl.textContent = `✅ Winst van ${currentGambleWin} opgenomen!`;
-        spinBtn.disabled = linesBtn.disabled = false;
+
         return;
     }
 
-    // Normale spin
-    spinBtn.disabled = linesBtn.disabled = true;
+    // ==========================
+    // NORMALE SPIN
+    // ==========================
+    if (credits < bet) {
+        alert("Niet genoeg credits!");
+        return;
+    }
+
+    spinBtn.disabled = true;
+    linesBtn.disabled = true;
+
     credits -= bet;
+
     updateUI();
 
     messageEl.textContent = "SPINNING...";
+
     clearHighlights();
 
-    const allImgs = document.querySelectorAll(".symbol img");
-    allImgs.forEach(img => img.style.animation = "spin 0.08s linear infinite");
+    const allImgs =
+        document.querySelectorAll(".symbol img");
+
+    allImgs.forEach(img => {
+        img.style.animation =
+            "spin 0.08s linear infinite";
+    });
 
     const delays = [600, 1000, 1450];
+
     for (let r = 0; r < 3; r++) {
-        await new Promise(res => setTimeout(res, delays[r]));
+
+        await new Promise(res =>
+            setTimeout(res, delays[r])
+        );
+
         const start = r * 4;
+
         for (let i = 0; i < 4; i++) {
-            allImgs[start + i].style.animation = "none";
-            allImgs[start + i].src = Math.random() < 0.08 ? "golden.png" : symbolNames[Math.floor(Math.random() * 4)];
+
+            allImgs[start + i].style.animation =
+                "none";
+
+            allImgs[start + i].src =
+                Math.random() < 0.08
+                    ? "golden.png"
+                    : symbolNames[
+                        Math.floor(Math.random() * 4)
+                    ];
         }
     }
 
     const wins = checkAllPaylines();
+
     let totalWin = 0;
 
     if (wins.length > 0) {
+
         wins.sort((a, b) => b.amount - a.amount);
+
         let messages = [];
+
         for (const win of wins) {
-            await highlightPayline(win.line.slice(0, win.count));
-            messages.push(`Lijn ${win.lineIndex + 1} (${win.count}x) = ${win.amount}`);
+
+            await highlightPayline(
+                win.line.slice(0, win.count)
+            );
+
+            messages.push(
+                `Lijn ${win.lineIndex + 1} (${win.count}x) = ${win.amount}`
+            );
+
             totalWin += win.amount;
+
             jackpot += 5;
         }
 
-        messageEl.innerHTML = messages.join("<br>") + `<br><strong>🎉 WIN ${totalWin}!</strong>`;
-        await new Promise(r => setTimeout(r, 1200));
+        messageEl.innerHTML =
+            messages.join("<br>") +
+            `<br><strong>🎉 WIN ${totalWin}!</strong>`;
+
+        await new Promise(r =>
+            setTimeout(r, 1200)
+        );
+
         clearHighlights();
 
+        lastWin = totalWin;
+        updateUI();
+
+        // BELANGRIJK:
+        // winst NIET naar credits
+        currentGambleWin = totalWin;
+
         await startGamble(totalWin);
+
     } else {
-        messageEl.textContent = "Geen winst...";
+
+        lastWin = 0;
+
+        messageEl.textContent =
+            "Geen winst...";
+
+        updateUI();
     }
 
+    // ==========================
+    // JACKPOT
+    // ==========================
     const jackpotWin = checkJackpot();
+
     if (jackpotWin > 0) {
+
         credits += jackpotWin;
-        messageEl.innerHTML += `<br><strong>🔥 JACKPOT! +${jackpotWin}</strong>`;
+
+        messageEl.innerHTML +=
+            `<br><strong>🔥 JACKPOT! +${jackpotWin}</strong>`;
+
         jackpot = 500;
+
+        updateUI();
     }
 
-    credits += totalWin;
-    lastWin = totalWin;
-    updateUI();
-    spinBtn.disabled = linesBtn.disabled = false;
+    spinBtn.disabled = false;
+    linesBtn.disabled = false;
 }
-
 // ==================== OVERIGE FUNCTIES ====================
 function checkAllPaylines() { /* je huidige code */ 
     const imgs = Array.from(document.querySelectorAll(".symbol img"));
