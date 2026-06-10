@@ -10,16 +10,14 @@ body {
 }
 
 .slot-machine {
-    width: 820px;
+    width: 800px;           /* iets smaller */
     background: linear-gradient(180deg, #5c0000 0%, #2b0000 30%, #120000 100%);
-    border: 12px solid #ffd700;
-    border-radius: 30px;
-    padding: 18px 20px 12px;
+    border: 10px solid #ffd700;
+    border-radius: 25px;
+    padding: 15px;
     box-shadow: 0 0 20px #ffd700, 0 0 40px #ffcc00;
-    position: relative;
 }
 
-/* ================= JACKPOT HEADER ================= */
 /* ================= JACKPOT HEADER ================= */
 .jackpot-header {
     display: flex;
@@ -27,25 +25,22 @@ body {
     align-items: center;
     background: #000;
     border: 3px solid #ffd700;
-    border-radius: 12px;
-    padding: 10px 20px;
-    margin-bottom: 16px;
+    border-radius: 10px;
+    padding: 8px 16px;
+    margin-bottom: 12px;
 }
 
 .jackpot-title {
-    font-size: 24px;
+    font-size: 20px;
+    color: #ffd700;
     font-weight: bold;
-    color: white;
-    text-shadow: 0 0 10px #ffd700;
-    white-space: nowrap;
 }
 
 .jackpot-value {
-    font-size: 38px;
+    font-size: 36px;
     font-weight: bold;
     color: #00ff66;
-    text-shadow: 0 0 15px #00ff66;
-    letter-spacing: 2px;
+    text-shadow: 0 0 12px #00ff66;
 }
 
 /* ================= SCOREBOARD ================= */
@@ -53,34 +48,33 @@ body {
     display: flex;
     justify-content: space-around;
     background: #000;
-    border: 4px solid #ffd700;
-    border-radius: 12px;
-    padding: 12px;
-    margin-bottom: 16px;
-    font-size: 21px;
+    border: 3px solid #ffd700;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 14px;
+    font-size: 19px;
     font-weight: bold;
     color: #00ff66;
 }
 
-/* ================= REELS ================= */
+/* ================= REELS - KLEINER ================= */
 .reels {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 10px;
-    padding: 14px;
+    gap: 8px;
+    padding: 12px;
     background: #0a0a0a;
-    border: 6px solid #ffd700;
-    border-radius: 18px;
-    overflow: hidden;
+    border: 5px solid #ffd700;
+    border-radius: 16px;
 }
 
 .symbol {
-    width: 128px;
-    height: 128px;
+    width: 115px;           /* kleiner gemaakt */
+    height: 115px;
     background: radial-gradient(circle, #444 0%, #111 100%);
     border: 4px solid #999;
-    border-radius: 14px;
+    border-radius: 12px;
     overflow: hidden;
 }
 
@@ -90,7 +84,7 @@ body {
     object-fit: contain;
 }
 
-/* ================= BUTTONS - ALLE OP ÉÉN LIJN ================= */
+/* ================= BUTTONS - COMPACT ================= */
 .button-bar {
     margin-top: 12px;
     display: flex;
@@ -101,44 +95,40 @@ body {
 }
 
 #spinBtn, #linesBtn, .gamble-btn {
-    height: 56px;
+    height: 54px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    border-radius: 12px;
-    cursor: pointer;
 }
 
 #spinBtn {
-    width: 140px;
-    font-size: 26px;
+    width: 135px;
+    font-size: 24px;
     background: radial-gradient(circle, #00ff00, #00aa00);
     color: white;
     border: 4px solid white;
 }
 
 #linesBtn {
-    padding: 0 24px;
-    font-size: 19px;
+    padding: 0 22px;
+    font-size: 18px;
     background: #ffd700;
     color: black;
-    min-width: 140px;
 }
 
 .gamble-btn {
-    width: 105px;
+    width: 100px;
     font-size: 19px;
 }
 
 #kopGambleBtn { background: #ff2a2a; color: white; }
 #muntGambleBtn { background: #ffd700; color: black; }
 
-/* ================= MESSAGE ================= */
+/* Message */
 #message {
     margin-top: 12px;
-    min-height: 60px;
-    font-size: 26px;
+    min-height: 50px;
+    font-size: 24px;
     color: #ffd700;
     text-align: center;
 }
@@ -152,5 +142,5 @@ body {
 .symbol.winning {
     border-color: #ffff00;
     box-shadow: 0 0 20px #ffff00, 0 0 40px #ffd700;
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
