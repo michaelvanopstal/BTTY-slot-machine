@@ -1,38 +1,111 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BTTY BRC-20 SLOT MACHINE</title>
-    <link rel="stylesheet" href="style.css">
+
+```
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+```
+
 </head>
 <body>
 
-  <div class="slot-machine">
-    <h1>BTTY BRC-20 SLOT MACHINE</h1>
+<div class="slot-machine">
 
-    <div class="scoreboard">
-        <div>Credits: <span id="credits">5000</span></div>
-        <div>Bet: <span id="bet">100</span></div>
-        <div>Lines: <span id="lines">5</span></div>
-        <div>Win: <span id="win">0</span></div>
-        <div style="color: gold; font-weight: bold;">
-            JACKPOT: <span id="jackpot">500</span>
-        </div>
+```
+<!-- TOP JACKPOT DISPLAY -->
+
+<div class="jackpot-header">
+    <div class="jackpot-title">
+        ★ MEGA JACKPOT ★
     </div>
+
+    <div class="jackpot-value">
+        <span id="jackpot">500</span>
+    </div>
+</div>
+
+<!-- TITLE -->
+
+<h1>BTTY BRC-20 SLOT MACHINE</h1>
+
+<!-- SCOREBOARD -->
+
+<div class="scoreboard">
+
+    <div class="score-box">
+        <div class="label">CREDITS</div>
+        <div class="value" id="credits">5000</div>
+    </div>
+
+    <div class="score-box">
+        <div class="label">BET</div>
+        <div class="value" id="bet">100</div>
+    </div>
+
+    <div class="score-box">
+        <div class="label">LINES</div>
+        <div class="value" id="lines">5</div>
+    </div>
+
+    <div class="score-box">
+        <div class="label">WIN</div>
+        <div class="value" id="win">0</div>
+    </div>
+
+</div>
+
+<!-- SLOT WINDOW -->
+
+<div class="slot-window">
 
     <div class="reels" id="reels"></div>
 
-    <div class="button-bar">
-        <button id="spinBtn">SPIN</button>
-        <button id="linesBtn">LINES: <strong>5</strong></button>
-        <button id="kopGambleBtn" class="gamble-btn">KOP</button>
-        <button id="muntGambleBtn" class="gamble-btn">MUNT</button>
-    </div>
+</div>
 
-    <div id="message"></div>
+<!-- MESSAGE -->
+
+<div id="message">
+    WELCOME TO BTTY SLOT MACHINE
+</div>
+
+<!-- BUTTONS -->
+
+<div class="button-bar">
+
+    <button id="kopGambleBtn" class="gamble-btn">
+        KOP
+    </button>
+
+    <button id="spinBtn">
+        SPIN
+    </button>
+
+    <button id="muntGambleBtn" class="gamble-btn">
+        MUNT
+    </button>
+
+</div>
+
+<!-- LINES BUTTON -->
+
+<div class="lines-wrapper">
+
+    <button id="linesBtn">
+        LINES: <strong>5</strong>
+    </button>
+
+</div>
+```
+
 </div>
 
 <script src="game.js"></script>
+
 </body>
 </html>
