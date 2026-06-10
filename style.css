@@ -1,11 +1,7 @@
 body {
     margin: 0;
     min-height: 100vh;
-    background:
-        radial-gradient(circle at center,
-            #2b2b2b 0%,
-            #111 50%,
-            #000 100%);
+    background: radial-gradient(circle at center, #2b2b2b 0%, #111 50%, #000 100%);
     color: white;
     font-family: Arial, sans-serif;
     display: flex;
@@ -14,144 +10,57 @@ body {
 }
 
 .slot-machine {
-    width: 950px;
-    background:
-        linear-gradient(
-            180deg,
-            #5c0000 0%,
-            #2b0000 30%,
-            #120000 100%
-        );
-
+    width: 820px;           /* iets smaller */
+    background: linear-gradient(180deg, #5c0000 0%, #2b0000 30%, #120000 100%);
     border: 12px solid #ffd700;
-    border-radius: 35px;
-    padding: 25px;
-
-    box-shadow:
-        0 0 20px #ffd700,
-        0 0 40px #ffcc00,
-        0 0 80px rgba(255,215,0,.4);
-
+    border-radius: 30px;
+    padding: 20px;
+    box-shadow: 0 0 20px #ffd700, 0 0 40px #ffcc00;
     position: relative;
-}
-
-.slot-machine::before {
-    content: "";
-    position: absolute;
-    inset: -8px;
-
-    border-radius: 40px;
-
-    box-shadow:
-        inset 0 0 25px rgba(255,255,255,.15),
-        inset 0 0 50px rgba(255,215,0,.3);
-
-    pointer-events: none;
 }
 
 h1 {
-    margin: 0 0 15px;
-    font-size: 46px;
+    margin: 0 0 12px;
+    font-size: 38px;
     color: #ffd700;
-    text-shadow:
-        0 0 10px #ffd700,
-        0 0 25px #ffcc00;
+    text-shadow: 0 0 10px #ffd700;
 }
 
-/* ================= DISPLAY ================= */
-
+/* Scoreboard */
 .scoreboard {
     display: flex;
     justify-content: space-around;
-
-    margin-bottom: 20px;
-
     background: #000;
-
     border: 4px solid #ffd700;
-
-    border-radius: 15px;
-
-    padding: 15px;
-
-    box-shadow:
-        inset 0 0 20px rgba(0,255,0,.25);
-
-    font-size: 24px;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 18px;
+    font-size: 22px;
     font-weight: bold;
-
     color: #00ff66;
-    text-shadow: 0 0 8px #00ff66;
 }
 
-/* ================= REELS ================= */
-
+/* Reels - compacter */
 .reels {
-    position: relative;
-
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(3, 1fr);
-
-    gap: 12px;
-
-    padding: 18px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #111,
-            #000
-        );
-
+    gap: 10px;
+    padding: 15px;
+    background: #0a0a0a;
     border: 6px solid #ffd700;
-
-    border-radius: 20px;
-
+    border-radius: 18px;
     overflow: hidden;
-}
-
-.reels::after {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(255,255,255,.18),
-            transparent 30%,
-            transparent 70%,
-            rgba(0,0,0,.25)
-        );
-
-    pointer-events: none;
 }
 
 .symbol {
-    width: 145px;
-    height: 145px;
-
-    background:
-        radial-gradient(
-            circle,
-            #444 0%,
-            #111 100%
-        );
-
+    width: 130px;
+    height: 130px;
+    background: radial-gradient(circle, #444 0%, #111 100%);
     border: 4px solid #999;
-
-    border-radius: 16px;
-
+    border-radius: 14px;
     overflow: hidden;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    box-shadow:
-        inset 0 0 15px rgba(255,255,255,.15);
+    box-shadow: inset 0 0 12px rgba(255,255,255,.15);
 }
 
 .symbol img {
@@ -160,157 +69,76 @@ h1 {
     object-fit: contain;
 }
 
-/* ================= WIN EFFECT ================= */
-
-.symbol.winning {
-    border-color: #ffff00;
-
-    box-shadow:
-        0 0 15px #ffff00,
-        0 0 30px #ffff00,
-        0 0 50px #ffd700;
-
-    transform: scale(1.08);
-}
-
-/* ================= BUTTONS ================= */
-
+/* Buttons - compacter en hoger */
 .button-bar {
-    margin-top: 25px;
-
+    margin-top: 18px;     /* dichter bij de reels */
     display: flex;
     justify-content: center;
     align-items: center;
-
-    gap: 20px;
+    gap: 12px;
     flex-wrap: wrap;
 }
 
-/* SPIN KNOP */
-
 #spinBtn {
-    width: 170px;
-    height: 170px;
-
-    border-radius: 50%;
-
-    border: 6px solid white;
-
-    background:
-        radial-gradient(
-            circle,
-            #00ff00 0%,
-            #00aa00 70%,
-            #006600 100%
-        );
-
-    color: white;
-
-    font-size: 34px;
+    width: 140px;
+    height: 62px;
+    font-size: 26px;
     font-weight: bold;
-
+    background: radial-gradient(circle, #00ff00, #00aa00);
+    color: white;
+    border: 4px solid white;
+    border-radius: 12px;
     cursor: pointer;
-
-    box-shadow:
-        0 0 20px #00ff00,
-        0 0 40px #00ff00,
-        inset 0 0 25px rgba(255,255,255,.35);
-
-    transition: .1s;
-}
-
-#spinBtn:hover {
-    transform: scale(1.05);
+    box-shadow: 0 6px 0 #006600;
 }
 
 #spinBtn:active {
-    transform: scale(.95);
+    transform: translateY(3px);
+    box-shadow: 0 3px 0 #006600;
 }
-
-/* LINES */
 
 #linesBtn {
-    padding: 18px 40px;
-
-    font-size: 24px;
-
-    border-radius: 12px;
-
-    border: none;
-
+    padding: 16px 35px;
+    font-size: 22px;
     background: #ffd700;
-
     color: black;
-
-    font-weight: bold;
-
-    cursor: pointer;
+    border-radius: 12px;
 }
-
-/* GAMBLE */
 
 .gamble-btn {
-    width: 140px;
-    height: 80px;
-
-    font-size: 26px;
+    width: 110px;
+    height: 58px;
+    font-size: 20px;
     font-weight: bold;
-
-    border-radius: 14px;
-
-    border: none;
-
+    border-radius: 10px;
     cursor: pointer;
-
-    transition: .15s;
 }
 
-#kopGambleBtn {
-    background: #ff2a2a;
-    color: white;
-}
-
-#muntGambleBtn {
-    background: #ffd700;
-    color: black;
-}
+#kopGambleBtn { background: #ff2a2a; color: white; }
+#muntGambleBtn { background: #ffd700; color: black; }
 
 .gamble-btn.active {
-    box-shadow:
-        0 0 15px white,
-        0 0 30px white,
-        0 0 50px white;
-
-    transform: scale(1.12);
+    box-shadow: 0 0 20px white;
+    transform: scale(1.08);
 }
 
-.gamble-btn:disabled {
-    opacity: .35;
-}
-
-/* ================= MESSAGE ================= */
-
+/* Message */
 #message {
-    margin-top: 20px;
-
-    min-height: 90px;
-
-    font-size: 28px;
-
+    margin-top: 18px;
+    min-height: 70px;
+    font-size: 26px;
     color: #ffd700;
-
-    text-shadow:
-        0 0 10px #ffd700;
+    text-align: center;
 }
 
-/* ================= ANIMATIONS ================= */
-
+/* Animaties */
 @keyframes spin {
-    from {
-        transform: rotateX(0deg);
-    }
+    from { transform: rotateX(0deg); }
+    to { transform: rotateX(360deg); }
+}
 
-    to {
-        transform: rotateX(360deg);
-    }
+.symbol.winning {
+    border-color: #ffff00;
+    box-shadow: 0 0 20px #ffff00, 0 0 40px #ffd700;
+    transform: scale(1.1);
 }
