@@ -97,12 +97,11 @@ h1 {
     box-shadow: 0 3px 0 #006600;
 }
 
+/* LINES knop */
 #linesBtn {
-    padding: 16px 35px;
-    font-size: 22px;
-    background: #ffd700;
-    color: black;
-    border-radius: 12px;
+    padding: 16px 32px;
+    font-size: 21px;
+    min-width: 160px;
 }
 
 .gamble-btn {
