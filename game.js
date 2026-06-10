@@ -240,7 +240,7 @@ async function spin() {
         lastWin = 0;
 
         messageEl.textContent =
-            "Geen winst...";
+            "no profit...";
 
         updateUI();
     }
