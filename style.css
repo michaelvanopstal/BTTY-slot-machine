@@ -242,8 +242,8 @@ body {
 
     position: absolute;
 
-    top: 720px;
-    left: 320px;
+    top: 680px;
+    left: 280px;
 
     transform: scale(1);
     transition: transform 0.12s ease;
@@ -261,8 +261,8 @@ body {
 
     position: absolute;
 
-    top: 720px;
-    left: 620px;
+    top: 680px;
+    left: 580px;
 
     transform: scale(1);
     transition: transform 0.12s ease;
