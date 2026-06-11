@@ -60,28 +60,55 @@ body {
 /* ================= REELS - KLEINER ================= */
 .reels {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    gap: 4px;
+
+    /* 4 kolommen van 115px */
+    grid-template-columns: repeat(4, 115px);
+
+    /* 3 rijen van 115px */
+    grid-template-rows: repeat(3, 115px);
+
+    gap: 8px;
+
+    justify-content: center;
+    align-content: center;
+
     padding: 8px;
+
     background: #0a0a0a;
     border: 5px solid #ffd700;
     border-radius: 16px;
+
+    margin: 0 auto;
 }
 
 .symbol {
-    width: 115px;           /* kleiner gemaakt */
+    width: 115px;
     height: 115px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     background: radial-gradient(circle, #444 0%, #111 100%);
+
     border: 4px solid #999;
     border-radius: 12px;
+
     overflow: hidden;
+
+    box-sizing: border-box;
 }
 
 .symbol img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    display: block;
+}
+.slot-window {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* ================= BUTTONS - COMPACT ================= */
