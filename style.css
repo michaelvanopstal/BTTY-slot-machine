@@ -229,7 +229,7 @@ body {
 
     position: absolute;
 
-    top: 660px;   /* ← jij bepaalt */
+    top: 650px;   /* ← jij bepaalt */
     left: 405px;  /* ← jij bepaalt */
 
     transform: scale(1);
@@ -290,8 +290,8 @@ body {
 
 
 #linesBtn {
-    width: 165px;
-    height: 135px;
+    width: 170px;
+    height: 140px;
 
     background: url("lines.png") center center no-repeat;
     background-size: contain;
