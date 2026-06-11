@@ -338,4 +338,11 @@ kopGambleBtn.addEventListener("click", () => {
 muntGambleBtn.addEventListener("click", () => {
     gambleChoice("munt");
 });
+spinBtn.addEventListener("click", () => {
+    spinBtn.style.transform = "scale(0.9)";
+
+    setTimeout(() => {
+        spinBtn.style.transform = "scale(1)";
+    }, 120);
+});
 
