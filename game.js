@@ -312,7 +312,7 @@ function updateUI() {
 }
 
 function updateLinesButton() {
-    linesBtn.innerHTML = `LINES: <strong>${numLines}</strong>`;
+    linesBtn.innerHTML = "";
 }
 
 function toggleLines() {
