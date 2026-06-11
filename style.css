@@ -221,24 +221,6 @@ body {
 /* ================= HEADS / TAILS ================= */
 
 
-.gamble-btn {
-    width: 110px;
-    height: 110px;
-
-    background: transparent;
-    border: none;
-
-    cursor: pointer;
-
-    color: transparent;
-    font-size: 0;
-
-    outline: none;
-
-    appearance: none;
-    -webkit-appearance: none;
-}
-
 #kopGambleBtn {
     width: 150px;
     height: 150px;
