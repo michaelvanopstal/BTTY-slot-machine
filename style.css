@@ -214,8 +214,8 @@ body {
 /* ================= BUTTONS ================= */
 
 #spinBtn {
-    width: 165px;
-    height: 165px;
+    width: 175px;
+    height: 175px;
 
     background: url("spin.png") center center no-repeat;
     background-size: contain;
@@ -226,12 +226,13 @@ body {
     cursor: pointer;
 
     transition: transform 0.12s ease;
-}
-#spinBtn:hover {
-    transform: scale(1.03);
-}
-#spinBtn:active {
-    transform: scale(0.92);
+
+    position: absolute;
+
+    left: 50%;
+    bottom: 80px;
+
+    transform: translateX(-50%);
 }
 /* ================= HEADS / TAILS ================= */
 
