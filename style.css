@@ -139,9 +139,9 @@ body {
     justify-content: center;
     align-items: center;
 
-    background: rgba(0,0,0,0.20);
+    background: rgba: #A87C43;
 
-    border: 3px solid #999;
+    border: 3px solid: #A87C43;
     border-radius: 12px;
 
     overflow: hidden;
