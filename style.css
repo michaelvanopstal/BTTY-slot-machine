@@ -231,8 +231,8 @@ body {
 }
 
 #kopGambleBtn {
-    width: 150px;
-    height: 150px;
+    width: 140px;
+    height: 140px;
 
     background: url("heads.png") center center no-repeat;
     background-size: contain;
@@ -242,8 +242,8 @@ body {
 
     position: absolute;
 
-    top: 680px;
-    left: 280px;
+    top: 690px;
+    left: 270px;
 
     transform: scale(1);
     transition: transform 0.12s ease;
@@ -261,8 +261,8 @@ body {
 
     position: absolute;
 
-    top: 680px;
-    left: 580px;
+    top: 690px;
+    left: 590px;
 
     transform: scale(1);
     transition: transform 0.12s ease;
