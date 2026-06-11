@@ -35,7 +35,7 @@ body {
 .jackpot-header {
     position: absolute;
 
-    top: 105px;
+    top: 150px;
     left: 230px;
 
     width: 540px;
@@ -71,8 +71,8 @@ body {
 .scoreboard {
     position: absolute;
 
-    top: 200px;
-    left: 190px;
+    top: 250px;
+    left: 200px;
 
     width: 700px;
 
