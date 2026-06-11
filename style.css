@@ -255,7 +255,7 @@ body {
     position: absolute;
 
     top: 690px;
-    left: 270px;
+    left: 265px;
 
     transform: scale(1);
     transition: transform 0.12s ease;
@@ -297,8 +297,8 @@ body {
 
     position: absolute;
 
-    top: 720px;   /* zelf aanpassen */
-    left: 30px;   /* zelf aanpassen */
+    top: 690px;   /* zelf aanpassen */
+    left: 60px;   /* zelf aanpassen */
 
     transform: scale(1);
 
