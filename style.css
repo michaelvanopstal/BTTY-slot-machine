@@ -193,7 +193,19 @@ body {
     z-index: 50;
 }
 
+#spinBtn:active,
+#linesBtn:active,
+#kopGambleBtn:active,
+#muntGambleBtn:active {
+    transform: scale(0.92);
+}
 
+#spinBtn:hover,
+#linesBtn:hover,
+#kopGambleBtn:hover,
+#muntGambleBtn:hover {
+    transform: scale(1.03);
+}
 
 /* ================= BUTTONS ================= */
 
