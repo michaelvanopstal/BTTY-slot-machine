@@ -59,7 +59,7 @@ body {
 
     text-shadow: 0 0 10px #000;
 
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .jackpot-value {
@@ -232,7 +232,7 @@ body {
 
     position: absolute;
 
-    top: 675px;   /* ← jij bepaalt */
+    top: 665px;   /* ← jij bepaalt */
     left: 405px;  /* ← jij bepaalt */
 
     transform: scale(1);
