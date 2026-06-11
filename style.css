@@ -212,8 +212,8 @@ body {
 /* ================= BUTTONS ================= */
 
 #spinBtn {
-    width: 150px;
-    height: 150px;
+    width: 165px;
+    height: 165px;
 
     background: url("spin.png") center center no-repeat;
     background-size: contain;
