@@ -110,8 +110,8 @@ body {
 .slot-window {
     position: absolute;
 
-    top: 340px;
-    left: 200px;
+    top: 370px;
+    left: 220px;
 
     z-index: 30;
 }
