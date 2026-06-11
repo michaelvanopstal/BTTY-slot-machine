@@ -209,6 +209,11 @@ body {
 
     cursor: pointer;
 
+    position: absolute;
+
+    top: 700px;   /* ← jij bepaalt */
+    left: 450px;  /* ← jij bepaalt */
+
     transform: scale(1);
 
     transition: transform 0.12s ease;
