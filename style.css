@@ -284,8 +284,8 @@ body {
 
 
 #linesBtn {
-    width: 180px;
-    height: 150px;
+    width: 165px;
+    height: 135px;
 
     background: url("lines.png") center center no-repeat;
     background-size: contain;
@@ -298,7 +298,7 @@ body {
     position: absolute;
 
     top: 690px;   /* zelf aanpassen */
-    left: 60px;   /* zelf aanpassen */
+    left: 85px;   /* zelf aanpassen */
 
     transform: scale(1);
 
