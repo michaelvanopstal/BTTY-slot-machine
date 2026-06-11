@@ -130,7 +130,6 @@ body {
 }
 
 /* ================= SYMBOLS ================= */
-
 .symbol {
     width: 135px;
     height: 90px;
@@ -139,9 +138,9 @@ body {
     justify-content: center;
     align-items: center;
 
-    background: rgba: #A87C43;
+    background: #A87C43;
 
-    border: 3px solid: #A87C43;
+    border: 3px solid #A87C43;
     border-radius: 12px;
 
     overflow: hidden;
