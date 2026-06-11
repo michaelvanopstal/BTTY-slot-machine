@@ -119,8 +119,8 @@ body {
 .reels {
     display: grid;
 
-    grid-template-columns: repeat(4, 115px);
-    grid-template-rows: repeat(3, 115px);
+    grid-template-columns: repeat(4, 135px);
+    grid-template-rows: repeat(3, 90px);
 
     gap: 8px;
 
@@ -132,8 +132,8 @@ body {
 /* ================= SYMBOLS ================= */
 
 .symbol {
-    width: 115px;
-    height: 115px;
+    width: 135px;
+    height: 90px;
 
     display: flex;
     justify-content: center;
