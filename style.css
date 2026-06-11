@@ -220,6 +220,15 @@ body {
 }
 /* ================= HEADS / TAILS ================= */
 
+.gamble-btn {
+    appearance: none;
+    -webkit-appearance: none;
+
+    border: none;
+    outline: none;
+
+    cursor: pointer;
+}
 
 #kopGambleBtn {
     width: 150px;
