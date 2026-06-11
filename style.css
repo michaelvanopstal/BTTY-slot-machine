@@ -225,14 +225,13 @@ body {
 
     cursor: pointer;
 
-    transition: transform 0.12s ease;
-
     position: absolute;
+    left: 50%;
+    bottom: 40px;
 
-    left: 45%;
-    bottom: 30px;
+    transform: translateX(-50%) scale(1);
 
-    transform: translateX(-50%);
+    transition: transform 0.12s ease;
 }
 /* ================= HEADS / TAILS ================= */
 
