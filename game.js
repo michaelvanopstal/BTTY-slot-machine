@@ -174,39 +174,41 @@ function spinReel(reelIndex, duration) {
 
         reelResults[reelIndex] = visibleSymbols;
 
+        // reset
         strip.style.transition = "none";
         strip.style.transform = "translateY(0px)";
-
         void strip.offsetHeight;
 
-        const extraRounds = 10;
+        const extraRounds = 4;
 
         const targetPosition =
             (extraRounds * symbolHeight) +
             (stopIndex * symbolHeight);
 
-        strip.style.transition = `transform ${duration}ms linear`;
+        // 🔥 FIX: geen linear, maar casino easing
+        strip.style.transition =
+            `transform ${duration}ms cubic-bezier(0.2, 0.85, 0.25, 1)`;
 
         strip.style.transform =
             `translateY(-${targetPosition}px)`;
 
         setTimeout(() => {
 
-            strip.style.transition = "transform 60ms ease-out";
+            // bounce 1 (klein)
+            strip.style.transition = "transform 55ms ease-out";
             strip.style.transform =
-                `translateY(-${targetPosition - 18}px)`;
+                `translateY(-${targetPosition - 16}px)`;
 
             setTimeout(() => {
 
-                strip.style.transition = "transform 60ms ease-in";
+                // settle
+                strip.style.transition = "transform 55ms ease-in";
                 strip.style.transform =
                     `translateY(-${targetPosition}px)`;
 
-                setTimeout(() => {
-                    resolve();
-                }, 70);
+                setTimeout(() => resolve(), 60);
 
-            }, 70);
+            }, 55);
 
         }, duration);
 
