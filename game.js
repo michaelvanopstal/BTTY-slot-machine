@@ -151,14 +151,14 @@ function startGamble(winAmount) {
     }, 150);
 }
 
-function spinReel(reelIndex, baseDuration) {
+function spinReel(reelIndex) {
     return new Promise(resolve => {
         const strip = reelStrips[reelIndex];
         const symbolHeight = 90;
-        const extraRounds = 7;                    // meer rondjes = voller gevoel
-        const stopIndex = Math.floor(Math.random() * 25) + 5; // min. 5 voor consistentie
+        const extraRounds = 7;
+        const stopIndex = Math.floor(Math.random() * 25) + 5;
 
-        // Visible symbols voor resultaat
+        // Visible symbols
         const visibleSymbols = [];
         for (let i = 0; i < 3; i++) {
             visibleSymbols.push(
@@ -168,39 +168,36 @@ function spinReel(reelIndex, baseDuration) {
         }
         reelResults[reelIndex] = visibleSymbols;
 
-        // Reset positie
+        // Reset
         strip.style.transition = "none";
         strip.style.transform = "translateY(0px)";
         void strip.offsetHeight;
 
         const targetPosition = (extraRounds * symbolHeight) + (stopIndex * symbolHeight);
 
-        // === CONSTANTE SNELHEID ===
-        const speed = 0.85;                    // pixels per ms  (0.8 = snel, 0.95 = iets rustiger)
+        // === 25% SNELLER ===
+        const speed = 1.10;          // was 0.88 → nu 25% sneller
         const duration = Math.round(targetPosition / speed);
 
         strip.style.transition = `transform ${duration}ms linear`;
-        strip.style.transform = `translateY(-${targetPosition}px)`;
+        strip.style.transform = `translateY(+${targetPosition}px)`;   
 
-        // Harde stop + bounce (start 100ms voor het einde)
+        // Harde stop + bounce
         setTimeout(() => {
-            // Overshoot (harde klap)
-            strip.style.transition = "transform 75ms cubic-bezier(0.35, 0, 1, 1)";
-            strip.style.transform = `translateY(-${targetPosition - 38}px)`;
+            strip.style.transition = "transform 70ms cubic-bezier(0.35, 0, 1, 1)";
+            strip.style.transform = `translateY(+${targetPosition + 38}px)`;
 
             setTimeout(() => {
-                // Terugveren
-                strip.style.transition = "transform 110ms cubic-bezier(0.25, 0.1, 0.3, 1)";
-                strip.style.transform = `translateY(-${targetPosition + 14}px)`;
+                strip.style.transition = "transform 105ms cubic-bezier(0.25, 0.1, 0.3, 1)";
+                strip.style.transform = `translateY(+${targetPosition - 14}px)`;
 
                 setTimeout(() => {
-                    // Settle
-                    strip.style.transition = "transform 50ms ease-out";
-                    strip.style.transform = `translateY(-${targetPosition}px)`;
-                    setTimeout(resolve, 60);
-                }, 110);
-            }, 75);
-        }, duration - 100);
+                    strip.style.transition = "transform 45ms ease-out";
+                    strip.style.transform = `translateY(+${targetPosition}px)`;
+                    setTimeout(resolve, 55);
+                }, 105);
+            }, 70);
+        }, duration - 95);
     });
 }
 // ==================== SPIN ====================
