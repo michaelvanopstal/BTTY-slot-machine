@@ -201,9 +201,30 @@ function spinReel(reelIndex, duration) {
         strip.style.transform =
             `translateY(-${targetPosition}px)`;
 
+        // Kleine bounce als de rol stopt
         setTimeout(() => {
 
-            resolve();
+            strip.style.transition =
+                "transform 120ms ease-out";
+
+            strip.style.transform =
+                `translateY(-${targetPosition - 12}px)`;
+
+            setTimeout(() => {
+
+                strip.style.transition =
+                    "transform 100ms ease-in";
+
+                strip.style.transform =
+                    `translateY(-${targetPosition}px)`;
+
+                setTimeout(() => {
+
+                    resolve();
+
+                }, 100);
+
+            }, 120);
 
         }, duration);
 
@@ -254,17 +275,17 @@ async function spin() {
     // ==========================
     // ECHTE ROLLEN LATEN DRAAIEN
     // ==========================
-    await Promise.all([
+  await Promise.all([
 
-        spinReel(0, 1800),
+    spinReel(0, 2500),
 
-        spinReel(1, 2400),
+    spinReel(1, 3200),
 
-        spinReel(2, 3000),
+    spinReel(2, 3900),
 
-        spinReel(3, 3600)
+    spinReel(3, 4600)
 
-    ]);
+]);
 
     // ==========================
     // WINSTEN CONTROLEREN
