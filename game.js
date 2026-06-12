@@ -155,10 +155,10 @@ function spinReel(reelIndex) {
     return new Promise(resolve => {
         const strip = reelStrips[reelIndex];
         const symbolHeight = 90;
-        const extraRounds = 7;
-        const stopIndex = Math.floor(Math.random() * 25) + 5;
+        const extraRounds = 8;           // iets meer voor goede doorloop
+        const stopIndex = Math.floor(Math.random() * 22) + 8;
 
-        // Visible symbols
+        // Visible symbols (het eindresultaat)
         const visibleSymbols = [];
         for (let i = 0; i < 3; i++) {
             visibleSymbols.push(
@@ -168,32 +168,32 @@ function spinReel(reelIndex) {
         }
         reelResults[reelIndex] = visibleSymbols;
 
-        // Reset
+        // === RESET + START HOOG (belangrijk voor van-boven-naar-beneden) ===
         strip.style.transition = "none";
-        strip.style.transform = "translateY(0px)";
+        strip.style.transform = `translateY(-${extraRounds * symbolHeight}px)`;  // start hoog
         void strip.offsetHeight;
 
         const targetPosition = (extraRounds * symbolHeight) + (stopIndex * symbolHeight);
 
-        // === 25% SNELLER ===
-        const speed = 1.10;          // was 0.88 → nu 25% sneller
+        // 25% sneller
+        const speed = 1.10;
         const duration = Math.round(targetPosition / speed);
 
         strip.style.transition = `transform ${duration}ms linear`;
-        strip.style.transform = `translateY(+${targetPosition}px)`;   
+        strip.style.transform = `translateY(-${targetPosition}px)`;   // negatief = van boven naar beneden
 
         // Harde stop + bounce
         setTimeout(() => {
             strip.style.transition = "transform 70ms cubic-bezier(0.35, 0, 1, 1)";
-            strip.style.transform = `translateY(+${targetPosition + 38}px)`;
+            strip.style.transform = `translateY(-${targetPosition - 38}px)`;
 
             setTimeout(() => {
                 strip.style.transition = "transform 105ms cubic-bezier(0.25, 0.1, 0.3, 1)";
-                strip.style.transform = `translateY(+${targetPosition - 14}px)`;
+                strip.style.transform = `translateY(-${targetPosition + 14}px)`;
 
                 setTimeout(() => {
                     strip.style.transition = "transform 45ms ease-out";
-                    strip.style.transform = `translateY(+${targetPosition}px)`;
+                    strip.style.transform = `translateY(-${targetPosition}px)`;
                     setTimeout(resolve, 55);
                 }, 105);
             }, 70);
