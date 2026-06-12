@@ -151,14 +151,14 @@ function startGamble(winAmount) {
     }, 150);
 }
 
-function spinReel(reelIndex, duration) {
+function spinReel(reelIndex, baseDuration) {
     return new Promise(resolve => {
         const strip = reelStrips[reelIndex];
         const symbolHeight = 90;
-        const extraRounds = 6;                    // meer rondjes = langer draaien
-        const stopIndex = Math.floor(Math.random() * 28);
+        const extraRounds = 7;                    // meer rondjes = voller gevoel
+        const stopIndex = Math.floor(Math.random() * 25) + 5; // min. 5 voor consistentie
 
-        // Visible symbols
+        // Visible symbols voor resultaat
         const visibleSymbols = [];
         for (let i = 0; i < 3; i++) {
             visibleSymbols.push(
@@ -168,37 +168,39 @@ function spinReel(reelIndex, duration) {
         }
         reelResults[reelIndex] = visibleSymbols;
 
-        // Reset
+        // Reset positie
         strip.style.transition = "none";
         strip.style.transform = "translateY(0px)";
         void strip.offsetHeight;
 
         const targetPosition = (extraRounds * symbolHeight) + (stopIndex * symbolHeight);
 
-        // === SNEL + CONSTANTE SNELHEID ===
-        strip.style.transition = `transform ${duration}ms linear`;   // linear = constant tempo
+        // === CONSTANTE SNELHEID ===
+        const speed = 0.85;                    // pixels per ms  (0.8 = snel, 0.95 = iets rustiger)
+        const duration = Math.round(targetPosition / speed);
+
+        strip.style.transition = `transform ${duration}ms linear`;
         strip.style.transform = `translateY(-${targetPosition}px)`;
 
-        // Harde stop + bounce (start net voor het einde)
+        // Harde stop + bounce (start 100ms voor het einde)
         setTimeout(() => {
             // Overshoot (harde klap)
-            strip.style.transition = "transform 70ms cubic-bezier(0.4, 0, 1, 1)";
-            strip.style.transform = `translateY(-${targetPosition - 35}px)`;
+            strip.style.transition = "transform 75ms cubic-bezier(0.35, 0, 1, 1)";
+            strip.style.transform = `translateY(-${targetPosition - 38}px)`;
 
             setTimeout(() => {
                 // Terugveren
-                strip.style.transition = "transform 95ms cubic-bezier(0.25, 0.1, 0.25, 1)";
-                strip.style.transform = `translateY(-${targetPosition + 12}px)`;
+                strip.style.transition = "transform 110ms cubic-bezier(0.25, 0.1, 0.3, 1)";
+                strip.style.transform = `translateY(-${targetPosition + 14}px)`;
 
                 setTimeout(() => {
-                    // Settle definitief
-                    strip.style.transition = "transform 45ms ease-out";
+                    // Settle
+                    strip.style.transition = "transform 50ms ease-out";
                     strip.style.transform = `translateY(-${targetPosition}px)`;
-
                     setTimeout(resolve, 60);
-                }, 95);
-            }, 70);
-        }, duration - 90);   // bounce begint 90ms voor einde
+                }, 110);
+            }, 75);
+        }, duration - 100);
     });
 }
 // ==================== SPIN ====================
