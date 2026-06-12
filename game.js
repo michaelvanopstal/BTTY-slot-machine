@@ -195,8 +195,8 @@ function spinReel(reelIndex, duration) {
             (extraRounds * symbolHeight) +
             (stopIndex * symbolHeight);
 
-        strip.style.transition =
-            `transform ${duration}ms cubic-bezier(0.12,0.85,0.25,1)`;
+     strip.style.transition =
+    `transform ${duration}ms cubic-bezier(0.15,0.95,0.35,1)`;
 
         strip.style.transform =
             `translateY(-${targetPosition}px)`;
@@ -205,7 +205,7 @@ function spinReel(reelIndex, duration) {
         setTimeout(() => {
 
             strip.style.transition =
-                "transform 180ms ease-out";
+                "transform 90ms ease-out";
 
             strip.style.transform =
                 `translateY(-${targetPosition - 25}px)`;
@@ -213,7 +213,7 @@ function spinReel(reelIndex, duration) {
             setTimeout(() => {
 
                 strip.style.transition =
-                    "transform 160ms ease-in";
+                    "transform 70ms ease-in";
 
                 strip.style.transform =
                     `translateY(-${targetPosition}px)`;
