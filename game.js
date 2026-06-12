@@ -63,21 +63,30 @@ function createReels() {
         const strip = document.createElement("div");
         strip.className = "reel-strip";
 
-        for (let i = 0; i < 40; i++) {
+        // Meer symbolen zodat de rol nooit "op" raakt
+        for (let i = 0; i < 60; i++) {
 
             const symbol = document.createElement("div");
             symbol.className = "symbol";
 
             const img = document.createElement("img");
 
-            img.src =
+            const randomSymbol =
                 Math.random() < 0.08
                     ? "golden.png"
                     : symbolNames[Math.floor(Math.random() * 4)];
 
+            img.src = randomSymbol;
+
+            img.draggable = false;
+
             symbol.appendChild(img);
             strip.appendChild(symbol);
         }
+
+        // Start altijd bovenaan
+        strip.style.transform = "translateY(0px)";
+        strip.style.transition = "none";
 
         reel.appendChild(strip);
         reelsContainer.appendChild(reel);
