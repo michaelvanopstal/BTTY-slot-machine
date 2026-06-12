@@ -152,68 +152,53 @@ function startGamble(winAmount) {
 }
 
 function spinReel(reelIndex, duration) {
-
     return new Promise(resolve => {
-
         const strip = reelStrips[reelIndex];
-        const symbolHeight = 90;
+        const symbolHeight = 90;           // zorg dat dit klopt met je CSS
+        const extraRounds = 5;             // iets meer rondjes voor snelheid gevoel
+        const stopIndex = Math.floor(Math.random() * 25); // meer variatie
 
-        const stopIndex = Math.floor(Math.random() * 20);
-
+        // visible symbols...
         const visibleSymbols = [];
-
         for (let i = 0; i < 3; i++) {
-
             visibleSymbols.push(
-                Math.random() < 0.08
-                    ? "golden.png"
-                    : symbolNames[Math.floor(Math.random() * 4)]
+                Math.random() < 0.08 ? "golden.png" : 
+                symbolNames[Math.floor(Math.random() * 4)]
             );
-
         }
-
         reelResults[reelIndex] = visibleSymbols;
 
-        // reset
+        // Reset
         strip.style.transition = "none";
         strip.style.transform = "translateY(0px)";
         void strip.offsetHeight;
 
-        const extraRounds = 4;
+        const targetPosition = (extraRounds * symbolHeight) + (stopIndex * symbolHeight);
 
-        const targetPosition =
-            (extraRounds * symbolHeight) +
-            (stopIndex * symbolHeight);
+        // === SNELLE ARCADE EASING ===
+        strip.style.transition = `transform ${duration}ms cubic-bezier(0.1, 0.8, 0.9, 0.1)`;
+        // Dit geeft: snel op gang + vrij harde rem
 
-        // 🔥 FIX: geen linear, maar casino easing
-        strip.style.transition =
-            `transform ${duration}ms cubic-bezier(0.2, 0.85, 0.25, 1)`;
+        strip.style.transform = `translateY(-${targetPosition}px)`;
 
-        strip.style.transform =
-            `translateY(-${targetPosition}px)`;
-
+        // Harde stop + bounce
         setTimeout(() => {
-
-            // bounce 1 (klein)
-            strip.style.transition = "transform 55ms ease-out";
-            strip.style.transform =
-                `translateY(-${targetPosition - 16}px)`;
+            // Kleine overshoot + harde terugslag
+            strip.style.transition = "transform 65ms cubic-bezier(0.5, 0, 0.8, 1)";
+            strip.style.transform = `translateY(-${targetPosition - 28}px)`;   // grotere bounce
 
             setTimeout(() => {
+                strip.style.transition = "transform 85ms ease-out";
+                strip.style.transform = `translateY(-${targetPosition + 8}px)`; // kleine terug
 
-                // settle
-                strip.style.transition = "transform 55ms ease-in";
-                strip.style.transform =
-                    `translateY(-${targetPosition}px)`;
-
-                setTimeout(() => resolve(), 60);
-
-            }, 55);
-
-        }, duration);
-
+                setTimeout(() => {
+                    strip.style.transition = "transform 45ms ease-in";
+                    strip.style.transform = `translateY(-${targetPosition}px)`;
+                    setTimeout(resolve, 50);
+                }, 85);
+            }, 65);
+        }, duration - 80);   // bounce begint net voor het einde
     });
-
 }
 // ==================== SPIN ====================
 async function spin() {
@@ -259,17 +244,13 @@ async function spin() {
     // ==========================
     // ECHTE ROLLEN LATEN DRAAIEN
     // ==========================
-  await Promise.all([
-
-    spinReel(0, 2500),
-
-    spinReel(1, 3200),
-
-    spinReel(2, 3900),
-
-    spinReel(3, 4600)
-
+ await Promise.all([
+    spinReel(0, 1350),   // was 2500
+    spinReel(1, 1650),   // was 3200
+    spinReel(2, 1950),   // was 3900
+    spinReel(3, 2250)    // was 4600
 ]);
+
 
     // ==========================
     // WINSTEN CONTROLEREN
