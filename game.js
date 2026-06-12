@@ -2,8 +2,11 @@
 const symbolNames = ["btty1.png", "btty2.png", "btty3.png", "btty4.png", "golden.png"];
 
 const payouts = {
-    "btty1.png": 3000, "btty2.png": 1800, "btty3.png": 1200,
-    "btty4.png": 600, "golden.png": 0
+    "btty1.png": 3000,
+    "btty2.png": 1800,
+    "btty3.png": 1200,
+    "btty4.png": 600,
+    "golden.png": 0
 };
 
 let credits = 5000;
@@ -15,6 +18,7 @@ let isGambleActive = false;
 let currentGambleWin = 0;
 let gambleInterval = null;
 
+// DOM Elements
 const creditsEl = document.getElementById("credits");
 const betEl = document.getElementById("bet");
 const linesEl = document.getElementById("lines");
@@ -25,18 +29,15 @@ const spinBtn = document.getElementById("spinBtn");
 const linesBtn = document.getElementById("linesBtn");
 const kopGambleBtn = document.getElementById("kopGambleBtn");
 const muntGambleBtn = document.getElementById("muntGambleBtn");
-const reelsContainer = document.getElementById("reels");
+const reelsContainer = document.getElementById("reels");   // dit moet je .reels of slot-window zijn
 
-// Paylines
-const paylines5 = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[0,1,6,11],[8,9,6,3]];
-const paylines13 = [...paylines5, [0,1,2,7],[4,5,6,3],[4,5,6,11],[8,9,10,7],[0,5,6,7],[4,1,2,3],[4,9,10,11],[9,5,6,7]];
-const paylines21 = [...paylines13, [0,5,3,7],[4,1,6,3],[4,9,6,11],[8,5,10,7],[0,1,6,7],[4,5,2,3],[4,5,10,11],[8,9,6,7]];
-
-let currentPaylines = paylines5;
 const reelStrips = [];
 let finalGrid = new Array(12).fill(null);
 
-// ==================== CREATE REELS (belangrijk: goede sizing) ====================
+const SYMBOL_HEIGHT = 90;
+const VISIBLE_ROWS = 3;
+
+// ==================== CREATE REELS ====================
 function createReels() {
     reelsContainer.innerHTML = "";
     reelStrips.length = 0;
@@ -48,18 +49,22 @@ function createReels() {
         const strip = document.createElement("div");
         strip.className = "reel-strip";
 
-        for (let i = 0; i < 80; i++) {   // genoeg symbols voor spin
+        // Genoeg symbols voor mooie spin
+        for (let i = 0; i < 60; i++) {
             const symbol = document.createElement("div");
             symbol.className = "symbol";
+
             const img = document.createElement("img");
             img.src = Math.random() < 0.08 ? "golden.png" : symbolNames[Math.floor(Math.random() * 4)];
             img.draggable = false;
             symbol.appendChild(img);
+
             strip.appendChild(symbol);
         }
 
-        strip.style.transition = "none";
         strip.style.transform = "translateY(0px)";
+        strip.style.transition = "none";
+
         reel.appendChild(strip);
         reelsContainer.appendChild(reel);
         reelStrips.push(strip);
@@ -75,25 +80,23 @@ function clearHighlights() {
     document.querySelectorAll(".symbol").forEach(s => s.classList.remove("winning"));
 }
 
-// ==================== SPIN REEL - VISUEEL GEOPTIMALISEERD ====================
-function spinReel(reelIndex, finalStopIndex) {
+// ==================== SPIN REEL (aangepast aan jouw CSS) ====================
+function spinReel(reelIndex, stopIndex) {
     return new Promise(resolve => {
         const strip = reelStrips[reelIndex];
-        const symbolHeight = 90;
-        const extraSpins = 6 + Math.floor(Math.random() * 5);
+        const extraSpins = 7 + Math.floor(Math.random() * 6);
 
-        const targetY = -((extraSpins * 80) + finalStopIndex) * symbolHeight;
+        // Bereken exacte positie zodat de stopIndex perfect in beeld komt
+        const targetY = -((extraSpins * 40) + stopIndex) * SYMBOL_HEIGHT;
 
-        // Reset
         strip.style.transition = "none";
         strip.style.transform = "translateY(0px)";
         void strip.offsetHeight; // force reflow
 
-        // Echte spin
-        strip.style.transition = `transform ${1350 + reelIndex * 280}ms cubic-bezier(0.22, 0.05, 0.25, 1)`;
+        strip.style.transition = `transform ${1300 + reelIndex * 320}ms cubic-bezier(0.25, 0.1, 0.25, 1)`;
         strip.style.transform = `translateY(${targetY}px)`;
 
-        setTimeout(resolve, 1400 + reelIndex * 280);
+        setTimeout(resolve, 1350 + reelIndex * 320);
     });
 }
 
@@ -120,25 +123,24 @@ async function spin() {
     finalGrid = new Array(12).fill(null);
     const stopIndices = [];
 
-    // Bepaal stop posities + vul finalGrid
+    // Bepaal stop posities + finalGrid
     for (let reel = 0; reel < 4; reel++) {
         const strip = reelStrips[reel];
         const symbols = strip.querySelectorAll(".symbol");
-        const stopIdx = Math.floor(Math.random() * (symbols.length - 5)) + 2; // veilige marge
+        const stopIdx = Math.floor(Math.random() * (symbols.length - VISIBLE_ROWS - 5)) + 3;
 
         stopIndices.push(stopIdx);
 
-        for (let row = 0; row < 3; row++) {
+        for (let row = 0; row < VISIBLE_ROWS; row++) {
             const idx = (stopIdx + row) % symbols.length;
             finalGrid[row * 4 + reel] = getFileName(symbols[idx].querySelector("img").src);
         }
     }
 
-    // Spin alle reels
+    // Start spinning
     await Promise.all(reelStrips.map((_, i) => spinReel(i, stopIndices[i])));
 
-    // Kleine extra wacht voor visuele settling
-    await new Promise(r => setTimeout(r, 180));
+    await new Promise(r => setTimeout(r, 200)); // settling time
 
     // Win check
     const wins = checkAllPaylines();
@@ -148,7 +150,7 @@ async function spin() {
         for (const win of wins) {
             await highlightPayline(win.line);
             totalWin += win.amount;
-            jackpot += 5;
+            jackpot += Math.floor(bet / 10);
         }
         messageEl.innerHTML = `🎉 WIN ${totalWin}! 🎉`;
         lastWin = totalWin;
@@ -169,55 +171,60 @@ async function spin() {
     spinBtn.disabled = linesBtn.disabled = false;
 }
 
-// Win checks
+// ==================== WIN CHECKS ====================
 function checkAllPaylines() {
     let wins = [];
     currentPaylines.forEach((line, idx) => {
         const syms = line.map(p => finalGrid[p]);
         const first = syms[0];
         if (first && syms.every(s => s === first) && first !== "golden.png") {
-            wins.push({ line, amount: payouts[first] });
+            wins.push({ line, amount: payouts[first] || 0 });
         }
     });
-    return wins;
+    return wins.filter(w => w.amount > 0);
 }
 
 function checkJackpot() {
-    return [[0,1,2,3],[4,5,6,7],[8,9,10,11]].some(l => l.every(i => finalGrid[i] === "golden.png"));
+    const horizontals = [[0,1,2,3],[4,5,6,7],[8,9,10,11]];
+    return horizontals.some(line => line.every(pos => finalGrid[pos] === "golden.png"));
 }
 
-// Highlight
+// ==================== HIGHLIGHT ====================
 async function highlightPayline(positions) {
     clearHighlights();
     positions.forEach(pos => {
         const reelIdx = pos % 4;
         const rowIdx = Math.floor(pos / 4);
         const strip = reelStrips[reelIdx];
-        const symbols = strip.querySelectorAll(".symbol img");
-        // Simpele benadering: neem de huidige visuele positie
-        const symbolEl = symbols[rowIdx * 2 + 1] || symbols[rowIdx]; // veilige fallback
-        if (symbolEl && symbolEl.parentElement) symbolEl.parentElement.classList.add("winning");
+        const symbols = strip.querySelectorAll(".symbol");
+        if (symbols[rowIdx]) symbols[rowIdx].classList.add("winning");
     });
-    await new Promise(r => setTimeout(r, 1350));
+    await new Promise(r => setTimeout(r, 1400));
 }
 
-// Gamble (onveranderd)
-function startGamble(win) { /* zelfde als vorige versie */ 
-    // ... kopieer uit vorige code
+// Gamble functies (kopieer deze uit je vorige werkende versie)
+function startGamble(winAmount) {
+    // ... je bestaande gamble code ...
 }
-function gambleChoice(choice) { /* zelfde */ }
-function resetGamble() { /* zelfde */ }
+function gambleChoice(choice) { /* ... */ }
+function resetGamble() { /* ... */ }
 
-function updateUI() { /* zelfde als vorige */ }
+function updateUI() {
+    creditsEl.textContent = credits;
+    betEl.textContent = bet;
+    linesEl.textContent = numLines;
+    winEl.textContent = lastWin;
+    if (jackpotEl) jackpotEl.textContent = jackpot;
+}
 
-function toggleLines() { /* zelfde */ }
+function toggleLines() {
+    if (numLines === 5) { numLines = 13; bet = 300; currentPaylines = paylines13; }
+    else if (numLines === 13) { numLines = 21; bet = 500; currentPaylines = paylines21; }
+    else { numLines = 5; bet = 100; currentPaylines = paylines5; }
+    updateUI();
+}
 
-// Event listeners
-spinBtn.addEventListener("click", spin);
-linesBtn.addEventListener("click", toggleLines);
-kopGambleBtn.addEventListener("click", () => gambleChoice("kop"));
-muntGambleBtn.addEventListener("click", () => gambleChoice("munt"));
-
+// ==================== INIT ====================
 createReels();
 updateUI();
 
