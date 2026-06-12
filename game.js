@@ -152,54 +152,65 @@ function startGamble(winAmount) {
 }
 
 function spinReel(reelIndex, baseDuration = 2000) {
+
     return new Promise(resolve => {
+
         const strip = reelStrips[reelIndex];
         const symbolHeight = 90;
-        const extraRounds = 9;
+
+        const extraRounds = 4;
         const stopIndex = Math.floor(Math.random() * 20) + 10;
 
-        // Visible symbols voor resultaat
         const visibleSymbols = [];
+
         for (let i = 0; i < 3; i++) {
             visibleSymbols.push(
-                Math.random() < 0.08 ? "golden.png" : 
-                symbolNames[Math.floor(Math.random() * 4)]
+                Math.random() < 0.08
+                    ? "golden.png"
+                    : symbolNames[Math.floor(Math.random() * 4)]
             );
         }
+
         reelResults[reelIndex] = visibleSymbols;
 
-        // === FORCED RESET (dit was het probleem) ===
+        // reset
         strip.style.transition = "none";
-        strip.style.transform = `translateY(0px)`;
-        void strip.offsetHeight;   // force browser refresh
+        strip.style.transform = "translateY(0px)";
+        void strip.offsetHeight;
 
-        const targetPosition = (extraRounds * symbolHeight) + (stopIndex * symbolHeight);
+        const targetPosition =
+            (extraRounds * symbolHeight) +
+            (stopIndex * symbolHeight);
 
-        const speed = 1.10;
-        let duration = Math.round(targetPosition / speed);
-        if (baseDuration > 1000) duration = baseDuration;
+        let duration = baseDuration;
 
-        // === VAN BOVEN NAAR BENEDEN ===
-        strip.style.transition = `transform ${duration}ms linear`;
-        strip.style.transform = `translateY(-${targetPosition}px)`;
+        // 🔥 BELANGRIJK: POSITIEF = VAN BOVEN NAAR BENEDEN
+        strip.style.transition =
+            `transform ${duration}ms cubic-bezier(0.2, 0.85, 0.25, 1)`;
 
-        // Harde stop + bounce
+        strip.style.transform =
+            `translateY(${targetPosition}px)`;
+
         setTimeout(() => {
-            strip.style.transition = "transform 70ms cubic-bezier(0.35, 0, 1, 1)";
-            strip.style.transform = `translateY(-${targetPosition - 38}px)`;
+
+            strip.style.transition = "transform 60ms ease-out";
+            strip.style.transform =
+                `translateY(${targetPosition - 18}px)`;
 
             setTimeout(() => {
-                strip.style.transition = "transform 105ms cubic-bezier(0.25, 0.1, 0.3, 1)";
-                strip.style.transform = `translateY(-${targetPosition + 14}px)`;
 
-                setTimeout(() => {
-                    strip.style.transition = "transform 45ms ease-out";
-                    strip.style.transform = `translateY(-${targetPosition}px)`;
-                    setTimeout(resolve, 55);
-                }, 105);
-            }, 70);
-        }, duration - 95);
+                strip.style.transition = "transform 60ms ease-in";
+                strip.style.transform =
+                    `translateY(${targetPosition}px)`;
+
+                setTimeout(() => resolve(), 60);
+
+            }, 60);
+
+        }, duration);
+
     });
+
 }
 // ==================== SPIN ====================
 async function spin() {
