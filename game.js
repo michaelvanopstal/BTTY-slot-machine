@@ -42,6 +42,13 @@ let currentPaylines = paylines5;
 
 const reelStrips = [];
 
+const reelResults = [
+    [],
+    [],
+    [],
+    []
+];
+
 function createReels() {
 
     reelsContainer.innerHTML = "";
@@ -86,6 +93,29 @@ async function highlightPayline(positions) {
     await new Promise(r => setTimeout(r, 1200));
 }
 
+function getVisibleGrid() {
+
+    return [
+
+        reelResults[0][0],
+        reelResults[1][0],
+        reelResults[2][0],
+        reelResults[3][0],
+
+        reelResults[0][1],
+        reelResults[1][1],
+        reelResults[2][1],
+        reelResults[3][1],
+
+        reelResults[0][2],
+        reelResults[1][2],
+        reelResults[2][2],
+        reelResults[3][2]
+
+    ];
+
+}
+
 // ==================== GAMBLE ====================
 function startGamble(winAmount) {
 
@@ -120,20 +150,42 @@ function spinReel(reelIndex, duration) {
 
         const symbolHeight = 90;
 
+        const stopIndex =
+            Math.floor(Math.random() * 25);
+
+        const visibleSymbols = [];
+
+        for (let i = 0; i < 3; i++) {
+
+            visibleSymbols.push(
+
+                Math.random() < 0.08
+                    ? "golden.png"
+                    : symbolNames[
+                        Math.floor(Math.random() * 4)
+                    ]
+
+            );
+        }
+
+        reelResults[reelIndex] = visibleSymbols;
+
         const stopPosition =
-            Math.floor(Math.random() * 20) * symbolHeight;
+            stopIndex * symbolHeight;
 
         const extraSpins =
-            20 * symbolHeight;
+            1800;
 
         strip.style.transition =
-            `transform ${duration}ms cubic-bezier(.15,.8,.25,1)`;
+            `transform ${duration}ms cubic-bezier(.12,.85,.25,1)`;
 
         strip.style.transform =
             `translateY(-${extraSpins + stopPosition}px)`;
 
         setTimeout(() => {
+
             resolve();
+
         }, duration);
 
     });
@@ -276,21 +328,59 @@ async function spin() {
 }
 
 // ==================== OVERIGE FUNCTIES ====================
-function checkAllPaylines() { /* je huidige code */ 
-    const imgs = Array.from(document.querySelectorAll(".symbol img"));
-    const current = imgs.map(img => getFileName(img.src));
+function checkAllPaylines() {
+
+    const current = getVisibleGrid();
+
     let wins = [];
+
     currentPaylines.forEach((line, index) => {
-        const symbols = line.map(pos => current[pos]);
-        const first = symbols[0];
+
+        const symbols =
+            line.map(pos => current[pos]);
+
+        const first =
+            symbols[0];
+
         let count = 1;
-        for (let i = 1; i < symbols.length; i++) if (symbols[i] === first) count++; else break;
-        if (count === 4 && first !== "golden.png") {
-            const amount = payouts[first]?.[4];
-            if (amount) wins.push({lineIndex: index, line, count:4, amount});
+
+        for (let i = 1; i < symbols.length; i++) {
+
+            if (symbols[i] === first) {
+                count++;
+            } else {
+                break;
+            }
+
         }
+
+        if (
+            count === 4 &&
+            first !== "golden.png"
+        ) {
+
+            const amount =
+                payouts[first]?.[4];
+
+            if (amount) {
+
+                wins.push({
+
+                    lineIndex: index,
+                    line,
+                    count: 4,
+                    amount
+
+                });
+
+            }
+
+        }
+
     });
+
     return wins;
+
 }
 
 function gambleChoice(choice) {
@@ -332,17 +422,37 @@ function resetGamble() {
     kopGambleBtn.classList.remove("active");
     muntGambleBtn.classList.remove("active");
 }
-function checkJackpot() { /* je huidige code */ 
-    const imgs = Array.from(document.querySelectorAll(".symbol img"));
-    const current = imgs.map(img => getFileName(img.src));
-    const horizontal = [[0,1,2,3],[4,5,6,7],[8,9,10,11]];
-    for (let line of horizontal) {
-        if (line.every(pos => current[pos] === "golden.png")) {
-            line.forEach(pos => reelsContainer.children[pos]?.classList.add("winning"));
+function checkJackpot() {
+
+    const current = getVisibleGrid();
+
+    const horizontal = [
+
+        [0,1,2,3],
+        [4,5,6,7],
+        [8,9,10,11]
+
+    ];
+
+    for (const line of horizontal) {
+
+        if (
+
+            line.every(
+                pos =>
+                    current[pos] === "golden.png"
+            )
+
+        ) {
+
             return jackpot;
+
         }
+
     }
+
     return 0;
+
 }
 
 function updateUI() {
