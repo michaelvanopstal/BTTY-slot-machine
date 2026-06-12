@@ -156,75 +156,57 @@ function spinReel(reelIndex, duration) {
     return new Promise(resolve => {
 
         const strip = reelStrips[reelIndex];
-
         const symbolHeight = 90;
 
-        // Kies waar de rol uiteindelijk stopt
         const stopIndex = Math.floor(Math.random() * 20);
 
-        // Bewaar zichtbare symbolen voor winstcontrole
         const visibleSymbols = [];
 
         for (let i = 0; i < 3; i++) {
 
             visibleSymbols.push(
-
                 Math.random() < 0.08
                     ? "golden.png"
-                    : symbolNames[
-                        Math.floor(Math.random() * 4)
-                    ]
-
+                    : symbolNames[Math.floor(Math.random() * 4)]
             );
 
         }
 
         reelResults[reelIndex] = visibleSymbols;
 
-        // Eerst helemaal bovenaan starten
         strip.style.transition = "none";
         strip.style.transform = "translateY(0px)";
 
-        // Browser forceren positie te verwerken
         void strip.offsetHeight;
 
-        // Veel verder laten draaien voor casino-effect
         const extraRounds = 10;
 
         const targetPosition =
             (extraRounds * symbolHeight) +
             (stopIndex * symbolHeight);
 
-     strip.style.transition =
-    `transform ${duration}ms cubic-bezier(0.15,0.95,0.35,1)`;
+        strip.style.transition = `transform ${duration}ms linear`;
 
         strip.style.transform =
             `translateY(-${targetPosition}px)`;
 
-        // Kleine bounce als de rol stopt
         setTimeout(() => {
 
-            strip.style.transition =
-                "transform 90ms ease-out";
-
+            strip.style.transition = "transform 60ms ease-out";
             strip.style.transform =
-                `translateY(-${targetPosition - 25}px)`;
+                `translateY(-${targetPosition - 18}px)`;
 
             setTimeout(() => {
 
-                strip.style.transition =
-                    "transform 70ms ease-in";
-
+                strip.style.transition = "transform 60ms ease-in";
                 strip.style.transform =
                     `translateY(-${targetPosition}px)`;
 
                 setTimeout(() => {
-
                     resolve();
+                }, 70);
 
-                }, 100);
-
-            }, 120);
+            }, 70);
 
         }, duration);
 
