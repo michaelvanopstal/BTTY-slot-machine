@@ -155,10 +155,10 @@ function spinReel(reelIndex, baseDuration = 2000) {
     return new Promise(resolve => {
         const strip = reelStrips[reelIndex];
         const symbolHeight = 90;
-        const extraRounds = 8;
-        const stopIndex = Math.floor(Math.random() * 22) + 8;
+        const extraRounds = 9;
+        const stopIndex = Math.floor(Math.random() * 20) + 10;
 
-        // Visible symbols
+        // Visible symbols voor resultaat
         const visibleSymbols = [];
         for (let i = 0; i < 3; i++) {
             visibleSymbols.push(
@@ -168,23 +168,18 @@ function spinReel(reelIndex, baseDuration = 2000) {
         }
         reelResults[reelIndex] = visibleSymbols;
 
-        // Reset
+        // === FORCED RESET (dit was het probleem) ===
         strip.style.transition = "none";
-        strip.style.transform = "translateY(0px)";
-        void strip.offsetHeight;
+        strip.style.transform = `translateY(0px)`;
+        void strip.offsetHeight;   // force browser refresh
 
         const targetPosition = (extraRounds * symbolHeight) + (stopIndex * symbolHeight);
 
-        // Snelheid (25% sneller)
         const speed = 1.10;
         let duration = Math.round(targetPosition / speed);
+        if (baseDuration > 1000) duration = baseDuration;
 
-        // Gebruik baseDuration als je die meegeeft (voor stagger)
-        if (baseDuration > 1000) {
-            duration = baseDuration;
-        }
-
-        // VAN BOVEN NAAR BENEDEN
+        // === VAN BOVEN NAAR BENEDEN ===
         strip.style.transition = `transform ${duration}ms linear`;
         strip.style.transform = `translateY(-${targetPosition}px)`;
 
