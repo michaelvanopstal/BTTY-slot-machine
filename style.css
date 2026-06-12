@@ -346,19 +346,4 @@ body {
         drop-shadow(0 0 20px #ffd700);
 }
 
-/* ================= REEL SPIN ================= */
-
-.symbol.spinning img {
-    animation: spin 0.12s linear infinite;
-}
-
-@keyframes spin {
-    from {
-        transform: rotateX(0deg);
-    }
-
-    to {
-        transform: rotateX(360deg);
-    }
-}
 
