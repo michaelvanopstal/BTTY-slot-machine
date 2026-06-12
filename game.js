@@ -161,6 +161,7 @@ function spinReel(reelIndex, baseDuration = 2000) {
         const extraRounds = 4;
         const stopIndex = Math.floor(Math.random() * 20) + 10;
 
+        // resultaat symbols
         const visibleSymbols = [];
 
         for (let i = 0; i < 3; i++) {
@@ -175,7 +176,9 @@ function spinReel(reelIndex, baseDuration = 2000) {
 
         // reset
         strip.style.transition = "none";
-        strip.style.transform = "translateY(0px)";
+
+        // 🔥 BELANGRIJK: START BOVEN
+        strip.style.transform = "translateY(-200px)";
         void strip.offsetHeight;
 
         const targetPosition =
@@ -184,7 +187,7 @@ function spinReel(reelIndex, baseDuration = 2000) {
 
         let duration = baseDuration;
 
-        // 🔥 BELANGRIJK: POSITIEF = VAN BOVEN NAAR BENEDEN
+        // 🎰 SCROLL NAAR BENEDEN (VISUEEL)
         strip.style.transition =
             `transform ${duration}ms cubic-bezier(0.2, 0.85, 0.25, 1)`;
 
@@ -193,12 +196,14 @@ function spinReel(reelIndex, baseDuration = 2000) {
 
         setTimeout(() => {
 
+            // bounce terug omhoog
             strip.style.transition = "transform 60ms ease-out";
             strip.style.transform =
                 `translateY(${targetPosition - 18}px)`;
 
             setTimeout(() => {
 
+                // settle naar beneden
                 strip.style.transition = "transform 60ms ease-in";
                 strip.style.transform =
                     `translateY(${targetPosition}px)`;
