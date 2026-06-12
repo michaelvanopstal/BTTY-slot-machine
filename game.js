@@ -48,7 +48,6 @@ const reelResults = [
     [],
     []
 ];
-
 function createReels() {
 
     reelsContainer.innerHTML = "";
@@ -77,11 +76,12 @@ function createReels() {
                     : symbolNames[Math.floor(Math.random() * 4)];
 
             img.src = randomSymbol;
-
             img.draggable = false;
 
             symbol.appendChild(img);
-            strip.appendChild(symbol);
+
+            // OMDRAAIEN VOLGORDE SYMBOLEN
+            strip.insertBefore(symbol, strip.firstChild);
         }
 
         // Start altijd bovenaan
@@ -158,64 +158,67 @@ function spinReel(reelIndex, baseDuration = 2000) {
         const strip = reelStrips[reelIndex];
         const symbolHeight = 90;
 
-        const extraRounds = 4;
+        const extraRounds = 8;
         const stopIndex = Math.floor(Math.random() * 20) + 10;
 
         // resultaat symbols
         const visibleSymbols = [];
 
         for (let i = 0; i < 3; i++) {
+
             visibleSymbols.push(
                 Math.random() < 0.08
                     ? "golden.png"
                     : symbolNames[Math.floor(Math.random() * 4)]
             );
+
         }
 
         reelResults[reelIndex] = visibleSymbols;
 
         // reset
         strip.style.transition = "none";
-
-        // 🔥 BELANGRIJK: START BOVEN
-        strip.style.transform = "translateY(-200px)";
+        strip.style.transform = "translateY(0px)";
         void strip.offsetHeight;
 
         const targetPosition =
             (extraRounds * symbolHeight) +
             (stopIndex * symbolHeight);
 
-        let duration = baseDuration;
+        const duration = baseDuration;
 
-        // 🎰 SCROLL NAAR BENEDEN (VISUEEL)
+        // rollen
         strip.style.transition =
-            `transform ${duration}ms cubic-bezier(0.2, 0.85, 0.25, 1)`;
+            `transform ${duration}ms linear`;
 
         strip.style.transform =
-            `translateY(${targetPosition}px)`;
+            `translateY(-${targetPosition}px)`;
 
         setTimeout(() => {
 
-            // bounce terug omhoog
-            strip.style.transition = "transform 60ms ease-out";
+            // bounce omhoog
+            strip.style.transition = "transform 70ms ease-out";
             strip.style.transform =
-                `translateY(${targetPosition - 18}px)`;
+                `translateY(-${targetPosition - 20}px)`;
 
             setTimeout(() => {
 
-                // settle naar beneden
-                strip.style.transition = "transform 60ms ease-in";
+                // terug op eindpositie
+                strip.style.transition = "transform 70ms ease-in";
                 strip.style.transform =
-                    `translateY(${targetPosition}px)`;
+                    `translateY(-${targetPosition}px)`;
 
-                setTimeout(() => resolve(), 60);
+                setTimeout(() => {
+                    resolve();
+                }, 70);
 
-            }, 60);
+            }, 70);
 
         }, duration);
 
     });
 
+}
 }
 // ==================== SPIN ====================
 async function spin() {
