@@ -148,10 +148,20 @@ function spinReel(reelIndex, duration) {
 
         const strip = reelStrips[reelIndex];
 
+        // RESET POSITIE
+        strip.style.transition = "none";
+        strip.style.transform = "translateY(0px)";
+
+        // Force reflow
+        strip.offsetHeight;
+
         const symbolHeight = 90;
 
         const stopIndex =
-            Math.floor(Math.random() * 25);
+            Math.floor(Math.random() * 20);
+
+        const stopPosition =
+            stopIndex * symbolHeight;
 
         const visibleSymbols = [];
 
@@ -166,32 +176,23 @@ function spinReel(reelIndex, duration) {
                     ]
 
             );
+
         }
 
-        reelResults[reelIndex] = visibleSymbols;
-
-        const stopPosition =
-            stopIndex * symbolHeight;
-
-        const extraSpins =
-            1800;
+        reelResults[reelIndex] =
+            visibleSymbols;
 
         strip.style.transition =
             `transform ${duration}ms cubic-bezier(.12,.85,.25,1)`;
 
         strip.style.transform =
-            `translateY(-${extraSpins + stopPosition}px)`;
+            `translateY(-${stopPosition}px)`;
 
-        setTimeout(() => {
-
-            resolve();
-
-        }, duration);
+        setTimeout(resolve, duration);
 
     });
 
 }
-
 // ==================== SPIN ====================
 async function spin() {
 
