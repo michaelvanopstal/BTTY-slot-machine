@@ -154,11 +154,11 @@ function startGamble(winAmount) {
 function spinReel(reelIndex, duration) {
     return new Promise(resolve => {
         const strip = reelStrips[reelIndex];
-        const symbolHeight = 90;           // zorg dat dit klopt met je CSS
-        const extraRounds = 5;             // iets meer rondjes voor snelheid gevoel
-        const stopIndex = Math.floor(Math.random() * 25); // meer variatie
+        const symbolHeight = 90;
+        const extraRounds = 6;                    // meer rondjes = langer draaien
+        const stopIndex = Math.floor(Math.random() * 28);
 
-        // visible symbols...
+        // Visible symbols
         const visibleSymbols = [];
         for (let i = 0; i < 3; i++) {
             visibleSymbols.push(
@@ -175,29 +175,30 @@ function spinReel(reelIndex, duration) {
 
         const targetPosition = (extraRounds * symbolHeight) + (stopIndex * symbolHeight);
 
-        // === SNELLE ARCADE EASING ===
-        strip.style.transition = `transform ${duration}ms cubic-bezier(0.1, 0.8, 0.9, 0.1)`;
-        // Dit geeft: snel op gang + vrij harde rem
-
+        // === SNEL + CONSTANTE SNELHEID ===
+        strip.style.transition = `transform ${duration}ms linear`;   // linear = constant tempo
         strip.style.transform = `translateY(-${targetPosition}px)`;
 
-        // Harde stop + bounce
+        // Harde stop + bounce (start net voor het einde)
         setTimeout(() => {
-            // Kleine overshoot + harde terugslag
-            strip.style.transition = "transform 65ms cubic-bezier(0.5, 0, 0.8, 1)";
-            strip.style.transform = `translateY(-${targetPosition - 28}px)`;   // grotere bounce
+            // Overshoot (harde klap)
+            strip.style.transition = "transform 70ms cubic-bezier(0.4, 0, 1, 1)";
+            strip.style.transform = `translateY(-${targetPosition - 35}px)`;
 
             setTimeout(() => {
-                strip.style.transition = "transform 85ms ease-out";
-                strip.style.transform = `translateY(-${targetPosition + 8}px)`; // kleine terug
+                // Terugveren
+                strip.style.transition = "transform 95ms cubic-bezier(0.25, 0.1, 0.25, 1)";
+                strip.style.transform = `translateY(-${targetPosition + 12}px)`;
 
                 setTimeout(() => {
-                    strip.style.transition = "transform 45ms ease-in";
+                    // Settle definitief
+                    strip.style.transition = "transform 45ms ease-out";
                     strip.style.transform = `translateY(-${targetPosition}px)`;
-                    setTimeout(resolve, 50);
-                }, 85);
-            }, 65);
-        }, duration - 80);   // bounce begint net voor het einde
+
+                    setTimeout(resolve, 60);
+                }, 95);
+            }, 70);
+        }, duration - 90);   // bounce begint 90ms voor einde
     });
 }
 // ==================== SPIN ====================
@@ -245,10 +246,10 @@ async function spin() {
     // ECHTE ROLLEN LATEN DRAAIEN
     // ==========================
 await Promise.all([
-    spinReel(0,  2500),   // was 2500
-    spinReel(1,  3200),   // was 3200
-    spinReel(2,  3900),   // was 3900
-    spinReel(3,  4600)    // was 4600
+    spinReel(0, 1600),
+    spinReel(1, 1850),
+    spinReel(2, 2100),
+    spinReel(3, 2350)
 ]);
     // ==========================
     // WINSTEN CONTROLEREN
