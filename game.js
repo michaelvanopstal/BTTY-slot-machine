@@ -14,7 +14,7 @@ let credits = 5000;
 let bet = 100;
 let numLines = 5;
 let lastWin = 0;
-let jackpot = 500;
+let jackpot = 500.000;
 let isGambleActive = false;
 let currentGambleWin = 0;
 let gambleInterval = null;
@@ -354,7 +354,7 @@ async function spin() {
         messageEl.innerHTML +=
             `<br><strong>🔥 JACKPOT! +${jackpotWin}</strong>`;
 
-        jackpot = 500;
+        jackpot = 500.000;
 
         updateUI();
     }
