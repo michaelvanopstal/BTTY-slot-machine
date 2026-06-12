@@ -64,7 +64,7 @@ function createReels() {
         strip.className = "reel-strip";
 
         // Meer symbolen zodat de rol nooit "op" raakt
-        for (let i = 0; i < 60; i++) {
+        for (let i = 0; i < 120; i++) {
 
             const symbol = document.createElement("div");
             symbol.className = "symbol";
@@ -160,7 +160,7 @@ function spinReel(reelIndex, duration) {
         const symbolHeight = 90;
 
         // Kies waar de rol uiteindelijk stopt
-        const stopIndex = Math.floor(Math.random() * 40);
+        const stopIndex = Math.floor(Math.random() * 20);
 
         // Bewaar zichtbare symbolen voor winstcontrole
         const visibleSymbols = [];
@@ -189,7 +189,7 @@ function spinReel(reelIndex, duration) {
         void strip.offsetHeight;
 
         // Veel verder laten draaien voor casino-effect
-        const extraRounds = 25;
+        const extraRounds = 10;
 
         const targetPosition =
             (extraRounds * symbolHeight) +
