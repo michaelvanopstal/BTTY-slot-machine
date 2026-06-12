@@ -40,18 +40,42 @@ const paylines21 = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[0,1,6,11],[8,9,6,3],[0,1,2,
 
 let currentPaylines = paylines5;
 
+const reelStrips = [];
+
 function createReels() {
+
     reelsContainer.innerHTML = "";
-    for (let i = 0; i < 12; i++) {
-        const div = document.createElement("div");
-        div.classList.add("symbol");
-        const img = document.createElement("img");
-        img.src = Math.random() < 0.08 ? "golden.png" : symbolNames[Math.floor(Math.random() * 4)];
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.objectFit = "contain";
-        div.appendChild(img);
-        reelsContainer.appendChild(div);
+
+    reelStrips.length = 0;
+
+    for (let r = 0; r < 4; r++) {
+
+        const reel = document.createElement("div");
+        reel.className = "reel";
+
+        const strip = document.createElement("div");
+        strip.className = "reel-strip";
+
+        for (let i = 0; i < 40; i++) {
+
+            const symbol = document.createElement("div");
+            symbol.className = "symbol";
+
+            const img = document.createElement("img");
+
+            img.src =
+                Math.random() < 0.08
+                    ? "golden.png"
+                    : symbolNames[Math.floor(Math.random() * 4)];
+
+            symbol.appendChild(img);
+            strip.appendChild(symbol);
+        }
+
+        reel.appendChild(strip);
+        reelsContainer.appendChild(reel);
+
+        reelStrips.push(strip);
     }
 }
 
