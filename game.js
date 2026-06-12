@@ -205,15 +205,15 @@ function spinReel(reelIndex, duration) {
         setTimeout(() => {
 
             strip.style.transition =
-                "transform 120ms ease-out";
+                "transform 180ms ease-out";
 
             strip.style.transform =
-                `translateY(-${targetPosition - 12}px)`;
+                `translateY(-${targetPosition - 25}px)`;
 
             setTimeout(() => {
 
                 strip.style.transition =
-                    "transform 100ms ease-in";
+                    "transform 160ms ease-in";
 
                 strip.style.transform =
                     `translateY(-${targetPosition}px)`;
