@@ -247,11 +247,14 @@ async function spin() {
     // ==========================
     // ECHTE ROLLEN LATEN DRAAIEN
     // ==========================
+// ==========================
+// ECHTE ROLLEN LATEN DRAAIEN
+// ==========================
 await Promise.all([
     spinReel(0, 1600),
-    spinReel(1, 1850),
-    spinReel(2, 2100),
-    spinReel(3, 2350)
+    spinReel(1, 1800),
+    spinReel(2, 2000),
+    spinReel(3, 2200)
 ]);
     // ==========================
     // WINSTEN CONTROLEREN
