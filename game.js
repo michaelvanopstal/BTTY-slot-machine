@@ -155,14 +155,16 @@ async function spin() {
         credits += cashoutAmount;
         lastWin = cashoutAmount;
 
-        messageEl.innerHTML =
-            `💰 Geclaimed: ${cashoutAmount}`;
+        messageEl.innerHTML = `💰 Geclaimed: ${cashoutAmount}`;
 
         currentGambleWin = 0;
 
         updateUI();
     }
 
+    // ==========================
+    // CREDITS CHECK
+    // ==========================
     if (credits < bet) {
         alert("Niet genoeg credits!");
         return;
@@ -179,38 +181,24 @@ async function spin() {
 
     clearHighlights();
 
-    const allImgs =
-        document.querySelectorAll(".symbol img");
+    // ==========================
+    // ECHTE ROLLEN LATEN DRAAIEN
+    // ==========================
+    await Promise.all([
 
-    allImgs.forEach(img => {
-        img.style.animation =
-            "spin 0.08s linear infinite";
-    });
+        spinReel(0, 1800),
 
-    const delays = [600, 1000, 1450];
+        spinReel(1, 2400),
 
-    for (let r = 0; r < 3; r++) {
+        spinReel(2, 3000),
 
-        await new Promise(res =>
-            setTimeout(res, delays[r])
-        );
+        spinReel(3, 3600)
 
-        const start = r * 4;
+    ]);
 
-        for (let i = 0; i < 4; i++) {
-
-            allImgs[start + i].style.animation =
-                "none";
-
-            allImgs[start + i].src =
-                Math.random() < 0.08
-                    ? "golden.png"
-                    : symbolNames[
-                        Math.floor(Math.random() * 4)
-                    ];
-        }
-    }
-
+    // ==========================
+    // WINSTEN CONTROLEREN
+    // ==========================
     const wins = checkAllPaylines();
 
     let totalWin = 0;
@@ -219,7 +207,7 @@ async function spin() {
 
         wins.sort((a, b) => b.amount - a.amount);
 
-        let messages = [];
+        const messages = [];
 
         for (const win of wins) {
 
@@ -240,16 +228,16 @@ async function spin() {
             messages.join("<br>") +
             `<br><strong>🎉 WIN ${totalWin}!</strong>`;
 
-        await new Promise(r =>
-            setTimeout(r, 1200)
+        await new Promise(resolve =>
+            setTimeout(resolve, 1200)
         );
 
         clearHighlights();
 
         lastWin = totalWin;
+
         updateUI();
 
-        // winst gaat naar gamble-pot
         currentGambleWin = totalWin;
 
         startGamble(totalWin);
@@ -258,8 +246,7 @@ async function spin() {
 
         lastWin = 0;
 
-        messageEl.textContent =
-            "Geen winst...";
+        messageEl.textContent = "Geen winst...";
 
         updateUI();
     }
@@ -281,6 +268,9 @@ async function spin() {
         updateUI();
     }
 
+    // ==========================
+    // BUTTONS TERUG AAN
+    // ==========================
     spinBtn.disabled = false;
     linesBtn.disabled = false;
 }
