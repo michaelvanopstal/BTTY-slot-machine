@@ -155,10 +155,10 @@ function spinReel(reelIndex) {
     return new Promise(resolve => {
         const strip = reelStrips[reelIndex];
         const symbolHeight = 90;
-        const extraRounds = 8;           // iets meer voor goede doorloop
+        const extraRounds = 8;
         const stopIndex = Math.floor(Math.random() * 22) + 8;
 
-        // Visible symbols (het eindresultaat)
+        // Visible symbols voor het resultaat
         const visibleSymbols = [];
         for (let i = 0; i < 3; i++) {
             visibleSymbols.push(
@@ -168,17 +168,18 @@ function spinReel(reelIndex) {
         }
         reelResults[reelIndex] = visibleSymbols;
 
-        // === RESET + START HOOG (belangrijk voor van-boven-naar-beneden) ===
+        // Reset + start positie (belangrijk!)
         strip.style.transition = "none";
-        strip.style.transform = `translateY(-${extraRounds * symbolHeight}px)`;  // start hoog
+        strip.style.transform = `translateY(0px)`;
         void strip.offsetHeight;
 
         const targetPosition = (extraRounds * symbolHeight) + (stopIndex * symbolHeight);
 
-        // 25% sneller
+        // Snelheid (25% harder dan eerst)
         const speed = 1.10;
         const duration = Math.round(targetPosition / speed);
 
+        // === VAN BOVEN NAAR BENEDEN ===
         strip.style.transition = `transform ${duration}ms linear`;
         strip.style.transform = `translateY(-${targetPosition}px)`;   // negatief = van boven naar beneden
 
