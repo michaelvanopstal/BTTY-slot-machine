@@ -151,14 +151,14 @@ function startGamble(winAmount) {
     }, 150);
 }
 
-function spinReel(reelIndex) {
+function spinReel(reelIndex, baseDuration = 2000) {
     return new Promise(resolve => {
         const strip = reelStrips[reelIndex];
         const symbolHeight = 90;
         const extraRounds = 8;
         const stopIndex = Math.floor(Math.random() * 22) + 8;
 
-        // Visible symbols voor het resultaat
+        // Visible symbols
         const visibleSymbols = [];
         for (let i = 0; i < 3; i++) {
             visibleSymbols.push(
@@ -168,20 +168,25 @@ function spinReel(reelIndex) {
         }
         reelResults[reelIndex] = visibleSymbols;
 
-        // Reset + start positie (belangrijk!)
+        // Reset
         strip.style.transition = "none";
-        strip.style.transform = `translateY(0px)`;
+        strip.style.transform = "translateY(0px)";
         void strip.offsetHeight;
 
         const targetPosition = (extraRounds * symbolHeight) + (stopIndex * symbolHeight);
 
-        // Snelheid (25% harder dan eerst)
+        // Snelheid (25% sneller)
         const speed = 1.10;
-        const duration = Math.round(targetPosition / speed);
+        let duration = Math.round(targetPosition / speed);
 
-        // === VAN BOVEN NAAR BENEDEN ===
+        // Gebruik baseDuration als je die meegeeft (voor stagger)
+        if (baseDuration > 1000) {
+            duration = baseDuration;
+        }
+
+        // VAN BOVEN NAAR BENEDEN
         strip.style.transition = `transform ${duration}ms linear`;
-        strip.style.transform = `translateY(-${targetPosition}px)`;   // negatief = van boven naar beneden
+        strip.style.transform = `translateY(-${targetPosition}px)`;
 
         // Harde stop + bounce
         setTimeout(() => {
