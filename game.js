@@ -112,6 +112,34 @@ function startGamble(winAmount) {
     }, 150);
 }
 
+function spinReel(reelIndex, duration) {
+
+    return new Promise(resolve => {
+
+        const strip = reelStrips[reelIndex];
+
+        const symbolHeight = 90;
+
+        const stopPosition =
+            Math.floor(Math.random() * 20) * symbolHeight;
+
+        const extraSpins =
+            20 * symbolHeight;
+
+        strip.style.transition =
+            `transform ${duration}ms cubic-bezier(.15,.8,.25,1)`;
+
+        strip.style.transform =
+            `translateY(-${extraSpins + stopPosition}px)`;
+
+        setTimeout(() => {
+            resolve();
+        }, duration);
+
+    });
+
+}
+
 // ==================== SPIN ====================
 async function spin() {
 
