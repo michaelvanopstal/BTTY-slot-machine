@@ -157,21 +157,12 @@ function spinReel(reelIndex, duration) {
 
         const strip = reelStrips[reelIndex];
 
-        // RESET POSITIE
-        strip.style.transition = "none";
-        strip.style.transform = "translateY(0px)";
-
-        // Force reflow
-        strip.offsetHeight;
-
         const symbolHeight = 90;
 
-        const stopIndex =
-            Math.floor(Math.random() * 20);
+        // Kies waar de rol uiteindelijk stopt
+        const stopIndex = Math.floor(Math.random() * 40);
 
-        const stopPosition =
-            stopIndex * symbolHeight;
-
+        // Bewaar zichtbare symbolen voor winstcontrole
         const visibleSymbols = [];
 
         for (let i = 0; i < 3; i++) {
@@ -188,16 +179,33 @@ function spinReel(reelIndex, duration) {
 
         }
 
-        reelResults[reelIndex] =
-            visibleSymbols;
+        reelResults[reelIndex] = visibleSymbols;
+
+        // Eerst helemaal bovenaan starten
+        strip.style.transition = "none";
+        strip.style.transform = "translateY(0px)";
+
+        // Browser forceren positie te verwerken
+        void strip.offsetHeight;
+
+        // Veel verder laten draaien voor casino-effect
+        const extraRounds = 25;
+
+        const targetPosition =
+            (extraRounds * symbolHeight) +
+            (stopIndex * symbolHeight);
 
         strip.style.transition =
-            `transform ${duration}ms cubic-bezier(.12,.85,.25,1)`;
+            `transform ${duration}ms cubic-bezier(0.12,0.85,0.25,1)`;
 
         strip.style.transform =
-            `translateY(-${stopPosition}px)`;
+            `translateY(-${targetPosition}px)`;
 
-        setTimeout(resolve, duration);
+        setTimeout(() => {
+
+            resolve();
+
+        }, duration);
 
     });
 
