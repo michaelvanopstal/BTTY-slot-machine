@@ -126,18 +126,23 @@ body {
 }
 
 .reels {
-    display: grid;
-
-    grid-template-columns: repeat(4, 135px);
-    grid-template-rows: repeat(3, 90px);
-
+    display: flex;
     gap: 8px;
+}
+.reel {
+    width: 135px;
+    height: 286px;
 
-    background: transparent;
-    border: none;
-    padding: 0;
+    overflow: hidden;
+    position: relative;
 }
 
+.reel-strip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
 /* ================= SYMBOLS ================= */
 .symbol {
     width: 135px;
